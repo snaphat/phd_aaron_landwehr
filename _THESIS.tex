@@ -1,0 +1,110 @@
+\documentclass{udthesis}
+
+\usepackage[english]{babel}
+%\usepackage{float}
+%\usepackage[hidelinks]{hyperref}
+\usepackage{graphicx}
+\usepackage{bookmark}
+
+\makeatletter
+\providecommand{\toclevel@prefacesection}{0}
+\makeatother
+
+\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage{tcolorbox}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{colortbl}
+\tcbuselibrary{skins}
+
+\pdfoptionpdfminorversion=7
+
+\definecolor{myblue}{RGB}{72,107,123}
+\definecolor{myblue2}{RGB}{184,206,216}
+\definecolor{darkgreen}{RGB}{0,151,33}
+
+\newcolumntype{Y}{>{\centering\arraybackslash}X}
+\tcbset{borderline={0.5mm}{0.0mm}{myblue},sharp corners,width=1.0\textwidth,enhanced,boxrule=0.5pt,fonttitle=\normalsize,
+colback=gray!01!white,colframe=myblue,colbacktitle=myblue2,
+coltitle=black,center title,shrink tight}
+
+%\usepackage{draftwatermark}
+%\SetWatermarkScale{8}
+%\SetWatermarkLightness{0.96}
+
+\begin{document}
+    %FIXME: FIX NUMBERING of pages to romane numerals, Get required pages (see Josh's thesis), add Acknowledgment.
+    \title[TBD]{TBD}
+                   % This file (thesis-tap.tex) contains the Title
+                   % and Approval Page information for a master's thesis.
+
+    \author{Aaron Myles Landwehr}
+    \type{dissertation}
+    \degree{Doctor of Philosophy}
+    \majorfieldtrue\majorfield{Electrical \& Computer Engineering}
+    \degreedate{Spring 2020}
+    \keywords{tbd}
+    \subject{Subject}
+
+    \maketitlepage
+
+    \begin{approvalpage}
+    \chair{Kenneth E. Barner, Ph.D.}{Chair of the Department of Electrical and Computer Engineering}
+    \dean{Levi T. Thompson, Ph.D.}{Dean of the College of Engineering}
+    \provost{Douglas J. Doren, Ph.D.}{Interim Vice Provost for Graduate \& Professional Education and Dean of the Graduate College\par}
+    \end{approvalpage}
+
+    \begin{signedpage} % Up to 4 signatures
+        \profmember{Fouad E. Kiamilev, Ph.D.}
+        \member{Chase J. Cotton, Ph.D.}
+        \member{Xiaoming Li, Ph.D.}
+        \member{St\'ephane Zuckerman, Ph.D.}
+    \end{signedpage}
+
+    \begin{front} % Starts front material (Roman style page numbers)
+        \prefacesection{Acknowledgments}
+            \input{Text/acknowledgments}
+
+        %\tablespagefalse
+        \maketocloflot
+        \prefacesectiontoc{Abstract}
+            \input{Text/abstract}
+    \end{front}
+
+    \pagenumbering{arabic}
+
+    \chapter{Introduction}
+        \input{Text/introduction}
+    \chapter{Background}
+        \input{Text/background}
+    \chapter{Problem Formulation}
+        \input{Text/problem_formulation}
+    \chapter{Packetized Display Protocol}
+        \input{Text/pdp_protocol}
+    \chapter{Machine Model}
+        \input{Text/machine_model}
+    \chapter{Use Cases}
+        \input{Text/use_cases}
+    \chapter{Implementation}
+        \input{Text/implementation}
+    %\chapter{Simulation Framework}
+        %\input{Text/Framework}
+    %\chapter{Experimental Evaluation}
+        %\input{Text/results}
+    \chapter{Related Work}
+        \input{Text/related_work}
+    \chapter*{Conclusion}
+    \addcontentsline{toc}{chapter}{conclusion}
+        \input{Text/conclusion}
+
+    %FIXME: Ack and Disclaimer
+    \section*{Acknowledgment}
+        This material is based upon work supported by the Department of Energy [Office of Science] under Award Number DE-XXXXXXX.
+
+    \section*{Disclaimer}
+        This report was prepared as an account of work sponsored by an agency of the United States Government. Neither the United States Government nor any agency thereof, nor any of their employees, makes any warranty, express or implied, or assumes any legal liability or responsibility for the accuracy, completeness, or usefulness of any information, apparatus, product, or process disclosed, or represents that its use would not infringe privately owned rights. Reference herein to any specific commercial product, process, or service by trade name, trademark, manufacturer, or otherwise does not necessarily constitute or imply its endorsement, recommendation, or favoring by the United States Government or any agency thereof. The views and opinions of authors expressed herein do not necessarily state or reflect those of the United States Government or any agency thereof.
+
+   \bibliographystyle{abbrv}
+   \bibliography{Bib/biblio}
+
+\end{document}

@@ -1,0 +1,13 @@
+*.aux
+*.bbl
+*.blg
+*.d
+*.fdb_latexmk
+*.fls
+*.ini
+*.lof
+*.log
+*.lot
+*.make
+\*.pdf
+*.toc
