@@ -1,10 +1,22 @@
 \label{chap:problem_formulation}
-As discussed briefly in the section \ref{sec:introduction}, our PDP architecture eschews with assumptions found in traditional display technology in order to provide a rich set of desirable features. In this section, we will discuss the assumptions of traditional display technology and how PDP differs, in order to provide the reader a rationale, as well as, the benefits to our proposed alternative.
+
+ In this chapter, we will discuss in detail the limitations with current display protocol technology that were alluded to in Chapter \ref{chap:introduction}. From there, we will focus on how these limitations affect adversely IRLED projector technology. Finally, we will provide a problem solution.
+
+\section{Problem Statement}
+
+\subsection{Display Protocol Limitations}
+
+\subsection{High-speed IRLED Projector systems}
+
+\section{Problem Solution}
+
+As discussed briefly in the section \ref{chap:introduction}, our PDP architecture eschews with assumptions found in traditional display technology in order to provide a rich set of desirable features. In this section, we will discuss the assumptions of traditional display technology and how PDP differs, in order to provide the reader a rationale, as well as, the benefits to our proposed alternative.
 
 Current display technology, such as HDMI, assumes a fixed frame rate display which places a hard limit on frame timing and synchronization. In detail, the underlying display protocols operate in a best-effort fashion where a buffer swap transmitting a frame of data occurs at static predetermined interval. If a new frame is unavailable to be transmitted at each interval due to any delay, such as processing delay, the previous frame will be retransmitted. This necessarily makes correct synchronization challenging because modern computation systems do not generally provide real-time guarantees for a number of reasons, such as, variability in work needed for frame generation, CPU scheduling, and I/O delays. Generally, while these challenges can be addressed to some degree, they require custom hardware solutions on top of existing display protocols because end-to-end system synchronization is out of the scope of typical display standards which are designed to push relatively low frame rates over single hardware links. Secondly, because of the static nature of of the transmission interval (e.g. 100hz), the frame rate cannot be dynamically controlled or changed after initialization. Instead, these protocols have static bandwidth requirements for a given resolution and frame rate of the form found in figure \ref{fig:bandwidth}. This disallows for fine-grained control over the frame rate in cases where a user might wish to dynamically change it to match the processing rate. In high speed display scenarios, this introduces the problem of unavoidable frame drops. This issue becomes further compounded by the fact that traditional display protocols utilize proprietary drivers and hardware such that frame-drops become effectively silent. An effort to address this problem necessarily requires complete control over the entire end-to-end system meaning an effective and correct solution requires customized hardware and software that deviates from standard display protocol behavior. Any solution that falls short of these requirements would necessarily fail to completely address the issue. In short, to truly address this issue within traditional display protocols would require essentially creating device specific new protocol tied to particular custom hardware. Finally, display protocols disallow the transmission of sub-frames of data. A frame is necessarily transmitted in whole when the transmission interval reached. Just as with the previous problem, to alleviate this would necessarily require control over driver and hardware behavior in an end-to-end system.
 
 \begin{figure}
     \centering
+    \large
     %\begin{small}
     %$$bandwidth = resolution \times bits \times fps$$
     %$bandwidth$ : \quad bandwidth requirements in bits per second. \\

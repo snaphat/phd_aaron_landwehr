@@ -1,8 +1,43 @@
 \label{chap:background}
 
-In this Chapter, we discuss relevant background information toward the goal of implementing a packetized display protocol (PDP) architecture for IRLED projector systems. First, we give an overview of what constitutes an IRLED system. Following this, we discuss in general how common display protocols work to send pixel data to a display system (e.g. a television). Finally, we discuss how these protocols are utilized within an IRLED system including discussion of example scenarios.
+In this Chapter, we discuss relevant background information toward the goal of implementing a packetized display protocol (PDP) architecture for Infrared Scene Projector systems (IRSPs). First, we give an overview of what constitutes an IRSP system. Following this, we discuss in general how common display protocols work to send pixel data to a display system (e.g. a television). Finally, we discuss how these protocols are utilized within an IRLED project system including discussion of example scenarios.
 
 \section{IRLED Projector Systems}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/sleds_system.png}
+    \caption{IRLED Scene Projector System}
+    \label{fig:sleds_system}
+\end{figure}
+
+IRSPs are made up Light Emitting Diodes (LEDs) that emit light in the IR spectrum\cite{biard1966semiconductor}. Since their inception they have been utilized in various fields such as medical\cite{MonteiroEtAl2011,MEEKS1998433,Sadick2009,takhtfooladi2015effects,yamanishi1995respiration} sensing; tracking; and localization\cite{PlotogVladescu2015,Kimon2001,SCHOLZ20151233,WalshDaemsSteckel2015,zeylikovich2003mid}, and communication\cite{CossuEtAl2014,escobosa2004ir,GeorgopoulosKormakopoulos1986,sohn2007localization,JangEtAl2012}. IRSPs are an emerging technology with various applications within the IR sensor testing community. A complete IRSP system consist of various technologies and processes as shown in Figure \ref{fig:sleds_system}. One denotes the scene generation and non-uniformity correction (NUC) process. This is where pixel data representing IR scenes is fed to a system for display. The NUC process is for correcting for physical and thermal non-uniformity in an IRLED array\cite{BarakhshanEtAl2018}. Two denotes the close support electronics which are responsible for converting a digital representation of a scene into analog signaling that goes directly to an array. Three indicates the dewar or vaccum chamber which houses an IRLED array and is utilized to keep it below ambient temperatures or at cryogenic temperature ranges. Four indicates an IRLED hybrid which consist of a Read-in Integrated Circuit (RIIC) used to address an IRLED array and the array itself. Analog signals coming from the CSE go into the dewar, and then are mapped using the RIIC, which results in specific IRLEDs within an array being driven. Five indicates an IR recording apparatus of some sort utilized to record IR data from an array. Synchronization between source generation, display, and recording is maintained via synchronization signaling. Often Camera Link serial communication\cite{CameraLink2000,zhu2008design} is used.
+
+
+Figure \ref{fig:sleds_timeline} shows the development timeline for IRLED Projector technology. In 2008, the world's first IRLED array called the Superlattice Light Emitting Diodes (SLEDs) array was developed in 2008\cite{FIXME}.
+
+\begin{figure}
+    \centering
+    \includegraphics[trim=1.5in 0.5in 1.5in 1.5in,width=1.0\textwidth]{fig/sleds_timeline.pdf}
+    \caption{IRLED Projector Technology Development Timeline Overview}
+    \label{fig:sleds_timeline}
+\end{figure}
+
+This device was a hybridized combination of an 64 by 64 IRLED wafer bonded to a RIIC wafer providing the electronics to drive the array. Initial testing was done by hand prior the design and implementation of the overall drive system was completed in 2011. Following this, an increased IRLED wafer of 512x512 size was fabricated in 2014. These efforts culminated in the first two IRLED projector systems in 2016. The first, a 512 by 512 sized array included support for driving the Light Emitting Diodes (LEDs) at two separate wavelength bands (denoted as 2-colors in Figure \ref{fig:sleds_timeline})\cite{EjzakEtAl2016, RickerEtAl2017}. The second, a 1024 by 1024 sized array doubled the total number of pixels supported. Additionally, these systems demonstrated the beginnings of a modular IR Scene Projection (IRSP) platform\cite{BrowningEtAl2019}. A further increase in size and efficiency occurred in 2018 with the world's first 2048 by 2048 pixel array.
+
+\begin{figure}
+    \centering
+    \includegraphics[trim=1.5in 0.5in 1.5in 1.5in,width=1.0\textwidth]{fig/typical_projection_system.pdf}
+    \caption{Typical IRLED Projection Process}
+    \label{fig:typical_projection}
+\end{figure}
+
+%FIXME: add discussion about the speeds
+
+%FIXME: add discussion about uses
+
+%FIXME: add discussion about system layout
+
 
 \section{Classical Display Protocols}
     \label{sec:classical_display_protocols}
@@ -66,21 +101,27 @@ In this Chapter, we discuss relevant background information toward the goal of i
     \end{figure}
 
     %FIXME: example modeline
-    To illustrate, let us look at the display modeline generated using the VESA Coordinated Video Timing (CVT) standard shown in Figure \ref{fig:modeline_example}. This modeline operates a total frame frequency of $30.0hz$. The pixel clock 79.75, denoted in red, is specified in megahertz. The horizontal pixels, denoted in blue; are horizontal active, horizontal front porch, horizontal sync pulse, and horizontal back porch respectively. The vertical pixels (measured in lines), are denoted in green; are vertical active, vertical front porch, vertical sync pulse, and horizontal back porch respectively. The sync pulse polarities, denoted in yellow; indicate whether a given sync pulse is active low or active high. A minus symbol indicates active low and a plus symbol indicates active high. If we put these numbers into the formulas shown in Figure \ref{fig:modeline_refresh_rate} we yield the results shown in Figure \ref{blah}.
+    To illustrate, let us look at the display modeline generated using the VESA Coordinated Video Timing (CVT) standard shown in Figure \ref{fig:modeline_example}. This modeline operates a total frame frequency of approximately $30.0hz$. The pixel clock 79.75, denoted in red, is specified in megahertz. The horizontal pixels, denoted in blue; are the end of horizontal active, the end of horizontal front porch, the end of horizontal sync pulse, and the end of horizontal back porch respectively. The vertical pixels (measured in lines), denoted in green; are the end of vertical active, the end of vertical front porch, the end of vertical sync pulse, and the end of horizontal back porch respectively. The sync pulse polarities, denoted in yellow; indicate whether a given sync pulse is active low or active high. A minus symbol indicates active low and a plus symbol indicates active high. If we put these numbers into the formulas shown in Figure \ref{fig:modeline_refresh_rate} we yield the results shown in Figure \ref{fig:modeline_refresh_rate_plug}. The astute reader will note that $l_h$ and $l_v$ are the same as the total pixel size for the given modeline. The pixel period is $\sim12.53ns$, meaning that each pixel is drawn for the given amount of time. The frame period is $\sim33.33ms$, meaning that each frame is drawn for that given amount of time.
 
     %FIXME: finish this chart
     \begin{figure}
         \centering
         { \Large
-            $l_h=1920+1976+2168+2416$ \vspace{8px} \\
-            $l_v=1080+1083+1088+1102$ \vspace{8px} \\
+            $h_a=1920; h_{fp}=1976-h_a; h_{sp}=2168-h_{fp}; h_{bp}=2416-h_{sp};$ \\
+            $v_a=1080; v_{fp}=1083-v_a; v_{sp}=1088-v_{fp}; v_{bp}=1102-v_{sp};$ \\
+            $l_h=2416=1920+56+192+248$ \vspace{8px} \\
+            $l_v=1102=1080+3+5+14$ \vspace{8px} \\
             $f_p=79.75e6$ \vspace{8px} \\
             $f_f=30.0={f_p \over {l_s \cdot l_c}}$ \\
-            $p_t={1 \over f_p}$ \vspace{8px} \\
-            $f_t={1 \over f_f}$ \vspace{8px}
+            $p_t=12.53ns={1 \over f_p}$ \vspace{8px} \\
+            $f_t=33.33ms={1 \over f_f}$ \vspace{8px}
         }
         \caption{Computed Refresh Rate for a 30hz CVT Modeline}
         \label{fig:modeline_refresh_rate_plug}
     \end{figure}
 
+    In section \ref{sec:displays_within_proj_system}, we discuss how these protocols are utilized within an IRLED projector system, briefly highlight the limitations, and . %FIXME: finish this paragraph
+
 \section{Display Protocols within an IRLED Project System}
+    \label{sec:displays_within_proj_system}
+    Projector systems utilize

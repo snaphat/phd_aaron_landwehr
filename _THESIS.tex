@@ -35,9 +35,6 @@ coltitle=black,center title,shrink tight}
 \begin{document}
     %FIXME: FIX NUMBERING of pages to romane numerals, Get required pages (see Josh's thesis), add Acknowledgment.
     \title[TBD]{TBD}
-                   % This file (thesis-tap.tex) contains the Title
-                   % and Approval Page information for a master's thesis.
-
     \author{Aaron Myles Landwehr}
     \type{dissertation}
     \degree{Doctor of Philosophy}
@@ -99,12 +96,13 @@ coltitle=black,center title,shrink tight}
 
     %FIXME: Ack and Disclaimer
     \section*{Acknowledgment}
-        This material is based upon work supported by the Department of Energy [Office of Science] under Award Number DE-XXXXXXX.
+        The work discussed within this dissertation was partially funded by (a) Air Force STTR Program AF18A-T017 `Next Generation Infrared Scene Projectors for Testing MWIR Systems' (Contract FA8650-19-C-1948), and (b) the Test Resource Management Center (TRMC) Test and Evaluation/Science \& Technology (T\&E/S\&T) Program through the US Army Program Executive Office for Simulation, Training, and Instrumentation (PEO STRI) under Contract No. W900KK-13-C-0049. We thank ONSemiconductor from fabricating silicon arrays, Firefly Photonics and the University of Iowa for fabricating Infrared LED arrays and Teledyne Scientific for hybridizing Silicon and LED arrays. Their fabrication effort enabled us to build and test the projector system(s) described in this paper.
 
     \section*{Disclaimer}
         This report was prepared as an account of work sponsored by an agency of the United States Government. Neither the United States Government nor any agency thereof, nor any of their employees, makes any warranty, express or implied, or assumes any legal liability or responsibility for the accuracy, completeness, or usefulness of any information, apparatus, product, or process disclosed, or represents that its use would not infringe privately owned rights. Reference herein to any specific commercial product, process, or service by trade name, trademark, manufacturer, or otherwise does not necessarily constitute or imply its endorsement, recommendation, or favoring by the United States Government or any agency thereof. The views and opinions of authors expressed herein do not necessarily state or reflect those of the United States Government or any agency thereof.
 
-   \bibliographystyle{abbrv}
-   \bibliography{Bib/biblio}
+    \bibliographystyle{abbrv}
+    \pdfstringdefDisableCommands{\let\uppercase\relax}
+    \bibliography{Bib/biblio}
 
 \end{document}
