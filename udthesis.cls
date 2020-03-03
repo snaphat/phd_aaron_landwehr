@@ -17,7 +17,7 @@
 
 \AtEndOfClass{%
         \usepackage[bookmarksnumbered,linktocpage,colorlinks,%
-        linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}%
+        linkcolor=black,citecolor=black,urlcolor=black]{hyperref}%
         \def\@pdfcreator{LaTeX2e, UDThesis class, hyperref package}%
         \usepackage[all]{hypcap}}
 \AtBeginDocument{%
