@@ -1,0 +1,4 @@
+* Finish garret's suggestions in _garret_THESIS-commented.pdf.
+* check for hardware agnostic display protocol related work
+* Talk about how snap works
+* Talk about each array and how they write
