@@ -9,6 +9,7 @@
 *.log
 *.lot
 *.make
-*.pdf
+/*.pdf
 *.toc
 *.gz
+~$*.pptx
