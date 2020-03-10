@@ -62,39 +62,39 @@ coltitle=black,center title,shrink tight}
 
     \begin{front} % Starts front material (Roman style page numbers)
         \prefacesection{Acknowledgments}
-            \input{Text/acknowledgments}
+            \input{text/acknowledgments}
 
         %\tablespagefalse
         \maketocloflot
         \prefacesectiontoc{Abstract}
-            \input{Text/abstract}
+            \input{text/abstract}
     \end{front}
 
     \pagenumbering{arabic}
 
     \chapter{Introduction}
-        \input{Text/introduction}
+        \input{text/introduction}
     \chapter{Background}
-        \input{Text/background}
+        \input{text/background}
     \chapter{Problem Formulation}
-        \input{Text/problem_formulation}
+        \input{text/problem_formulation}
     \chapter{Packetized Display Protocol}
-        \input{Text/pdp_protocol}
+        \input{text/pdp_protocol}
     \chapter{Machine Model}
-        \input{Text/machine_model}
+        \input{text/machine_model}
     \chapter{Use Cases}
-        \input{Text/use_cases}
+        \input{text/use_cases}
     \chapter{Implementation}
-        \input{Text/implementation}
+        \input{text/implementation}
     %\chapter{Simulation Framework}
-        %\input{Text/Framework}
+        %\input{text/Framework}
     %\chapter{Experimental Evaluation}
-        %\input{Text/results}
+        %\input{text/results}
     \chapter{Related Work}
-        \input{Text/related_work}
+        \input{text/related_work}
     \chapter*{Conclusion}
     \addcontentsline{toc}{chapter}{conclusion}
-        \input{Text/conclusion}
+        \input{text/conclusion}
 
     %FIXME: Ack and Disclaimer
     \section*{Acknowledgment}
@@ -105,7 +105,7 @@ coltitle=black,center title,shrink tight}
 
     \renewcommand{\bibname}{References}
     \pdfstringdefDisableCommands{\let\uppercase\relax}
-    \bibliography{Bib/biblio}
+    \bibliography{bib/biblio}
     \bibliographystyle{ieeetr}
 
 \end{document}
