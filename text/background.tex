@@ -38,7 +38,6 @@ This device was a hybridized combination of an 68 by 68 IRLED wafer bonded to a 
 
 %FIXME: add discussion about system layout
 
-
 \section{Classical Display Protocols}
     \label{sec:classical_display_protocols}
 
@@ -125,3 +124,16 @@ This device was a hybridized combination of an 68 by 68 IRLED wafer bonded to a 
 \section{Display Protocols within an IRLED Project System}
     \label{sec:displays_within_proj_system}
     Projector systems utilize
+
+\section{Array Drawing Process}
+    As discussed in Section~\ref{sec:classical_display_protocols}, while all current IRSP arrays utilize some display protocol technology that is decoded in order to drive an array's pixels, they may utilize different internal drawing mechanisms for driving the pixels. This section discusses the details of those mechanisms within the NSLEDs and HDILED arrays for conceptual purposes, and while the details may differ for other arrays, the raster write process will be similar.
+
+    The NSLEDs and HDILED arrays are organized into four quadrants as shown in Figure~\ref{fig:nsleds_hdiled_quads}. Internally each quadrant has separate internal signaling.
+
+    \begin{figure}
+        \centering
+        \includegraphics[trim=0in 0.35in 0in 0in,width=1.0\textwidth]{fig/nsleds_hdiled_quads.pdf}
+        \caption[NSLEDs and HIDLED Array Layout]{NSLEDs and HIDLED Array Layout\footnotemark}
+        \label{fig:nsleds_hdiled_quads}
+    \end{figure}
+    \footnotetext{Not drawn to scale}
