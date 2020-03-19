@@ -32,6 +32,15 @@ This device was a hybridized combination of an 68 by 68 IRLED wafer bonded to a 
     \label{fig:typical_projection}
 \end{figure}
 
+The relative array size is shown in Figure~\ref{fig:tcsa_nsleds_hdiled_array_ratio}.
+\begin{figure}
+    \centering
+    \includegraphics[trim=0.5in 0.5in 0.5in 1.5in,width=1.0\textwidth]{fig/tcsa_nsleds_hdiled_array_ratio.pdf}
+    \caption{SLEDs Array Ratios}
+    \label{fig:tcsa_nsleds_hdiled_array_ratio}
+\end{figure}
+
+
 %FIXME: add discussion about the speeds
 
 %FIXME: add discussion about uses
@@ -45,14 +54,14 @@ This device was a hybridized combination of an 68 by 68 IRLED wafer bonded to a 
 
     \begin{figure}
         \centering
-        \includegraphics[width=1.0\textwidth]{fig/display_timing_overview.pdf}
+        \includegraphics[width=0.9\textwidth]{fig/display_timing_overview.pdf}
         \caption{Display Protocol Timing Overview}
         \label{fig:display_protocol_timing_overview}
     \end{figure}
 
     \begin{figure}
         \centering
-        \includegraphics[width=1.0\textwidth]{fig/display_timing_line_cross.pdf}
+        \includegraphics[width=0.7\textwidth]{fig/display_timing_line_cross.pdf}
         \caption{Display Protocol Horizontal Signal Cross Section Timing}
         \label{fig:display_protocol_line_cross}
     \end{figure}
@@ -68,7 +77,7 @@ This device was a hybridized combination of an 68 by 68 IRLED wafer bonded to a 
 
     \begin{figure}
         \centering
-        \includegraphics[width=1.0\textwidth]{fig/display_timing_full_cross.pdf}
+        \includegraphics[width=0.9\textwidth]{fig/display_timing_full_cross.pdf}
         \caption{Display Protocol Full Signal Cross Section Timing}
         \label{fig:display_protocol_full_cross}
     \end{figure}
@@ -90,7 +99,7 @@ This device was a hybridized combination of an 68 by 68 IRLED wafer bonded to a 
     Figure~\ref{fig:modeline_refresh_rate} shows the relationship between between the different regions of a display and the frequency or refresh rate. $l_h$ denotes the scan line size of a display, or total horizontal width, which is made up of the horizontal active and horizontal porch region pixels of a display. $l_v$ denotes the total vertical width of a display, which is made up the vertical active and vertical porch region pixels of a display. Each pixel is sent at a rate denoted by $f_p$, the pixel frequency (also called the pixel clock). $f_f$ denotes the frame frequency or framerate of a display. This is simply the pixel frequency over the total number of pixels (video active and porches) of a display. $p_t$ denotes the time period a single pixel takes to send. $f_t$ denotes the time period for an entire frame.
 
     %FIXME: example modeline
-    To illustrate, let us look at the display modeline generated using the VESA Coordinated Video Timing (CVT) standard shown in Figure~\ref{fig:modeline_example}. This modeline operates a total frame frequency of approximately \mbox{30 Hz}. The pixel clock 79.75, denoted in red, is specified in megahertz. The horizontal pixels, denoted in blue; are the end of horizontal active, the end of horizontal front porch, the end of horizontal sync pulse, and the end of horizontal back porch respectively. The vertical pixels (measured in lines), denoted in green; are the end of vertical active, the end of vertical front porch, the end of vertical sync pulse, and the end of horizontal back porch respectively. The sync pulse polarities, denoted in yellow; indicate whether a given sync pulse is active low or active high. A minus symbol indicates active low and a plus symbol indicates active high. If these numbers are placed into into the formulas shown in Figure~\ref{fig:modeline_refresh_rate} the results shown in Figure~\ref{fig:modeline_refresh_rate_plug} are yielded. The astute reader will note that $l_h$ and $l_v$ are the same as the total pixel size for the given modeline. The pixel period is $\sim12.53ns$, meaning that each pixel is drawn for the given amount of time. The frame period is $\sim33.33ms$, meaning that each frame is drawn for that given amount of time.
+    To illustrate, let us look at the display modeline generated using the VESA Coordinated Video Timing (CVT) standard shown in Figure~\ref{fig:modeline_example}. This modeline operates a total frame frequency of approximately \mbox{30 Hz}. The pixel clock 79.75, denoted in red, is specified in megahertz. The horizontal pixels, denoted in blue; are the end of horizontal active, the end of horizontal front porch, the end of horizontal sync pulse, and the end of horizontal back porch respectively. The vertical pixels (measured in lines), denoted in green; are the end of vertical active, the end of vertical front porch, the end of vertical sync pulse, and the end of horizontal back porch respectively. The sync pulse polarities, denoted in yellow; indicate whether a given sync pulse is active low or active high. A minus symbol indicates active low and a plus symbol indicates active high. If these numbers are placed into into the formulas shown in Figure~\ref{fig:modeline_refresh_rate} the results shown in Figure~\ref{fig:modeline_refresh_rate_plug} are yielded. The astute reader will note that $l_h$ and $l_v$ are the same as the total pixel size for the given modeline. The pixel period is $\sim12.53 ns$, meaning that each pixel is drawn for the given amount of time. The frame period is $\sim33.33 ms$, meaning that each frame is drawn for that given amount of time.
 
     \begin{figure}
         \centering
@@ -134,6 +143,6 @@ This device was a hybridized combination of an 68 by 68 IRLED wafer bonded to a 
         \centering
         \includegraphics[trim=0in 0.35in 0in 0in,width=1.0\textwidth]{fig/nsleds_hdiled_quads.pdf}
         \caption[NSLEDs and HIDLED Array Layout]{NSLEDs and HIDLED Array Layout\footnotemark}
+        \footnotetext{Not drawn to scale}
         \label{fig:nsleds_hdiled_quads}
     \end{figure}
-    \footnotetext{Not drawn to scale}
