@@ -1,51 +1,52 @@
 \label{chap:background}
 
- This chapter discusses relevant background information toward the goal of implementing a packetized display protocol (PDP) architecture for Infrared Scene Projector systems (IRSPs). First, it gives an overview of what constitutes an IRSP system. Following this, it provides a general discussion of how common display protocols work to send pixel data to a display system (e.g. a television). Finally, it discusses how these protocols are utilized within an IRLED project system including discussion of example scenarios.
+    This chapter discusses relevant background information toward the goal of implementing a packetized display protocol (PDP) architecture for Infrared Scene Projector systems (IRSPs). First, it gives an overview of what constitutes an IRSP system. Following this, it provides a general discussion of how common display protocols work to send pixel data to a display system (e.g. a television). Finally, it discusses how these protocols are utilized within an IRLED project system including discussion of example scenarios.
 
 \section{IRLED Projector Systems}
 
-\begin{figure}
-    \centering
-    \includegraphics[width=1.0\textwidth]{fig/sleds_system.pdf}
-    \caption{IRLED Scene Projector System}
-    \label{fig:sleds_system}
-\end{figure}
+    \begin{figure}
+        \centering
+        \includegraphics[width=1.0\textwidth]{fig/sleds_system.pdf}
+        \caption{IRLED Scene Projector System}
+        \label{fig:sleds_system}
+    \end{figure}
 
-IRLED based IRSPs are made up light emitting diodes (LEDs) that emit light in the IR spectrum\cite{biard1966semiconductor}. Since their inception they have been utilized in various fields such as medical\cite{MonteiroEtAl2011,MEEKS1998433,Sadick2009,takhtfooladi2015effects,yamanishi1995respiration} sensing; tracking; and localization\cite{PlotogVladescu2015,Kimon2001,SCHOLZ20151233,WalshDaemsSteckel2015,zeylikovich2003mid}, and communication\cite{CossuEtAl2014,escobosa2004ir,GeorgopoulosKormakopoulos1986,sohn2007localization,JangEtAl2012}. IRLED projectors are an emerging technology with various applications within the IR sensor testing community. A complete IRLED based IRSP system consist of various technologies and processes as shown in Figure~\ref{fig:sleds_system}. One denotes the scene generation and non-uniformity correction (NUC) process. This is where pixel data representing IR scenes is fed to a system for display. The NUC process is for correcting for physical and thermal non-uniformity in an IRLED array\cite{BarakhshanEtAl2018}. Two denotes the close support electronics which are responsible for converting a digital representation of a scene into analog signaling that goes directly to an array. Three indicates the dewar or vaccum chamber which houses an IRLED array and is utilized to keep it below ambient temperatures or at cryogenic temperature ranges. Four indicates an IRLED hybrid which consist of a Read-in Integrated Circuit (RIIC) used to address an IRLED array and the array itself. Analog signals coming from the CSE go into the dewar, and then are mapped using the RIIC, which results in specific IRLEDs within an array being driven. Five indicates an IR recording apparatus of some sort utilized to record IR data from an array. Synchronization between source generation, display, and recording is maintained via synchronization signaling. Often Camera Link serial communication\cite{CameraLink2000,zhu2008design} is used.
-
-
-Figure~\ref{fig:sleds_timeline} shows the development timeline for IRLED Projector technology. In 2008, the world's first IRLED array called the Superlattice Light Emitting Diodes (SLEDs) array was completed in 2008\cite{ahmed1}.
-
-\begin{figure}
-    \centering
-    \includegraphics[trim=0.5in 0.5in 0.5in 1.5in,width=1.0\textwidth]{fig/sleds_timeline.pdf}
-    \caption{IRLED Projector Technology Development Timeline Overview}
-    \label{fig:sleds_timeline}
-\end{figure}
-
-This device was a hybridized combination of an 68 by 68 IRLED wafer bonded to a RIIC wafer providing the electronics to drive the array. Initial testing was done by hand prior the design and implementation of the overall drive system was completed in 2011. Following this, an increased IRLED wafer of 512x512 size was fabricated in 2014. These efforts culminated in the first two IRLED projector systems in 2016. The first, a 512 by 512 sized array included support for driving the LEDs at two separate wavelength bands (denoted as 2-colors in Figure~\ref{fig:sleds_timeline})\cite{EjzakEtAl2016, RickerEtAl2017}. The second, a 1024 by 1024 sized array doubled the total number of pixels supported. Additionally, these systems demonstrated the beginnings of a modular IR Scene Projection (IRSP) platform\cite{BrowningEtAl2019}. A further increase in size and efficiency occurred in 2018 with the world's first 2048 by 2048 pixel array.
-
-\begin{figure}
-    \centering
-    \includegraphics[trim=0.5in 0.5in 0.5in 1.5in,width=1.0\textwidth]{fig/typical_projection_system.pdf}
-    \caption{Typical IRLED Projection Process}
-    \label{fig:typical_projection}
-\end{figure}
-
-The relative array size is shown in Figure~\ref{fig:tcsa_nsleds_hdiled_array_ratio}.
-\begin{figure}
-    \centering
-    \includegraphics[trim=0.5in 0.5in 0.5in 1.5in,width=1.0\textwidth]{fig/tcsa_nsleds_hdiled_array_ratio.pdf}
-    \caption{SLEDs Array Pixel Ratios}
-    \label{fig:tcsa_nsleds_hdiled_array_ratio}
-\end{figure}
+    IRLED based IRSPs are made up light emitting diodes (LEDs) that emit light in the IR spectrum\cite{biard1966semiconductor}. Since their inception they have been utilized in various fields such as medical\cite{MonteiroEtAl2011,MEEKS1998433,Sadick2009,takhtfooladi2015effects,yamanishi1995respiration} sensing; tracking; and localization\cite{PlotogVladescu2015,Kimon2001,SCHOLZ20151233,WalshDaemsSteckel2015,zeylikovich2003mid}, and communication\cite{CossuEtAl2014,escobosa2004ir,GeorgopoulosKormakopoulos1986,sohn2007localization,JangEtAl2012}. Modern IRLED projectors are an emerging technology with various applications within the IR sensor testing community. A complete IRLED based IRSP system consist of various technologies and processes as shown in Figure~\ref{fig:sleds_system}. One denotes the scene generation and non-uniformity correction (NUC) process. This is where pixel data representing IR scenes is fed to a system for display. The NUC process is for correcting for physical and thermal non-uniformity\cite{BarakhshanEtAl2017} in an IRLED array\cite{BarakhshanEtAl2018}. Two denotes the close support electronics\cite{ejzak4} which are responsible for converting a digital representation of a scene into analog signaling that goes directly to an array. Three indicates the dewar\cite{lang1, MarksEtAl2017} or vaccum chamber which houses an IRLED array and is utilized to keep it below ambient temperatures or at cryogenic temperature ranges. Four indicates an IRLED hybrid which consist of a Read-in Integrated Circuit (RIIC)\cite{HernandezEtAl2017} used to address an IRLED array and the array itself. Analog signals coming from the CSE go into the dewar, and then are mapped using the RIIC, which results in specific IRLEDs within an array being driven. Five indicates an IR recording apparatus of some sort utilized to record IR data from an array. Synchronization between source generation, display, and recording is maintained via synchronization signaling. Often Camera Link serial communication\cite{CameraLink2000, zhu2008design} is used.
 
 
-%FIXME: add discussion about the speeds
+    Figure~\ref{fig:sleds_timeline} shows the development timeline for IRLED Projector technology. In 2008, the world's first IRLED array called the Superlattice Light Emitting Diodes (SLEDs) array was completed in 2008\cite{ahmed1}. This device was a hybridized combination of an 68 by 68 IRLED wafer bonded to a RIIC wafer\cite{das2} providing the electronics to drive the array. Initial testing was done by hand prior the design and implementation of the overall drive system was completed in 2011. Following this, an increased IRLED wafer of 512x512 size was fabricated in 2014\cite{norton1}. These efforts culminated in the first two IRLED projector systems in 2016. The first, TCSA (Two Color SLEDS Array), a 512 by 512 sized array\cite{McGeeEtAl2015, ejzak1, ejzak2, EjzakEtAl2016, RickerEtAl2017} included support for driving the LEDs at two separate wavelength bands (denoted as 2-colors in Figure~\ref{fig:sleds_timeline}. The second, NSLEDS (N Superlattice Infrared Light Emitting Diode System), a 1024 by 1024 sized array\cite{benedict1} doubled the total number of pixels supported. Additionally, these systems demonstrated the beginnings of a modular IR Scene Projection (IRSP) platform\cite{BrowningEtAl2019}. A further increase in size and efficiency occurred in 2018 with the world's first 2048 by 2048 pixel array, HDILED (High Definition Infrared LED). A visual representation of the pixel ratios is shown in Figure~\ref{fig:tcsa_nsleds_hdiled_array_ratio}
 
-%FIXME: add discussion about uses
+    \begin{figure}
+        \centering
+        \includegraphics[trim=0.5in 0.5in 0.5in 1.5in,width=1.0\textwidth]{fig/sleds_timeline.pdf}
+        \caption{IRLED Projector Technology Development Timeline Overview}
+        \label{fig:sleds_timeline}
+    \end{figure}
 
-%FIXME: add discussion about system layout
+    \begin{figure}
+        \centering
+        \includegraphics[trim=0.5in 0.5in 0.5in 1.5in,width=1.0\textwidth]{fig/tcsa_nsleds_hdiled_array_ratio.pdf}
+        \caption{SLEDs Array Pixel Ratios}
+        \label{fig:tcsa_nsleds_hdiled_array_ratio}
+    \end{figure}
+
+    TCSA represented a novel step forward in terms of IRLED array technology. It incorporated a multiple color pixel design to enable emission in multiple wave-length spectrums, as well as, an increase in the number of analog channels from 4 to 16 to allow for more pixels to be driven at a time. NSLEDS used the same size wafer as a TCSA, but incorporated only a single-color pixel design instead of the multiple color design of the original, which allowed for the pixel resolution to be doubled paving the way toward larger format SLED IRSPs. HDILED combines. The interleaved write process of each array will be discussed in detail in Section~\ref{sec:array_Interleaved_write_process}.
+
+    Figure~\ref{fig:typical_projection} shows a typical projection process utilized within an IRLED system. A scene projector will perform scene generation utilizing a GPU typically. Following this, imagery will be undergo non-uniformity correction by utilizing a NUC table created by analyzing the non-uniformity on a given array. This process compensates for any physical defects that may cause non-linear variation in light emission from different diodes on a given array, thus, allowing for uniform emission across a given spectrum. There are number of different ways this linearization may be performed\cite{BrowningEtAl2016, LandwehrEtAl2017, BarakhshanEtAl2019}, but that is beyond the scope of this work.
+
+    \begin{figure}
+        \centering
+        \includegraphics[trim=0.5in 0.5in 0.5in 1.5in,width=1.0\textwidth]{fig/typical_projection_system.pdf}
+        \caption{Typical IRLED Projection Process}
+        \label{fig:typical_projection}
+    \end{figure}
+
+
+    %FIXME: add discussion about the speeds
+
+    %FIXME: add discussion about uses
+
+    %FIXME: add discussion about system layout
 
 \section{Classical Display Protocols}
     \label{sec:classical_display_protocols}
@@ -134,7 +135,8 @@ The relative array size is shown in Figure~\ref{fig:tcsa_nsleds_hdiled_array_rat
     \label{sec:displays_within_proj_system}
     Projector systems utilize
 
-\section{Array Drawing Process}
+\section{Array Interleaved Write Process}
+    \label{sec:array_Interleaved_write_process}
     As discussed in Section~\ref{sec:classical_display_protocols}, while all current IRSP arrays utilize some display protocol technology that is decoded in order to drive an array's pixels, they may utilize different internal drawing mechanisms for driving the pixels. This section discusses the details of those mechanisms within the NSLEDs and HDILED arrays for conceptual purposes, and while the details may differ for other arrays, the raster write process will be similar.
 
     The NSLEDs and HDILED arrays are organized into four quadrants as shown in Figure~\ref{fig:tcsa_nsleds_hdiled_quads}. Internally each quadrant has separate internal signaling.
