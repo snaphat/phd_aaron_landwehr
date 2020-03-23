@@ -144,9 +144,12 @@
 
 \section{Array Interleaved Write Process}
     \label{sec:array_Interleaved_write_process}
-    As discussed in Section~\ref{sec:classical_display_protocols}, while all current IRSP arrays utilize some display protocol technology that is decoded in order to drive an array's pixels, they may utilize different internal drawing mechanisms for driving the pixels. This section discusses the details of those mechanisms within the NSLEDs and HDILED arrays for conceptual purposes, and while the details may differ for other arrays, the raster write process will be similar.
+    As discussed in Section~\ref{sec:classical_display_protocols}, while all current IRSP arrays utilize some display protocol technology that is decoded in order to drive an array's pixels, arrays may utilize different internal drawing mechanisms for driving the pixels. This section discusses the details of those mechanisms within the TCSA, NSLEDs, and HDILED arrays for conceptual purposes, and while the details may differ for other arrays, the overall raster write process is generalizable.
 
-    The NSLEDs and HDILED arrays are organized into four quadrants as shown in Figure~\ref{fig:tcsa_nsleds_hdiled_quads}. Internally each quadrant has separate internal signaling.
+    %FIXME: add missing Tianne paper when published
+    The TCSA, NSLEDs, and HDILED arrays are organized into four quadrants as shown in Figure~\ref{fig:tcsa_nsleds_hdiled_quads}. Each quadrant has separate internal signaling which allows for each quadrant to operate independently in parallel when mounted in a package that provides independent external signals. However, to date most of the fabricated IRLED arrays are mounted in packages that allows for only one quadrant to be drawn at a time\footnote{Currently, only HIDLED has been tested in the type of setup\cite{lassiter1, LassiterEtAl2019_1, LassiterEtAl2019_2, LassiterEtAl2020_missing} due to it having the largest resolution per quadrant.}; thus, that write process is what will be discussed here.
+
+    Each quadrant is organized into a given number of pixels with TCSA housing 256 by 256, NSLEDS housing 512 by 512, and HDILED housing 1024 by 1024 per quadrant. Each array can write 32-channels worth of data at once, which cooresponds to 32 pixels of data; therefore, each address on an array is mapped to 32 physical pixel locations. This yields a horizontal address bus width of 9-bits on NSLEDS, and 10-bits on HDILED. And, a
 
     \begin{figure}
         \centering
