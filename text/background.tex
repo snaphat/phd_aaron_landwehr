@@ -146,10 +146,8 @@
     \label{sec:array_Interleaved_write_process}
     As discussed in Section~\ref{sec:classical_display_protocols}, while all current IRSP arrays utilize some display protocol technology that is decoded in order to drive an array's pixels, arrays may utilize different internal drawing mechanisms for driving the pixels. This section discusses the details of those mechanisms within the TCSA, NSLEDs, and HDILED arrays for conceptual purposes, and while the details may differ for other arrays, the overall raster write process is generalizable.
 
-    %FIXME: add missing Tianne paper when published
-    The TCSA, NSLEDs, and HDILED arrays are organized into four quadrants as shown in Figure~\ref{fig:tcsa_nsleds_hdiled_quads}. Each quadrant has separate internal signaling which allows for each quadrant to operate independently in parallel when mounted in a package that provides independent external signals. However, to date most of the fabricated IRLED arrays are mounted in packages that allows for only one quadrant to be drawn at a time\footnote{Currently, only HIDLED has been tested in the type of setup\cite{lassiter1, LassiterEtAl2019_1, LassiterEtAl2019_2, lassiter3} due to it having the largest resolution per quadrant.}; thus, that write process is what will be discussed here.
-
-    Each quadrant is organized into a given number of pixels with TCSA housing 256 by 256, NSLEDS housing 512 by 512, and HDILED housing 1024 by 1024 per quadrant. Each array can write 32-channels worth of data at once, which cooresponds to 32 pixels of data; therefore, each address on an array is mapped to 32 physical pixel locations. This yields a horizontal address bus width of 9-bits on NSLEDS, and 10-bits on HDILED. And, a
+    %FIXME: add proper citation for Tianne paper when published
+    The TCSA, NSLEDs, and HDILED arrays are organized into four quadrants as shown in Figure~\ref{fig:tcsa_nsleds_hdiled_quads}. Each quadrant is organized into a given number of pixels with TCSA housing 256 by 256, NSLEDS housing 512 by 512, and HDILED housing 1024 by 1024 per quadrant. There are number of input signals necessary to drive an array. These are {\em a 4 bit quadrant write enable}, {\em X address}, {\em Y address}, {\em LOAD bit}, {\em 16 Strong/Weak bit}, {\em array reset bit}, and {\em analog signaling which charges the pixels being addressed}. The quadrant write enable, X address, Y address, and LOAD signals are all utilized for addressing the array.
 
     \begin{figure}
         \centering
@@ -158,4 +156,30 @@
         \vspace{-8px}
         \footnotesize\textsuperscript{a} Not drawn to scale
         \label{fig:tcsa_nsleds_hdiled_quads}
+    \end{figure}
+
+    The quadrant write enable selects which quadrant to. It is worth noting that each quadrant has separate internal signaling which allows for each quadrant to operate independently in parallel when mounted in a package that provides independent external signals. However, to date most of the fabricated IRLED arrays are mounted in packages that allows for only one quadrant to be drawn at a time\footnote{Currently, only HIDLED has been tested in the type of setup\cite{lassiter1, LassiterEtAl2019_1, LassiterEtAl2019_2, lassiter3} due to it having the largest resolution per quadrant.}; thus, that write process is what is discussed here.
+
+    The X address, Y address, and LOAD are used to select which pixel or group of pixels to write within a quadrant depending on the mode of operation.  Internally, each array can write up to 32 pixels (or channels) of data at a given time. The mode of operation dictates whether 2, 4, 8, 16, or 32 channels are used. The number of address bits utilized depends on the mode of operation. The amount of address bits differs by array due to the differences in sizes. NSLEDs utilizes 7 bits for the X address and 7 bits for the Y address, yielding a total of 256 by 256 addresses per quadrant. The LOAD bit is used to select between even and odd rows, yielding an effective address space of 256 by 512 per quadrant. Because the smallest mode of operation writes 2 pixels at a time, this is sufficient to fully address the array. Similarly, HDILED utilizes 8 bits for the X address and 8 bits for the Y address, yielding a total of 512 by 512 addresses per quadrant. Again, as with NSLEDS, the LOAD bit is used to select between even and odd rows, yielding an effective address space of 512 by 1024 per quadrant. This is again sufficient to completely address the array since it also can at a minimize write 2 pixels at a time.
+
+    The Strong/Weak bits and analog signaling control the emission intensity of pixels. The former is shared between two pixels and dictates whether to provide a strong or weaker light emission. The latter consist of 32 channels controlled by digital to analog converters that are driven by the CSE firmware.
+
+    In practice, it is perferable to utilize all channels at once because this allows for more pixels to be driven in a shorter amount of time. Therefore, during normal operation each array writes 32-channels worth of data at once, which cooresponds to 32 pixels of data; therefore, from the perspective of the driving CSE Firmware, each address on an array is mapped to 32 physical pixel locations.
+
+    \begin{figure}
+        \centering
+        %includegraphs[trim=L B R T]
+        \includegraphics[trim=0in 0in 0in 0in,width=0.8\textwidth]{fig/superpixel_layout.pdf}
+        \caption{NSLEDS/HDILED Array Super Pixel Layout}
+        \label{fig:nsleds_hdiled_array_superpixel_layout}
+    \end{figure}
+
+    The exact mapping is dictated by the array hardware and is shown in Figure~\ref{fig:nsleds_hdiled_array_interleaved_write_process}.
+
+    \begin{figure}
+        \centering
+        %includegraphs[trim=L B R T]
+        \includegraphics[trim=0in 0.3in 0in 0in,width=1.0\textwidth]{fig/nsleds_hdiled_array_writing.pdf}
+        \caption{NSLEDS/HDILED Array Writing Process}
+        \label{fig:nsleds_hdiled_array_interleaved_write_process}
     \end{figure}
