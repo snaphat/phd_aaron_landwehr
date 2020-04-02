@@ -48,7 +48,9 @@
     \end{figure}
 
 \section{Close Support Electronics}
-    As mentioned briefly in Section~\ref{sec:irled_projector_systems}, some form of CSE is needed to drive IRLED arrays. TCSA, NSLEDS, and HDILED can all be driven using the same electronics. Figure~\ref{fig:sleds_block} shows internals of the CSE broken out. The combined internals are shown in Figure~\ref{fig:nessie_enclosure_internals}.
+     As mentioned briefly in Section~\ref{sec:irled_projector_systems}, a CSE is needed to drive IRLED arrays. Conceptually, A CSE is an interface that converts digital display data to an array specific format in order to produce IR imagery. It further provides power for an array, and regulates the current in order to safe guard arrays from physical damage due to misconfiguration or heating.
+
+     The TCSA, NSLEDS, and HDILED arrays can all be driven using the same electronics. Figure~\ref{fig:sleds_block} shows the internal components of the CSE broken out in green. A display system drives a CSE using two HDMI inputs in parallel to provide more physical bandwidth. Typically, these will each carry half of a frame segmented either vertically or horizontally. Each hdmi input decodes the video signals in parallel and the output pixels are buffered into the main FPGA board which houses a Xilinx Vertex 6 FPGA\cite{FIXME}. The controlling firmware will then control the write process to drive the 8 DAC cards which each house 2 DACs. The output signals are then amplified and routed to the array. Figure~\ref{fig:nessie_enclosure_internals} shows the components installed within a CSE. Additional control signals provided by the firmware and routed to the RIIC are discussed in Section~\ref{sec:array_Interleaved_write_process}. The specifics of the PDP firmware architectures write process is discusses in Chapter~\ref{chap:implementation}.
 
     \begin{figure}
         \centering
