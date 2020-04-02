@@ -3,18 +3,18 @@
     This chapter discusses relevant background information toward the goal of implementing a packetized display protocol (PDP) architecture for Infrared Scene Projector systems (IRSPs). First, it gives an overview of what constitutes an IRSP system. Following this, it provides a general discussion of how common display protocols work to send pixel data to a display system (e.g. a television). Finally, it discusses how these protocols are utilized within an IRLED project system including discussion of example scenarios.
 
 \section{IRLED Projector Systems}
-
+    \label{sec:irled_projector_systems}
     \begin{figure}
         \centering
-        \includegraphics[width=1.0\textwidth]{fig/sleds_system.pdf}
+        %includegraphs[trim=L B R T]
+        \includegraphics[trim=0.45in 1.25in 0.0in 0in,width=1.0\textwidth]{fig/sleds_system.pdf}
         \caption{IRLED Scene Projector System}
         \label{fig:sleds_system}
     \end{figure}
 
     IRLED based IRSPs are made up light emitting diodes (LEDs) that emit light in the IR spectrum\cite{biard1966semiconductor}. Since their inception they have been utilized in various fields such as medical\cite{MonteiroEtAl2011,MEEKS1998433,Sadick2009,takhtfooladi2015effects,yamanishi1995respiration} sensing; tracking; and localization\cite{PlotogVladescu2015,Kimon2001,SCHOLZ20151233,WalshDaemsSteckel2015,zeylikovich2003mid}, and communication\cite{CossuEtAl2014,escobosa2004ir,GeorgopoulosKormakopoulos1986,sohn2007localization,JangEtAl2012}.
 
-    Modern IRLED projectors are an emerging technology with various applications within the IR sensor testing community. A complete IRLED based IRSP system consist of various technologies and processes as shown in Figure~\ref{fig:sleds_system}. One denotes the scene generation and non-uniformity correction (NUC) process. This is where pixel data representing IR scenes is fed to a system for display. The NUC process corrects for physical and thermal non-uniformity\cite{BarakhshanEtAl2017} in an IRLED array\cite{BarakhshanEtAl2018}. Two denotes the close support electronics\cite{ejzak4} which are responsible for converting a digital representation of a scene into analog signaling that goes directly to an array. Three indicates the dewar\cite{lang1, MarksEtAl2017} or vaccum chamber which houses an IRLED array and is utilized to keep it below ambient temperatures or at cryogenic temperature ranges. Four indicates an IRLED hybrid which consist of a Read-in Integrated Circuit (RIIC)\cite{HernandezEtAl2017} used to address an IRLED array and the array itself. Analog signals coming from the CSE go into the dewar, and then are mapped using the RIIC, which results in specific IRLEDs within an array being driven. Five indicates an IR recording apparatus of some sort utilized to record IR data from an array. Synchronization between source generation, display, and recording is maintained via synchronization signaling. Often Camera Link serial communication\cite{CameraLink2000, zhu2008design} is used.
-
+    Modern IRLED projectors are an emerging technology with various applications within the IR sensor testing community. A complete IRLED based IRSP system consist of various technologies and processes as shown in Figure~\ref{fig:sleds_system}. One denotes the scene generation and two the non-uniformity correction (NUC) process. These are where pixel data representing IR scenes is fed to a system for display. The NUC process corrects for physical and thermal non-uniformity\cite{BarakhshanEtAl2017} in an IRLED array\cite{BarakhshanEtAl2018}. Three denotes the close support electronics\cite{ejzak4} which are responsible for converting a digital representation of a scene into analog signaling that goes directly to an array. Four indicates the dewar\cite{lang1, MarksEtAl2017} or vaccum chamber which houses an IRLED array and is utilized to keep it below ambient temperatures or at cryogenic temperature ranges. Five indicates an IRLED hybrid which consist of a Read-in Integrated Circuit (RIIC)\cite{HernandezEtAl2017} used to address an IRLED array and the array itself. Analog signals coming from the CSE go into the dewar, and then are mapped using the RIIC, which results in specific IRLEDs within an array being driven. Six indicates an IR recording apparatus of some sort utilized to record IR data from an array. Synchronization between source generation, display, and recording is maintained via synchronization signaling. Often Camera Link serial communication\cite{CameraLink2000, zhu2008design} is used. The red dotted lines show what is provided within an IRLED system; where as, scene generation is usually application specific and thus excluded.
 
     Figure~\ref{fig:sleds_timeline} shows the development timeline for IRLED Projector technology. In 2008, the world's first IRLED array called the Superlattice Light Emitting Diodes (SLEDs) array was completed in 2008\cite{ahmed1}. This device was a hybridized combination of an 68 by 68 IRLED wafer bonded to a RIIC wafer\cite{das2} providing the electronics to drive the array. Initial testing was done by hand prior the design and implementation of the overall drive system was completed in 2011. Following this, an increased IRLED wafer of 512x512 size was fabricated in 2014\cite{norton1}. The combination of the array with the drive system resulted in SLEDS (Superlattice Light Emitting Diode System), the first functioning IRLED projector system in the world. Further efforts culminated in two IRLED projector systems in 2016. The first, TCSA (Two Color SLEDS Array), a 512 by 512 sized array\cite{McGeeEtAl2015, ejzak1, ejzak2, EjzakEtAl2016, RickerEtAl2017} included support for driving the LEDs at two separate wavelength bands (denoted as 2-colors in Figure~\ref{fig:sleds_timeline}. The second, NSLEDS (N\footnote{The N originally stood for Nightglow, before the device was retargeted to Midwave-IR.} Superlattice Infrared Light Emitting Diode System), a 1024 by 1024 sized array\cite{benedict1} doubled the total number of pixels supported. Additionally, these systems demonstrated the beginnings of a modular IR Scene Projection (IRSP) platform\cite{BrowningEtAl2019}. A further increase in size and efficiency occurred in 2018 with the world's first 2048 by 2048 pixel array, HDILED (High Definition Infrared LED). A visual representation of the pixel ratios is shown in Figure~\ref{fig:tcsa_nsleds_hdiled_array_ratio}
 
@@ -47,14 +47,22 @@
         \label{fig:typical_projection}
     \end{figure}
 
+\section{Close Support Electronics}
+    As mentioned briefly in Section~\ref{sec:irled_projector_systems}, some form of CSE is needed to drive IRLED arrays. TCSA, NSLEDS, and HDILED can all be driven using the same electronics. Figure~\ref{fig:sleds_block} shows internals of the CSE broken out. The combined internals are shown in Figure~\ref{fig:nessie_enclosure_internals}.
 
+    \begin{figure}
+        \centering
+        \includegraphics[width=1.0\textwidth]{fig/sleds_block.pdf}
+        \caption{SLEDS System Block Diagram}
+        \label{fig:sleds_block}
+    \end{figure}
 
-
-    %FIXME: add discussion about the speeds
-
-    %FIXME: add discussion about uses
-
-    %FIXME: add discussion about system layout
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.7\textwidth]{fig/nessie_enclosure_internals.jpg}
+        \caption{CSE Internals}
+        \label{fig:nessie_enclosure_internals}
+    \end{figure}
 
 \section{Classical Display Protocols}
     \label{sec:classical_display_protocols}
@@ -145,16 +153,16 @@
 
 \section{Array Interleaved Write Process}
     \label{sec:array_Interleaved_write_process}
-    As discussed in Section~\ref{sec:classical_display_protocols}, while all current IRSP arrays utilize some display protocol technology that is decoded in order to drive an array's pixels, arrays may utilize different internal drawing mechanisms for driving the pixels. This section discusses the details of those mechanisms within the TCSA, NSLEDs, and HDILED arrays for conceptual purposes, and while the details may differ for other arrays, the overall raster write process is generalizable.
+    As discussed in Section~\ref{sec:classical_display_protocols}, while all current IRSP arrays utilize some display protocol technology that is decoded in order to drive an array's pixels, arrays may utilize different internal drawing mechanisms for driving the pixels. This section discusses the details of those mechanisms within the TCSA, NSLEDS, and HDILED arrays for conceptual purposes, and while the details may differ for other arrays, the overall raster write process is generalizable.
 
     %FIXME: add proper citation for Tianne paper when published
-    The TCSA, NSLEDs, and HDILED arrays are organized into four quadrants as shown in Figure~\ref{fig:tcsa_nsleds_hdiled_quads}. Each quadrant is organized into a given number of pixels with TCSA housing 256 by 256, NSLEDS housing 512 by 512, and HDILED housing 1024 by 1024 per quadrant. There are number of input signals necessary to drive an array. These are {\em a 4 bit quadrant write enable}, {\em X address}, {\em Y address}, {\em LOAD bit}, {\em 16 Strong/Weak drive strength bit}, {\em array reset bit}, and {\em analog signaling lines which charges the pixels being addressed}. The quadrant write enable, X address, Y address, and LOAD signals are all utilized for addressing the array.
+    The TCSA, NSLEDS, and HDILED arrays are organized into four quadrants as shown in Figure~\ref{fig:tcsa_nsleds_hdiled_quads}. Each quadrant is organized into a given number of pixels with TCSA housing 256 by 256, NSLEDS housing 512 by 512, and HDILED housing 1024 by 1024 per quadrant. There are number of input signals necessary to drive an array. These are {\em a 4 bit quadrant write enable}, {\em X address}, {\em Y address}, {\em LOAD bit}, {\em 16 Strong/Weak drive strength bit}, {\em array reset bit}, and {\em analog signaling lines which charges the pixels being addressed}. The quadrant write enable, X address, Y address, and LOAD signals are all utilized for addressing the array.
 
     \begin{figure}
         \centering
         %includegraphs[trim=L B R T]
         \includegraphics[trim=0in 0.35in 0in 1.5in,width=1.0\textwidth]{fig/tcsa_nsleds_hdiled_quads.pdf}
-        \caption[TCSA, NSLEDs, and HIDLED Array Quadrant Layouts]{TCSA, NSLEDs, and HIDLED Array Quadrant Layouts\textsuperscript{a}}
+        \caption[TCSA, NSLEDS, and HIDLED Array Quadrant Layouts]{TCSA, NSLEDS, and HIDLED Array Quadrant Layouts\textsuperscript{a}}
         \vspace{-8px}
         \footnotesize\textsuperscript{a} Not drawn to scale
         \label{fig:tcsa_nsleds_hdiled_quads}
@@ -162,7 +170,7 @@
 
     The quadrant write enable selects which quadrant to. It is worth noting that each quadrant has separate internal signaling which allows for each quadrant to operate independently in parallel when mounted in a package that provides independent external signals. However, to date most of the fabricated IRLED arrays are mounted in packages that allows for only one quadrant to be drawn at a time\footnote{Currently, only HIDLED has been tested in the type of setup\cite{lassiter1, LassiterEtAl2019_1, LassiterEtAl2019_2, lassiter3} due to it having the largest resolution per quadrant.}; thus, that write process is what is discussed here.
 
-    The X address, Y address, and LOAD are used to select which pixel or group of pixels to write within a quadrant depending on the mode of operation.  Internally, each array can write up to 32 pixels (or channels) of data at a given time. The mode of operation dictates whether 2, 4, 8, 16, or 32 channels are used. The number of address bits utilized depends on the mode of operation. The amount of address bits differs by array due to the differences in sizes. NSLEDs utilizes 7 bits for the X address and 7 bits for the Y address, yielding a total of 256 by 256 addresses per quadrant. The LOAD bit is used to select between even and odd rows, yielding an effective address space of 256 by 512 per quadrant. Because the smallest mode of operation writes 2 pixels at a time, this is sufficient to fully address the array. Similarly, HDILED utilizes 8 bits for the X address and 8 bits for the Y address, yielding a total of 512 by 512 addresses per quadrant. Again, as with NSLEDS, the LOAD bit is used to select between even and odd rows, yielding an effective address space of 512 by 1024 per quadrant. This is again sufficient to completely address the array since it also can at a minimize write 2 pixels at a time.
+    The X address, Y address, and LOAD are used to select which pixel or group of pixels to write within a quadrant depending on the mode of operation.  Internally, each array can write up to 32 pixels (or channels) of data at a given time. The mode of operation dictates whether 2, 4, 8, 16, or 32 channels are used. The number of address bits utilized depends on the mode of operation. The amount of address bits differs by array due to the differences in sizes. NSLEDS utilizes 7 bits for the X address and 7 bits for the Y address, yielding a total of 256 by 256 addresses per quadrant. The LOAD bit is used to select between even and odd rows, yielding an effective address space of 256 by 512 per quadrant. Because the smallest mode of operation writes 2 pixels at a time, this is sufficient to fully address the array. Similarly, HDILED utilizes 8 bits for the X address and 8 bits for the Y address, yielding a total of 512 by 512 addresses per quadrant. Again, as with NSLEDS, the LOAD bit is used to select between even and odd rows, yielding an effective address space of 512 by 1024 per quadrant. This is again sufficient to completely address the array since it also can at a minimize write 2 pixels at a time.
 
     Structurally, NSLEDS and HIDLED are layed out as super pixel as shown in Figure~\ref{fig:nsleds_hdiled_array_superpixel_layout}. Each super pixel is made up of a grid of 4 pixels spanning two rows and columns. These are layed out across the array in a grid structure with NSLEDS consisting of 256 by 256 super pixels, and HIDLED consisting of 512 by 512 super pixels. This image also highlights two points discussed above, the global LOAD line selects between the top two pixels (even rows) and bottom two pixels (odd rows) of each super pixel in the array, and two selected pixels are both written at the same time. Additionally, these share a drive strength as noted. This is controlled using Strong/Weak drive strength bits which dictate whether to provide a strong or weaker light emission for the given pixels.
 
@@ -185,3 +193,7 @@
         \caption{NSLEDS/HDILED Array Interleaved Pixel Mapping Per Write}
         \label{fig:nsleds_hdiled_array_interleaved_pixel_mapping_per_write}
     \end{figure}
+
+    The overall writing process for writing 64 pixels is a two step process. First, 32 values for the even rows are loaded in and written to the array, followed by 32 values from the odd rows being loaded and written to the array. At a data level, it is ideal to interleave the data such that it is avaliable at the optimal time in order to reduce latency and buffering requirements within the firmware. This is discussed in detail in Chapter~\ref{chap:pdp_protocol}.
+
+    Another aspect that will be touched on in subsequent chapters is that a CSE has two inputs for incoming data
