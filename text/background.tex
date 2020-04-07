@@ -1,12 +1,12 @@
 \label{chap:background}
 
-    This chapter discusses relevant background information toward the goal of implementing a packetized display protocol (PDP) architecture for Infrared Scene Projector systems (IRSPs). First, it gives an overview of what constitutes an IRSP system. Following this, it provides a general discussion of how common display protocols work to send pixel data to a display system (e.g. a television). Finally, it discusses how these protocols are utilized within an IRLED project system including discussion of example scenarios.
+This chapter discusses relevant background information toward the goal of implementing a packetized display protocol (PDP) architecture for Infrared Scene Projector systems (IRSPs). First, it gives an overview of what constitutes an IRSP system. Following this, it provides a general discussion of how common display protocols work to send pixel data to a display system (e.g. a television). Finally, it discusses how these protocols are utilized within an IRLED project system including discussion of example scenarios.
 
-    %FIXME: Add new information above
+%FIXME: Add new information above
 
 \section{IRLED Projector Systems}
-    \label{sec:irled_projector_systems}
-    \begin{figure}
+\label{sec:irled_projector_systems}
+\begin{figure}
         \centering
         %includegraphs[trim=L B R T]
         \includegraphics[trim=0.45in 1.25in 0.0in 0in,width=1.0\textwidth]{fig/sleds_system.pdf}
@@ -53,7 +53,7 @@
     \label{sec:close_support_electronics}
     As mentioned briefly in Section~\ref{sec:irled_projector_systems}, a CSE is needed to drive IRLED arrays. Conceptually, A CSE is an interface that converts digital display data to an array specific format in order to produce IR imagery. It further provides power for an array, and regulates the current in order to safe guard arrays from physical damage due to misconfiguration or heating.
 
-    The TCSA, NSLEDS, and HDILED arrays can all be driven using the same electronics. Figure~\ref{fig:sleds_block} shows the internal components of the CSE broken out in green. A display system drives a CSE using two HDMI inputs in parallel to provide more physical bandwidth. Typically, these will each carry half of a frame segmented either vertically or horizontally. Each hdmi input decodes the video signals in parallel and the output pixels are buffered into the main FPGA board which houses a Xilinx Vertex 6 FPGA\cite{XILINX1}. The firmware will then control the write process to drive the 8 DAC cards which each house 2 DAC integrated circuits per card, with each circuit consisting of 2 channels per DAC. The output signals are then amplified and routed to the array. Figure~\ref{fig:nessie_enclosure_internals} shows the components installed within a CSE. Additional control signals provided by the firmware and routed to the RIIC are discussed in Section~\ref{sec:array_Interleaved_write_process}. The specifics of the PDP firmware architectures write process is discussed in Chapter~\ref{chap:implementation}.
+    The TCSA, NSLEDS, and HDILED arrays can all be driven using the same electronics. Figure~\ref{fig:sleds_block} shows the internal components of the CSE broken out in green. A display system drives a CSE using two HDMI inputs in parallel to provide more physical bandwidth. Typically, these will each carry half of a frame segmented either vertically or horizontally. Each hdmi input decodes the video signals in parallel and the output pixels are buffered into the main FPGA board which houses a Xilinx Vertex 6 FPGA\cite{XILINX1}. The firmware will then control the write process to drive the 8 DAC cards which each house 2 DAC integrated circuits per card, with each circuit consisting of 2 channels per DAC. The output signals are then amplified and routed to the array through ribbon cables. Figure~\ref{fig:nessie_enclosure_internals} shows the components installed within a CSE.
 
     \begin{figure}
         \centering
@@ -62,12 +62,61 @@
         \label{fig:sleds_block}
     \end{figure}
 
+    Additional control signals provided by the firmware and routed to the RIIC are discussed in Section~\ref{sec:array_Interleaved_write_process}. The specifics of the PDP firmware architectures write process is discussed in Chapter~\ref{chap:implementation}.
+
     \begin{figure}
         \centering
         \includegraphics[width=0.7\textwidth]{fig/nessie_enclosure_internals.jpg}
         \caption{CSE Internals}
         \label{fig:nessie_enclosure_internals}
     \end{figure}
+
+\section{Array Interleaved Write Process}
+    \label{sec:array_Interleaved_write_process}
+    As will be discussed in Section~\ref{sec:classical_display_protocols}, while all current IRSP arrays utilize some display protocol technology that is decoded in order to drive an array's pixels, arrays may utilize different internal drawing mechanisms for driving the pixels. This section discusses the details of those mechanisms within the TCSA, NSLEDS, and HDILED arrays for conceptual purposes, and while the details may differ for other arrays, the overall raster write process is generalizable.
+
+    %FIXME: add proper citation for Tianne paper when published
+    The TCSA, NSLEDS, and HDILED arrays are organized into four quadrants as shown in Figure~\ref{fig:tcsa_nsleds_hdiled_quads}. Each quadrant is organized into a given number of pixels with TCSA housing 256 by 256, NSLEDS housing 512 by 512, and HDILED housing 1024 by 1024 per quadrant. There are number of input signals necessary to drive an array. These are {\em a 4 bit quadrant write enable}, {\em X address}, {\em Y address}, {\em LOAD bit}, {\em 16 Strong/Weak drive strength bit}, {\em array reset bit}, and {\em analog signaling lines which charges the pixels being addressed}. The quadrant write enable, X address, Y address, and LOAD signals are all utilized for addressing the array.
+
+    \begin{figure}
+        \centering
+        %includegraphs[trim=L B R T]
+        \includegraphics[trim=0in 0.35in 0in 1.5in,width=1.0\textwidth]{fig/tcsa_nsleds_hdiled_quads.pdf}
+        \caption[TCSA, NSLEDS, and HIDLED Array Quadrant Layouts]{TCSA, NSLEDS, and HIDLED Array Quadrant Layouts\textsuperscript{a}}
+        \vspace{-8px}
+        \footnotesize\textsuperscript{a} Not drawn to scale
+        \label{fig:tcsa_nsleds_hdiled_quads}
+    \end{figure}
+
+    The quadrant write enable selects which quadrant to drive. It is worth noting that each quadrant has separate internal signaling which allows for each quadrant to operate independently in parallel when mounted in a package that provides independent external signals. However, to date most of the fabricated IRLED arrays are mounted in packages that allows for only one quadrant to be drawn at a time\footnote{Currently, only HIDLED has been tested in the type of setup\cite{lassiter1, LassiterEtAl2019_1, LassiterEtAl2019_2, lassiter3} due to it having the largest resolution per quadrant.}; thus, that write process is what is discussed here.
+
+    The X address, Y address, and LOAD are used to select which pixel or group of pixels to write within a quadrant depending on the mode of operation.  Internally, each array can write up to 32 pixels (or channels) of data at a given time. The mode of operation dictates whether 2, 4, 8, 16, or 32 channels are used. The number of address bits utilized depends on the mode of operation. The amount of address bits differs by array due to the differences in sizes. NSLEDS utilizes 7 bits for the X address and 7 bits for the Y address, yielding a total of 256 by 256 addresses per quadrant. The LOAD bit is used to select between even and odd rows, yielding an effective address space of 256 by 512 per quadrant. Because the smallest mode of operation writes 2 pixels at a time, this is sufficient to fully address the array. Similarly, HDILED utilizes 8 bits for the X address and 8 bits for the Y address, yielding a total of 512 by 512 addresses per quadrant. Again, as with NSLEDS, the LOAD bit is used to select between even and odd rows, yielding an effective address space of 512 by 1024 per quadrant. This is again sufficient to completely address the array since it also can at a minimize write 2 pixels at a time.
+
+    Structurally, NSLEDS and HIDLED are layed out as super pixel as shown in Figure~\ref{fig:nsleds_hdiled_array_superpixel_layout}. Each super pixel is made up of a grid of 4 pixels spanning two rows and columns. These are layed out across the array in a grid structure with NSLEDS consisting of 256 by 256 super pixels, and HIDLED consisting of 512 by 512 super pixels. This image also highlights two points discussed above, the global LOAD line selects between the top two pixels (even rows) and bottom two pixels (odd rows) of each super pixel in the array, and the two selected pixels are both written at the same time. Additionally, these share a drive strength as noted in the diagram. This is controlled using the Strong/Weak drive strength bits which dictate whether to provide a strong or weaker light emission for the given pair of pixels.
+
+    \begin{figure}
+        \centering
+        %includegraphs[trim=L B R T]
+        \includegraphics[trim=0in 0in 0in 0in,width=0.8\textwidth]{fig/superpixel_layout.pdf}
+        \caption{NSLEDS/HDILED Array Super Pixel Layout}
+        \label{fig:nsleds_hdiled_array_superpixel_layout}
+    \end{figure}
+
+    The 32 analog signaling lines control the emission intensity of driven pixels. These 32 channels are controlled by digital to analog converters within the CSE that are driven by the firmware. Internally, a CSE has 8 DAC cards with 2 DAC integrated circuits per card, with each DAC circuit consisting of 2 DAC channels as discussed in Section~\ref{sec:close_support_electronics}. Each channel is used to drive a single pixel, giving the ability to drive 32 pixels at once or some subset as mentioned previously.
+
+    In practice, it is perferable to utilize all channels at once because this allows for more pixels to be driven in a shorter amount of time. Figure~\ref{fig:nsleds_hdiled_array_interleaved_pixel_mapping_per_write} shows the pixel mapping per write for 32 physical pixels on an array. 2 by 32 columns of pixels are shown segmented into super pixels. The Y address denotes the 16 super pixels that are selected per address. If Y is incremented by 1 then the next 16 rows of super pixels would be selected. X address (not shown) simply selects the next two columns of super pixels. DAC Card denotes which DAC card drives the given super pixel. L denotes which value of LOAD will select which columns within super pixels. When LOAD is low as shown in the middle segment, the top super pixels are selected as indicated in cyan. When LOAD is high as shown in the right segment, the bottom super pixels are selected.
+
+    \begin{figure}
+        \centering
+        %includegraphs[trim=L B R T]
+        \includegraphics[trim=0in 0.3in 0in 0in,width=1.0\textwidth]{fig/nsleds_hdiled_array_writing.pdf}
+        \caption{NSLEDS/HDILED Array Interleaved Pixel Mapping Per Write}
+        \label{fig:nsleds_hdiled_array_interleaved_pixel_mapping_per_write}
+    \end{figure}
+
+    The overall writing process for writing 64 pixels is a two step process. First, 32 values for the even rows are loaded in and written to the array, followed by 32 values from the odd rows being loaded and written to the array. At a data level, it is ideal to interleave the data such that it is avaliable at the optimal time in order to reduce latency and buffering requirements within the firmware. This is discussed in detail in Chapter~\ref{chap:pdp_protocol}.
+
+    Another aspect that will be touched on in subsequent chapters is that a CSE has two inputs for incoming data
 
 \section{Classical Display Protocols}
     \label{sec:classical_display_protocols}
@@ -155,50 +204,3 @@
 \section{Display Protocols within an IRLED Project System}
     \label{sec:displays_within_proj_system}
     Projector systems utilize
-
-\section{Array Interleaved Write Process}
-    \label{sec:array_Interleaved_write_process}
-    As discussed in Section~\ref{sec:classical_display_protocols}, while all current IRSP arrays utilize some display protocol technology that is decoded in order to drive an array's pixels, arrays may utilize different internal drawing mechanisms for driving the pixels. This section discusses the details of those mechanisms within the TCSA, NSLEDS, and HDILED arrays for conceptual purposes, and while the details may differ for other arrays, the overall raster write process is generalizable.
-
-    %FIXME: add proper citation for Tianne paper when published
-    The TCSA, NSLEDS, and HDILED arrays are organized into four quadrants as shown in Figure~\ref{fig:tcsa_nsleds_hdiled_quads}. Each quadrant is organized into a given number of pixels with TCSA housing 256 by 256, NSLEDS housing 512 by 512, and HDILED housing 1024 by 1024 per quadrant. There are number of input signals necessary to drive an array. These are {\em a 4 bit quadrant write enable}, {\em X address}, {\em Y address}, {\em LOAD bit}, {\em 16 Strong/Weak drive strength bit}, {\em array reset bit}, and {\em analog signaling lines which charges the pixels being addressed}. The quadrant write enable, X address, Y address, and LOAD signals are all utilized for addressing the array.
-
-    \begin{figure}
-        \centering
-        %includegraphs[trim=L B R T]
-        \includegraphics[trim=0in 0.35in 0in 1.5in,width=1.0\textwidth]{fig/tcsa_nsleds_hdiled_quads.pdf}
-        \caption[TCSA, NSLEDS, and HIDLED Array Quadrant Layouts]{TCSA, NSLEDS, and HIDLED Array Quadrant Layouts\textsuperscript{a}}
-        \vspace{-8px}
-        \footnotesize\textsuperscript{a} Not drawn to scale
-        \label{fig:tcsa_nsleds_hdiled_quads}
-    \end{figure}
-
-    The quadrant write enable selects which quadrant to drive. It is worth noting that each quadrant has separate internal signaling which allows for each quadrant to operate independently in parallel when mounted in a package that provides independent external signals. However, to date most of the fabricated IRLED arrays are mounted in packages that allows for only one quadrant to be drawn at a time\footnote{Currently, only HIDLED has been tested in the type of setup\cite{lassiter1, LassiterEtAl2019_1, LassiterEtAl2019_2, lassiter3} due to it having the largest resolution per quadrant.}; thus, that write process is what is discussed here.
-
-    The X address, Y address, and LOAD are used to select which pixel or group of pixels to write within a quadrant depending on the mode of operation.  Internally, each array can write up to 32 pixels (or channels) of data at a given time. The mode of operation dictates whether 2, 4, 8, 16, or 32 channels are used. The number of address bits utilized depends on the mode of operation. The amount of address bits differs by array due to the differences in sizes. NSLEDS utilizes 7 bits for the X address and 7 bits for the Y address, yielding a total of 256 by 256 addresses per quadrant. The LOAD bit is used to select between even and odd rows, yielding an effective address space of 256 by 512 per quadrant. Because the smallest mode of operation writes 2 pixels at a time, this is sufficient to fully address the array. Similarly, HDILED utilizes 8 bits for the X address and 8 bits for the Y address, yielding a total of 512 by 512 addresses per quadrant. Again, as with NSLEDS, the LOAD bit is used to select between even and odd rows, yielding an effective address space of 512 by 1024 per quadrant. This is again sufficient to completely address the array since it also can at a minimize write 2 pixels at a time.
-
-    Structurally, NSLEDS and HIDLED are layed out as super pixel as shown in Figure~\ref{fig:nsleds_hdiled_array_superpixel_layout}. Each super pixel is made up of a grid of 4 pixels spanning two rows and columns. These are layed out across the array in a grid structure with NSLEDS consisting of 256 by 256 super pixels, and HIDLED consisting of 512 by 512 super pixels. This image also highlights two points discussed above, the global LOAD line selects between the top two pixels (even rows) and bottom two pixels (odd rows) of each super pixel in the array, and the two selected pixels are both written at the same time. Additionally, these share a drive strength as noted in the diagram. This is controlled using the Strong/Weak drive strength bits which dictate whether to provide a strong or weaker light emission for the given pair of pixels.
-
-    \begin{figure}
-        \centering
-        %includegraphs[trim=L B R T]
-        \includegraphics[trim=0in 0in 0in 0in,width=0.8\textwidth]{fig/superpixel_layout.pdf}
-        \caption{NSLEDS/HDILED Array Super Pixel Layout}
-        \label{fig:nsleds_hdiled_array_superpixel_layout}
-    \end{figure}
-
-    The 32 analog signaling lines control the emission intensity of driven pixels. These 32 channels are controlled by digital to analog converters within the CSE that are driven by the firmware. Internally, a CSE has 8 DAC cards with 2 DAC integrated circuits per card, with each DAC circuit consisting of 2 DAC channels as discussed in Section~\ref{sec:close_support_electronics}. Each channel is used to drive a single pixel, giving the ability to drive 32 pixels at once or some subset as mentioned previously.
-
-    In practice, it is perferable to utilize all channels at once because this allows for more pixels to be driven in a shorter amount of time. Figure~\ref{fig:nsleds_hdiled_array_interleaved_pixel_mapping_per_write} shows the pixel mapping per write for 32 physical pixels on an array. 2 by 32 columns of pixels are shown segmented into super pixels. The Y address denotes the 16 super pixels that are selected per address. If Y is incremented by 1 then the next 16 rows of super pixels would be selected. X address (not shown) simply selects the next two columns of super pixels. DAC Card denotes which DAC card drives the given super pixel. L denotes which value of LOAD will select which columns within super pixels. When LOAD is low as shown in the middle segment, the top super pixels are selected as indicated in cyan. When LOAD is high as shown in the right segment, the bottom super pixels are selected.
-
-    \begin{figure}
-        \centering
-        %includegraphs[trim=L B R T]
-        \includegraphics[trim=0in 0.3in 0in 0in,width=1.0\textwidth]{fig/nsleds_hdiled_array_writing.pdf}
-        \caption{NSLEDS/HDILED Array Interleaved Pixel Mapping Per Write}
-        \label{fig:nsleds_hdiled_array_interleaved_pixel_mapping_per_write}
-    \end{figure}
-
-    The overall writing process for writing 64 pixels is a two step process. First, 32 values for the even rows are loaded in and written to the array, followed by 32 values from the odd rows being loaded and written to the array. At a data level, it is ideal to interleave the data such that it is avaliable at the optimal time in order to reduce latency and buffering requirements within the firmware. This is discussed in detail in Chapter~\ref{chap:pdp_protocol}.
-
-    Another aspect that will be touched on in subsequent chapters is that a CSE has two inputs for incoming data
