@@ -1,6 +1,6 @@
 \label{chap:background}
 
-This chapter discusses relevant background information toward the goal of implementing a packetized display protocol (PDP) architecture for Infrared Scene Projector systems (IRSPs). First, it gives an overview of what constitutes an IRSP system. Secondly, it discusses the Close Support Electronics (CSE) hardware used to drive IRSP systems. Thirdly, it discusses the interleaved write process required to directly drive LEDs on an LED IRSP. Fourthly,, it provides a general discussion of how common display protocols work to send pixel data to a display system (e.g. a television). Finally, it discusses how these protocols are utilized within an IRLED project system.
+This chapter discusses relevant background information toward the goal of implementing a packetized display protocol (PDP) architecture for Infrared Scene Projector systems (IRSPs). First, it gives an overview of what constitutes an IRSP system. Secondly, it discusses the Close Support Electronics (CSE) hardware used to drive IRSP systems. Thirdly, it discusses the interleaved write process required to directly drive LEDs on an LED IRSP. Fourthly,, it provides a general discussion of how common display protocols work to send pixel data to a display system (e.g. a television). Finally, it discusses how these protocols are utilized within IRSP technology.
 
 \section{IRLED Projector Systems}
 \label{sec:irled_projector_systems}
@@ -208,6 +208,9 @@ This chapter discusses relevant background information toward the goal of implem
 
     Section~\ref{sec:displays_within_proj_system}, discusses how these protocols are utilized within an IRLED projector system, briefly highlight the limitations, and . %FIXME: finish this paragraph
 
-\section{Display Protocols within an IRLED Project System}
+\section{Display Protocols within IRSP Technology}
     \label{sec:displays_within_proj_system}
-    Projector systems utilize each
+    % Finally, it discusses how these protocols are utilized within an IRLED project system.
+    IRSP technology typically utilizes classical display protocol technology in some form in order to drive IR-arrays. In the most basic form a scene generator will provide imagery that is encoded utilizing one of the protocols discussed and send it to some form of CSE which will then simply decode it.
+
+    For scenerios that involve unsynchronized operation where dropped frames are not an issue, these protocols can largely be used without modification. However, scenerios that require synchronization in either open loop or closed loop setups present a challenge. Often, non-standard modifications must be used to compensate for jitter among different system processes and overall system latency. This can range from utilizing off the shelf components such as Nvidia Quadro Sync cards\cite{NVIDIAQuadroSync} or developing additional hardware pipelines capable of buffering and delaying emission of frame data. This presents a particular challenge because the user typically does not have direct control over frame buffers, frame emission, or the software drivers within a system. Moreover, encoders and decoders expect the protocols to work in a defined way that modifications could run afoul of.
