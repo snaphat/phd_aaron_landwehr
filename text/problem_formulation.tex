@@ -2,17 +2,33 @@
 
 This chapter discusses in detail the limitations with current display protocol technology that were alluded to in Chapter~\ref{chap:introduction}. From there, it focuses on how these limitations affect adversely IRLED projector technology. Finally, it provides a problem solution.
 
-\section{Problem Statement}
+\section{Display Protocol Limitations}
 
-\subsection{Display Protocol Limitations}
+% FIXME: Reference display protocol background section here
 
-\subsection{High-speed IRLED Projector systems}
+Current display technologies, such as HDMI, assumes a fixed frame rate display which places a hard limit on frame timing and synchronization.
 
-\section{Problem Solution}
+% Limitations:
+% Synchronization:
+%   -Implementation and integration-costs $
+%   -System-specific solutions $
+%   -Poor upgradeability $
+In detail, the underlying display protocols operate in a best-effort fashion where a buffer swap transmitting a frame of data occurs at static predetermined interval. If a new frame is unavailable to be transmitted at each interval due to any delay, such as processing delay, the previous frame will be retransmitted. This necessarily makes correct synchronization challenging because modern computation systems do not generally provide real-time guarantees for a number of reasons, such as, variability in work needed for frame generation, CPU scheduling, and I/O delays. Generally, while these challenges can be addressed to some degree, they require custom hardware solutions on top of existing display protocols because end-to-end system synchronization is out of the scope of typical display standards which are designed to push relatively low frame rates over single hardware links. This necessitate designers who need strict control over synchronization to implement custom hardware solutions with high implementation and integration costs. Additionally, because these solutions are custom, they are designed for specific hardware and system configurations resulting in the solution not being universally applicable to other setups, as well as, lacking an abstraction layer causing poor upgradeability.
 
-As discussed briefly in the Chapter~\ref{chap:introduction}, the PDP architecture eschews with assumptions found in traditional display technologies to provide a rich set of desirable features. This section discusses the assumptions of traditional display technologies and how PDP differs, in order to provide the reader a rationale, as well as, the benefits to proposed alternative technology.
+% Limitations:
+% Display Protocols
+%   -Frame-rate limits                 -> image size inversely proportional to speed $
+%   -Static Bandwidth Requirements     -> full image transfer $
+%   -Static frame-rates                -> 60hz, 100hz, etc. $
+%   -Scalability                       -> single scene generator, projector driver $
+%   Diagrams: Bandwidth diagram -- referenced already $
+Secondly, because of the static nature of of the transmission interval (e.g. 100hz), the frame rate cannot be dynamically controlled or changed after initialization. Instead, these protocols have static bandwidth requirements for a given resolution and frame rate of the form found in Figure~\ref{fig:bandwidth}, which shows that image size is inversely proportional to the max speed the display can operate at. Additionally, these protocols only support sending the entire frame at a given interval even if only a small portion of the frame has changed. This is a non-optimal use of bandwidth that does not allow for fine-grained control over the frame rate in cases where a user might wish to dynamically change the framerate to match the processing rate. In high-speed display scenarios, this inevitably causes frames to be dropped. This issue is further compounded by the fact that traditional display protocols utilize proprietary drivers and hardware such that frame-drops become effectively silent.  Furthermore, because the current protocol scheme is custom tuned for a single hardware setup, this means that generally that the design is not transferable to other setups, such as, ones with a differing number of hardware links; thus, resulting in poor scalability and upgradeability.
 
-Current display technologies, such as HDMI, assumes a fixed frame rate display which places a hard limit on frame timing and synchronization. In detail, the underlying display protocols operate in a best-effort fashion where a buffer swap transmitting a frame of data occurs at static predetermined interval. If a new frame is unavailable to be transmitted at each interval due to any delay, such as processing delay, the previous frame will be retransmitted. This necessarily makes correct synchronization challenging because modern computation systems do not generally provide real-time guarantees for a number of reasons, such as, variability in work needed for frame generation, CPU scheduling, and I/O delays. Generally, while these challenges can be addressed to some degree, they require custom hardware solutions on top of existing display protocols because end-to-end system synchronization is out of the scope of typical display standards which are designed to push relatively low frame rates over single hardware links. Secondly, because of the static nature of of the transmission interval (e.g. 100hz), the frame rate cannot be dynamically controlled or changed after initialization. Instead, these protocols have static bandwidth requirements for a given resolution and frame rate of the form found in Figure~\ref{fig:bandwidth}. This does now allow for fine-grained control over the frame rate in cases where a user might wish to dynamically change it to match the processing rate. In high-speed display scenarios, this inevitably causes frames to be dropped. This issue is further compounded by the fact that traditional display protocols utilize proprietary drivers and hardware such that frame-drops become effectively silent. Any effort to address this problem necessarily requires complete control over the entire end-to-end system meaning an effective and correct solution requires customized hardware and software that deviates from standard display protocol behavior. Any solution that falls short of these requirements would necessarily fail to completely address the issue. In short, to truly address this issue within traditional display protocols would require essentially creating device specific new protocol tied to particular custom hardware. Finally, display protocols disallow the transmission of sub-frames of data. A frame is necessarily transmitted in whole when the transmission interval reached. Just as with the previous problem, to alleviate this would necessarily require control over driver and hardware behavior in an end-to-end system.
+% Analog Chain:
+%   -RT settling time limitations: -- not included right now
+% Existing diagrams:
+%   Diagrams: Scgen -> Non-uniformity Correction -> Projector
+%   Diagrams: Modeline Overhead diagram
 
 \begin{figure}
     \centering
@@ -36,6 +52,51 @@ Current display technologies, such as HDMI, assumes a fixed frame rate display w
     \label{fig:bandwidth}
     %\end{small}
 \end{figure}
+
+\section{High-speed IRLED Projector systems}
+% How these limitations affect IRSP
+% Bottlenecks:
+% Hardware limitations:
+%   -Physical interconnect bandwidth and latency -> Concurrency/Parallelization $
+%   -FPGA/ASIC/IC clock rates                    -> Concurrency/Parallelization $
+%   -Analog chain settling times (DAC)           -> Address only the pixels needed $
+% Software limitations:
+%   -Computational/algorithmic limitations       -> Concurrency/Parallelization $
+%   -Poorly optimized software / drivers         -> Don't use $
+%   -Fixed-frame display                         -> Dynamic framerate + frame segmentation $
+%   -Non-RT scheduling                           -> Realtime schedule / DMA -- not covered below - do i want to cover this?
+%   -Lack of control                             -> Use a communication protocol with dynamic control built in $
+%
+
+%FIXME: stick section BLAH in
+In the field, these classic display protocols, which are designed for driving relatively low speed consumer electronics as indicated in section /ref{BLAH}, are often utilized in High-speed IRLED Projector systems. This results in a combination of unnecessary hardware and software limitations being incorporated into systems. This section will discuss these limitations and the general methodology toward alleviating them. Firstly, I will discuss hardware limitations followed by software.
+
+\subsection{Hardware Limitations}
+    The are a number of hardware limitations including physical bandwidth and latency, FPGA, ASIC, IC clock rates, and analog chain settling times. The physical hardware that data is transferred over has inherent characteristics that dictate the maximum bandwidth and latency that can't be overcome due to the nature of physics. One solution toward, working around this is to introduce more parallel links into a system. A similar issue arises with respect to the clock rates of components within a system, such as, projector driver firmware; and scene generator. Ideally, these components would operate as fast as possible, but reality dictates physical limitations. Similarly introducing more projector drivers, or scene generators could alleviate this issue. The speed of the analog chain in these systems is dictated by the digital to analog converter (DAC) settling times which can in some ways be alleviated by increasing the number of converters utilized within a system. This allows each DAC to drive a smaller portion of an array.
+
+\subsection{Software Limitations}
+    In terms of software, computational and algorithm limitations exist in the generation of scenery for display, and in correcting for pixel and array imperfections, as well as, in putting data in the correct format to understood by a projector's driving firmware. In particular, rendering of individual frames of scene can be particularly computationally expensive. This can be further complicated by poorly optimized software drivers or algorithms. Additionally, in these systems, tight control over timing is important because frame drops are not tolerable. Meaning that fixed rate display technology is a hinderance in terms of user level control. One solution toward that is to utilize technology that allows dynamic framerates and frame segmentation; which, requires protocols with dynamic control built in.
+
+
+\section{Problem Statement}
+% Problem statement:
+% How to architect a dynamic scalable IRLED projection end-to-end system capable of:
+%   -High-performance operation
+%   -Sub-frame latency
+%   -Dynamic frame-rates
+%   -Intelligent Bandwidth utilization
+%   -Intelligent DAC utilization
+%   -Upgradeability / Generalizability
+
+\section{Problem Solution}
+% What you'd need to do to address problem -- needs to be expanded and rewritten (from paper):
+Any effort to address this problem necessarily requires complete control over the entire end-to-end system meaning an effective and correct solution requires customized hardware and software that deviates from standard display protocol behavior. Any solution that falls short of these requirements would necessarily fail to completely address the issue.
+% Subframe transfer and requirement of creating a new protocol -- needs to be expanded and rewritten (from paper):
+In short, to truly address this issue within traditional display protocols would require essentially creating device specific new protocol tied to particular custom hardware. Finally, display protocols disallow the transmission of sub-frames of data. A frame is necessarily transmitted in whole when the transmission interval reached. Just as with the previous problem, to alleviate this would necessarily require control over driver and hardware behavior in an end-to-end system.
+
+% Old from paper:
+
+As discussed briefly in the Chapter~\ref{chap:introduction}, the PDP architecture eschews with assumptions found in traditional display technologies to provide a rich set of desirable features. This section discusses the assumptions of traditional display technologies and how PDP differs, in order to provide the reader a rationale, as well as, the benefits to proposed alternative technology.
 
 The proposed architecture, in contrast, is designed to utilize a dynamic source driven refresh rate through the coordination of both source (scene generator) and sink (display). In this architecture, frames are segmented into pieces or sub-frames and sent to the display based upon how often these segments need to update. An example of this is shown in Figure~\ref{fig:variable_display} where different regions of the display operate at different frame rates. By utilizing dynamic frame rate control at sub-frame resolutions, substantial bandwidth reductions can occur. This will be discussed in further detail in subsequent sections.
 
