@@ -4,6 +4,8 @@ This chapter discusses the underlying communication details of the packetized di
 
 \section{Design Methodology}
 
+%FIXME: make sure this talks about the PACKET requirements in slide 30 of REAL PROPOSAL
+
     The design methodology for the PDP protocol began with a number of critical design goals. The first goal was to design a scalable display system that was distributable and hardware agnostic. The second design goal was to provide a protocol that was relatively simple to implement without unnecessary complexity to ease the encoding and decoding process. Additionally, simplifying these processes eases potential hardware implementation mistakes, as well as, inefficiencies that could lead to reduced performance. The third goal was to provide dynamic intra-frame variable refresh rate (VRR) to enable better bandwidth utilization as shown in Figure~\ref{FIXME}. In particular, to allow for regions of a display to be intelligently updated at different rates depending differences in input data. The fourth goal was to provide a path to utilize classical display protocol streams such as HDMI with PDP without introducing overhead. This is to allow for interoperability where necessary when utilizing classical display sources.
 
     \subsection{Comparison to Classical Display Protocols}
@@ -48,7 +50,9 @@ This chapter discusses the underlying communication details of the packetized di
         %FIXME: Relate back to the design goals of PDP
 
 \section{Packet Format}
+%FIXME: REAL PROPOSAL slides 31 and 32 talk about packet considerations and details
 
+%FIXME: insert packet format from REAL PROPOSAL slide 34 and 36
 
 
 \section{Packet Types}
@@ -69,3 +73,6 @@ PDP Packets are segmented into three types, a draw region packet, array reset pa
 The second packet, array reset, is utilized to indicate that quadrants on a given array should be cleared. It consists of an array specific quadrant bit-mask used to indicate which quadrant to reset. Any unused bits are reserved. This type of packet would be utilized exclusively between compositor and array tile links.
 
 The third packet, trigger, is used to implement a trigger based synchronization within in PDP. It consists of a system specific action bit-mask used to indicate the type of operation to trigger. In IRLED array systems, the coordinator of synchronization is dependent on the array itself and the different components within the system. In some systems, a sensor may be used as the source of synchronization, in other systems, another component may be utilized. Other aspects of system operation may even be triggered outside of the system synchronization interval based off of other events. For the reason, PDP has opted for a trigger based approach to synchronization. This approach allows for synchronization, data transfer, and computation to be custom tailored to an individual systems use-case. For example, the action mask could be used to trigger the generation of the next frame to be displayed when needed, the source of which is defined by the system itself. Another example would be utilize the action mask to indicate that further computations (such as scene generation) stall until otherwise indicated.
+
+\Section{PDP Frames}
+%FIXME: insert picture from slide 38 of real proposal
