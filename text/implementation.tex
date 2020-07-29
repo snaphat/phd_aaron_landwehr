@@ -1,5 +1,9 @@
 \label{chap:implementation}
+%FIXME: V1 decoder logic
+%FIXME: original SCB
+%FIXME: Add information about the development history thingies from the repo
 %FIXME: my research group's arrays?
+%FIXME: talk about fw control modularity
 This chapter describes the implemented FPGA version of the PDP architecture used on my research group's arrays. For the purposes of this discussion, only relevant details are included to ease the readers understanding. First, the chapter will discuss the purpose of the implemented architecture. Following this each component will be discussed at a high level. Finally, the operation of sub-components will be discussed.
 
 The implemented architecture consists of the portion of the AMM that drives an IRLED tile (or emitter array) directly from data packets sent by a compositor. As such, it is responsible for receiving PDP packets, decoding and validating them, and drawing them to an IRLED array. This is shown in Figure~\ref{fig:overall_arch}. In the current implementation, packets are sent using an underlying HDMI protocol layer. The incoming data is synchronized across two distinct clock domains utilizing a synchronized circular buffer (SCB). The input side consists of two separate HDMI inputs in order to meet system bandwidth requirements. Each input is assumed to contain clock skew relative to the other so separate SCBs are used to synchronize these to the system domain. At a high level, individual data words of 24-bit sized values come in per HDMI cycle. These are transitioned to the system domain and stored for retrieval by the array emitter module. The array emitter module is responsible for bringing in each 24-bit word value and emptying the corresponding SCB slot. As it brings in each word, it begins to decode them into PDP commands. Once enough data is buffered for a write or reset command, it sends the data to the write buffer module which then drives an emitter directly through IO lines.
