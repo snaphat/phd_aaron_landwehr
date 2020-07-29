@@ -74,5 +74,5 @@ The second packet, array reset, is utilized to indicate that quadrants on a give
 
 The third packet, trigger, is used to implement a trigger based synchronization within in PDP. It consists of a system specific action bit-mask used to indicate the type of operation to trigger. In IRLED array systems, the coordinator of synchronization is dependent on the array itself and the different components within the system. In some systems, a sensor may be used as the source of synchronization, in other systems, another component may be utilized. Other aspects of system operation may even be triggered outside of the system synchronization interval based off of other events. For the reason, PDP has opted for a trigger based approach to synchronization. This approach allows for synchronization, data transfer, and computation to be custom tailored to an individual systems use-case. For example, the action mask could be used to trigger the generation of the next frame to be displayed when needed, the source of which is defined by the system itself. Another example would be utilize the action mask to indicate that further computations (such as scene generation) stall until otherwise indicated.
 
-\Section{PDP Frames}
+\section{PDP Frames}
 %FIXME: insert picture from slide 38 of real proposal
