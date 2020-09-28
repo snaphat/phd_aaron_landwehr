@@ -3,14 +3,10 @@
 This chapter discusses the underlying communication details of the packetized display protocol (PDP) architecture. First, it gives an overview of the protocol design methodology. Followed by a discussion of the generalized packet format. Finally, it discusses individual packet types. The central purpose of this chapter is to provide the reader with an understanding of the reasoning behind design decisions, as well as, to provide a detailed specification of the protocol.
 
 \section{Design Methodology}
-
-%FIXME: make sure this talks about the PACKET requirements in slide 30 of REAL PROPOSAL
-
-    The design methodology for the PDP protocol began with a number of critical design goals. The first goal was to design a scalable display system that was distributable and hardware agnostic. The second design goal was to provide a protocol that was relatively simple to implement without unnecessary complexity to ease the encoding and decoding process. Additionally, simplifying these processes eases potential hardware implementation mistakes, as well as, inefficiencies that could lead to reduced performance. The third goal was to provide dynamic intra-frame variable refresh rate (VRR) to enable better bandwidth utilization as shown in Figure~\ref{FIXME}. In particular, to allow for regions of a display to be intelligently updated at different rates depending differences in input data. The fourth goal was to provide a path to utilize classical display protocol streams such as HDMI with PDP without introducing overhead. This is to allow for interoperability where necessary when utilizing classical display sources.
+    The design methodology for the PDP protocol began with a number of critical design goals. The first goal was to design a scalable display system that was distributable and hardware agnostic. The second design goal was to provide a protocol that was relatively simple to implement without unnecessary complexity to ease the encoding and decoding process. A low overhead and fast decode process is crucial to ensuring latency is sub-frame across the system. Additionally, simplifying these processes also eases potential hardware implementation mistakes, as well as, inefficiencies that could lead to reduced performance. The third goal was to provide dynamic intra-frame variable refresh rate (VRR) to enable better bandwidth utilization. In particular, to allow for regions of a display to be intelligently updated at different rates depending differences in input data. The fourth goal was to provide a path to utilize classical display protocol streams such as HDMI with PDP without introducing overhead. This is to allow for interoperability where necessary when utilizing classical display sources.
 
     \subsection{Comparison to Classical Display Protocols}
-
-        In order to better understand how to design PDP, the constraints of classical display protocols was investigated to discern which features within these protocols conflicted with the design goals of PDP. In addition, it was necessary to investigate whether these could provide a direction for where to go with PDP. Many versions of these protocols (DVI\cite{DDWG1999}, HDMI\cite{HDMIForum2018}, DisplayPort\cite{VESA2016}, etc.) provide similar feature-sets to end-users with the major focus being on increasing refresh-rates and resolutions with each new specification. However, as discussed in Section~\ref{sec:classical_display_protocols}, their basis is rooted in the classical analog video specifications that utilize scan lines\cite{Neal1998}. This means, that signal timing utilizes vertical and horizontal blanking periods that consist of a front-porch, sync pulse, and back-porch; in addition to, the active video data to be displayed.
+        In order to better understand how to design PDP, the constraints of classical display protocols were investigated to discern which features within these protocols conflict with the design goals of PDP. In addition, it was necessary to investigate whether these could provide a path forward in the design and development of PDP. Many versions of these protocols (DVI\cite{DDWG1999}, HDMI\cite{HDMIForum2018}, DisplayPort\cite{VESA2016}, etc.) provide similar feature-sets to end-users with the major focus being on increasing refresh-rates and resolutions with each new specification. However, as discussed in Section~\ref{sec:classical_display_protocols}, their basis is rooted in the classical analog video specifications that utilize scan lines\cite{Neal1998}. This means, that signal timing utilizes vertical and horizontal blanking periods that consist of a front-porch, sync pulse, and back-porch; in addition to, the active video data to be displayed.
 
         \begin{table}
             \centering
@@ -41,13 +37,52 @@ This chapter discusses the underlying communication details of the packetized di
             \label{tbl:modeline_overhead}
         \end{table}
 
-        For analog display devices, these signals enabled operators to manually adjust horizontal and vertical hold times relative to the sync pulses in order to correct for the imprecise timing of early display hardware; but provide little benefit on modern hardware. Instead, they represent an anachronism that impedes the goal of maximizing bandwidth utilization to a display by requiring the transmission of unnecessary data over a digital protocol. For example, a commonly utilized 1920 by 1080 pixel mode operating at \mbox{60 Hz}\cite{MythTVWebsite} on a modern display has a 16 percent blanking period overhead due to the specification of vertical and horizontal sync periods. Other examples can be seen in Table~\ref{tbl:modeline_overhead}.
+        For analog display devices, these signals enabled operators to manually adjust horizontal and vertical hold times relative to the sync pulses in order to correct for the imprecise timing of early display hardware; but provide little benefit on modern hardware other than as an embedded form of synchronization. In digital display technology, this represents an anachronism that impedes the goal of maximizing bandwidth utilization when driving a display by requiring the transmission of unnecessary data over the digital protocol. For example, a commonly utilized 1920 by 1080 pixel mode operating at \mbox{60 Hz}\cite{MythTVWebsite} on a modern display has a 16 percent blanking period overhead due to the specification of vertical and horizontal sync periods. Other examples can be seen in Table~\ref{tbl:modeline_overhead}.
 
-        These protocols also internally utilize a mode based display of data that requires the specification of the absolute width and height of display, as well as, a pixel clock which when used in conjunction with the vertical blanking information provides a total refresh-rate as described in Figure~\ref{fig:modeline_refresh_rate} from Section~\ref{sec:classical_display_protocols}. This means that the bandwidth requirements for a given mode are inherently static across all frames. In addition, this constrains the refresh-rate for a display to be static in terms of both the intra-frame regions of the display and between frames. Effectively increasing the burden of synchronization, and impeding the introduction of dynamism into the display process. In recent years, work has been done to implement a limited form of variable refresh-rate (VRR) display between frames for use with newer protocols\cite{AMDFreesync,NVIDIAGsync}. In essence, it allows for entire frames to be sent for display immediately once the rendering process has completed. The downside is that this generally requires specialized hardware support out of the scope of protocol specifications\footnote{A recent update of the HDMI 2.1 specification\cite{HDMIForum2018} seeks to integrate VRR directly into the specification}, and requires entire full frames of data at the specified resolution.
+        These protocols also internally utilize a mode based display of data that requires the specification of the absolute width and height of display, as well as, a pixel clock which when used in conjunction with the vertical blanking information provides a total refresh-rate as described in Figure~\ref{fig:modeline_refresh_rate} from Section~\ref{sec:classical_display_protocols}. This means that the bandwidth requirements for a given mode are inherently static across all frames. In addition, this constrains the refresh-rate for a display to be static in terms of both the intra-frame regions of the display and between frames. Effectively increasing the burden of synchronization, and impeding the introduction of dynamism into the display process. In recent years, work has been done to implement a limited form of variable refresh-rate (VRR) display between frames for use with newer protocols\cite{AMDFreesync,NVIDIAGsync}. In essence, it allows for entire frames to be sent for display immediately once the rendering process has completed. The downside is that this generally requires specialized hardware support out of the scope of protocol specifications\footnote{A recent update of the HDMI 2.1 specification\cite{HDMIForum2018} seeks to integrate speed-limited form of VRR directly into the specification}, and requires entire full frames of data at the specified resolution.
 
-    \subsection{something}
+    \subsection{A Path Forward with PDP}
+        Internally PDP has no notion of blanking periods or porches for providing synchronization, and therefore does not encapsulate the inefficiencies inherent in the aforementioned protocols. Instead synchronization is controlled by the source through timing when data is sent. This means the high overheads as shown in Table~\ref{tbl:modeline_overhead} can be mitigated. Furthermore, because PDP allows for control over individual segments a large amount of bandwidth can be saved by updating parts of a frame at slower framerates than other sections of a frame. Equation~\eqref{eq:bandwidth_saved} shows computing the savings where $p$ is the proportion of pixels operating at a slow framerate, $r_f$ is the fast framerate, $r_s$ is the slow framerate, and $b_s$ the percentage of bandwidth saved.
 
+        \begin{equation}
+            b_s=1-\frac{(1-p)\cdot r_f + p\cdot r_s}{r_f}
+            \label{eq:bandwidth_saved}
+        \end{equation}
+
+        %FIXME: double table
+        \begin{table}
+            \centering
+            \large
+            \begin{tcolorbox}[tabularx={Y|Y|Y|Y|Y},title=\textbf{Modeline Overhead},boxrule=0.5pt]
+            \textbf{Slow Refresh-Rate (Hz)} & \textbf{Fast Refresh-Rate (Hz)} & \textbf{Visible Pixels} & \textbf{Total Pixels} & \textbf{Overhead} \\ \hline
+                \textbf{1920x1080} & \textbf{60}   & 2073600 & 2475000 & 16.2\% \\ \hline
+                \textbf{1600x1200} & \textbf{60}   & 1920000 & 2700000 & 28.9\% \\ \hline
+                \textbf{1280x1024} & \textbf{60}   & 1310720 & 1799408 & 27.2\% \\ \hline
+                \textbf{1280x960}  & \textbf{60}   & 1228800 & 1800000 & 31.7\% \\ \hline
+                \textbf{1280x800}  & \textbf{60}   & 1024000 & 1391040 & 26.4\% \\ \hline
+                \textbf{1024x768}  & \textbf{60}   & 786432  & 1083264 & 27.4\% \\ \hline
+                \textbf{500x500}   & \textbf{500}  & 250000  & 296100  & 15.6\% \\ \hline
+                \textbf{500x500}   & \textbf{400}  & 250000  & 296100  & 15.6\% \\ \hline
+                \textbf{500x500}   & \textbf{300}  & 250000  & 357500  & 30.1\% \\ \hline
+                \textbf{500x500}   & \textbf{100}  & 250000  & 357500  & 30.1\% \\ \hline
+                \textbf{500x500}   & \textbf{60}   & 250000  & 357500  & 30.1\% \\ \hline
+                \textbf{500x500}   & \textbf{50}   & 250000  & 364000  & 31.3\% \\ \hline
+                \textbf{500x500}   & \textbf{30}   & 250000  & 520000  & 51.9\% \\ \hline
+                \textbf{500x500}   & \textbf{30}   & 250000  & 520000  & 51.9\% \\ \hline
+                \textbf{500x256}   & \textbf{1000} & 131072  & 149460  & 12.3\% \\ \hline
+                \textbf{500x256}   & \textbf{500}  & 131072  & 256000  & 48.8\% \\ \hline
+                \textbf{500x256}   & \textbf{200}  & 131072  & 320000  & 51.9\% \\ \hline
+                \textbf{500x256}   & \textbf{100}  & 131072  & 320000  & 59.0\% \\ \hline
+                \textbf{500x256}   & \textbf{60}   & 131072  & 320000  & 59.0\% \\ \hline
+            \end{tcolorbox}
+            \caption[Modeline Overhead]{Modeline overhead for various resolutions and refresh rates\cite{MythTVWebsite}. Computed using active pixel area over total pixel area. 500x500 and 512x256 are typical modeline resolutions used on IRLED arrays.}
+            \label{tbl:pdp_efficiency}
+        \end{table}
+
+
+        %FIXME: Add figure that shows better bandwidth utilization of PDP?
         %FIXME: Relate back to the design goals of PDP
+
 
 \section{Packet Format}
 %FIXME: REAL PROPOSAL slides 31 and 32 talk about packet considerations and details
