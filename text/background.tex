@@ -63,11 +63,7 @@ This chapter discusses relevant background information toward the goal of implem
         \label{fig:sleds_block}
     \end{figure}
 
-    Once enough data is buffered, the firmware will then control the write process to drive the 8 DAC cards which each house 2 16-bit DAC integrated circuits per card, with each circuit consisting of 2 channels per DAC. The output signals are then amplified and routed to the array through ribbon cables. Figure~\ref{fig:nessie_enclosure_internals} shows the components installed within a CSE.
-
-    Multiple CSEs can be utilized to drive specific sections of an array as will be discussed briefly during
-
-    Additional control signals provided by the firmware and routed to the RIIC are discussed in Section~\ref{sec:array_Interleaved_write_process}. The specifics of the PDP firmware architectures write process are discussed in Chapter~\ref{chap:implementation}.
+    Once enough data is buffered, the firmware will then control the write process to drive the 8 DAC cards which each house 2 16-bit DAC integrated circuits per card, with each circuit consisting of 2 channels per DAC. The output signals are then amplified and routed to the array through ribbon cables. Figure~\ref{fig:nessie_enclosure_internals} shows the components installed within a CSE. Additional control signals provided by the firmware and routed to the RIIC are discussed in Section~\ref{sec:array_Interleaved_write_process}. The specifics of the PDP firmware architectures write process are discussed in Chapter~\ref{chap:implementation}.
 
     \begin{figure}
         \centering
@@ -75,6 +71,16 @@ This chapter discusses relevant background information toward the goal of implem
         \caption{CSE Internals}
         \label{fig:nessie_enclosure_internals}
     \end{figure}
+
+    Figure~\ref{fig:cse_comm_block} shows the internals of CSE communication. Communication for controlling the behavior of CSE is done through a daisy chained set of UART devices utilizing a reliable two way communication protocol called the CVORG protocol. The protocol itself consist of commands to control various aspects of operation, such as, tripping an array, setting voltage limits, and configuring firmware operation. It also allows for information to be retrieved about current system configuration, and operational errors. The destination of an operation is encoded as part of the command. Thus, commands not meant for a given component are forwarded along the chain. Memory mapped I/O is controlled by the microblaze soft processor and used to control the underlying PDP firmware registers, as well as, program an array using SPI\footnote{Not shown}. The details of these operations will be discussed in Chapter~\ref{sec:frontend_arch}. Additionally, SPI communication is used to send data for LCD readout. Finally, HDMI display data sent directly to the Backend Firmware as will be discussed in Chapter~\ref{sec:backend_arch}.
+
+    \begin{figure}
+        \centering
+        \includegraphics[width=1.0\textwidth]{fig/cse_comm_block}
+        \caption{CSE Control Communication}
+        \label{fig:cse_comm_block}
+    \end{figure}
+
 
 \section{Array Interleaved Write Process}
     \label{sec:array_Interleaved_write_process}
