@@ -131,6 +131,89 @@ This chapter discusses relevant background information toward the goal of implem
 
     %FIXME: Add details about delays into the RIIC and aligning signals maybe?
     %FIXME: slow channels
+\section{Data ordering}
+    Due to the interleaved write process described in Section~\ref{sec:array_Interleaved_write_process}, data sent to an array is preordered in a manner that simplifies firmware development and minimizes buffering requirements.
+
+    \begin{figure}
+        \centering
+        %includegraphs[trim=L B R T]
+        \includegraphics[trim=0in 0in 0in 0in,width=1.0\textwidth]{fig/image_encoding.pdf}
+        \caption{Image Encoding: Input Reordering}
+        \label{fig:image_encoding}
+    \end{figure}
+
+    \begin{figure}
+        \centering
+        %includegraphs[trim=L B R T]
+        \includegraphics[trim=0in 0in 0in 0in,width=1.0\textwidth]{fig/image_encoding_quads.pdf}
+        \caption{Image Encoding: Quadrant Reordering}
+        \label{fig:image_encoding_quads}
+    \end{figure}
+
+    \begin{figure}
+        \centering
+        %includegraphs[trim=L B R T]
+        \includegraphics[trim=0in 0in 0in 0in,width=1.0\textwidth]{fig/image_encoding_colored.pdf}
+        \caption{Image Encoding: Quadrant Reordering with Color Overlay}
+        \label{fig:image_encoding_colored}
+    \end{figure}
+
+    \begin{figure}
+        \centering
+        %includegraphs[trim=L B R T]
+        \includegraphics[trim=0in 0in 0in 0in,width=1.0\textwidth]{fig/image_encoding_bitback.pdf}
+        \caption{Image Encoding: Data Bitpack}
+        \label{fig:image_encoding_bitback}
+    \end{figure}
+
+    \begin{figure}
+        \centering
+        %includegraphs[trim=L B R T]
+        \includegraphics[trim=0in 0in 0in 0in,width=1.0\textwidth]{fig/image_encoding_reorder.pdf}
+        \caption{Image Encoding: Data Reorder}
+        \label{fig:image_encoding_bitpack_reorder}
+    \end{figure}
+
+    \begin{figure}
+        \centering
+        %includegraphs[trim=L B R T]
+        \includegraphics[trim=0in 0in 0in 0in,width=1.0\textwidth]{fig/image_encoding_pac.pdf}
+        \caption{Image Encoding: Color Example 1}
+        \label{fig:image_encoding_color_example1}
+    \end{figure}
+
+    \begin{figure}
+        \centering
+        %includegraphs[trim=L B R T]
+        \includegraphics[trim=0in 0in 0in 0in,width=1.0\textwidth]{fig/image_encoding_liberty.pdf}
+        \caption{Image Encoding: Color Example 2}
+        \label{fig:image_encoding_color_example2}
+    \end{figure}
+
+    \begin{figure}
+        \centering
+        %includegraphs[trim=L B R T]
+        \includegraphics[trim=0in 0in 0in 0in,width=1.0\textwidth]{fig/image_encoding_origami.pdf}
+        \caption{Image Encoding: Color Example 3}
+        \label{fig:image_encoding_color_example3}
+    \end{figure}
+
+    \begin{figure}
+        \centering
+        %includegraphs[trim=L B R T]
+        \includegraphics[trim=0in 0in 0in 0in,width=1.0\textwidth]{fig/image_encoding_ir1.pdf}
+        \caption{Image Encoding: IR Example 1}
+        \label{fig:image_encoding_ir_example1}
+    \end{figure}
+
+    \begin{figure}
+        \centering
+        %includegraphs[trim=L B R T]
+        \includegraphics[trim=0in 0in 0in 0in,width=1.0\textwidth]{fig/image_encoding_ir2.pdf}
+        \caption{Image Encoding: IR Example 2}
+        \label{fig:image_encoding_ir_example2}
+    \end{figure}
+
 
 \section{Classical Display Protocols}
     \label{sec:classical_display_protocols}
