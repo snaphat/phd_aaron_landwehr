@@ -80,7 +80,7 @@ This chapter discusses relevant background information toward the goal of implem
         \label{fig:cse_comm_block}
     \end{figure}
 
-    Figures~\ref{fig:external_cse_comm_direct}, \ref{fig:external_cse_comm_half_indirect}, and \ref{fig:external_cse_comm_indirect} show the details of external communication to a CSE in various configurations. In all configurations, a Low Pin Count (LPC) FPGA Mezzanine Card (FMC) connector provides the ability for various interfaces to be used to send data to the CSE for display. Current CSE setups utilize two HDMI FMC cards for input where the input for the top half of an array will be delivered over one cable and the bottom over the other.
+    Figures~\ref{fig:external_cse_comm_direct}, \ref{fig:external_cse_comm_half_indirect}, and \ref{fig:external_cse_comm_indirect} show the details of external communication to a CSE in various configurations. In all configurations, a Low Pin Count (LPC) FPGA Mezzanine Card (FMC) connector provides the ability for various interfaces to be used to send data to the CSE, such as serial protocols or display based protocols over different types of hardware links. FMC interface cards are responsible for formatting data sent to the internal CSE FPGA for display. Current CSE setups utilize two HDMI FMC cards for input where the input for the top half of an array will be delivered over one cable and the bottom over the other.
 
     \begin{figure}
         \centering
