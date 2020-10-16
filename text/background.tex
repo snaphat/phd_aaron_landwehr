@@ -198,7 +198,7 @@ This chapter discusses relevant background information toward the goal of implem
         \label{fig:image_encoding_colored}
     \end{figure}
 
-    Figure~\ref{fig:image_encoding_bitback} shows the bit-packing process for a false color image to aid in understanding. The blown up sections show single columns of data and the cooresponding bitpacked version of the data where two columns of input with different colored data is merged into single column of 24-bit data with one color. In the actual implementation of bitpacking, real data is in the IR-spectrum and not averaged in this way, but clamped and scaled instead. While not required, generally IR data is normally 16-bits per pixel which corresponds to current IR detectors having a dynamic range of 14 to 16-bits per pixel\cite{FLIR1, FLIR2, FLIR3}.
+    Figure~\ref{fig:image_encoding_bitback} shows the bit-packing process for a false color image to aid in understanding. The blown up sections show single columns of data and the cooresponding bitpacked version of the data where two columns of input with different colored data is merged into single column of 24-bit data with one color. In the actual implementation of bitpacking, real data is in the IR-spectrum and not averaged in this way, but clamped and scaled instead. While not required, generally IR data is normally 16-bits per pixel which corresponds to current higher class IR detectors having a dynamic range of 14 per pixel\cite{FLIR1, FLIR2, FLIR3}. Cheaper detectors may only have lower dynamic ranges.
 
     \begin{figure}
         \centering
@@ -208,6 +208,8 @@ This chapter discusses relevant background information toward the goal of implem
         \label{fig:image_encoding_bitback}
     \end{figure}
 
+    Figure~\ref{fig:image_encoding_bitpack_reorder} shows a false color input image designed to show the data reordering applied to imagery. The blown up sections show approximately 64 rows of data where the even rows are one color and the odd rows another for ever 32 rows. For every 32 rows, the even and odd rows are de-interlaced into 16 even rows of data follow by 16 odd rows of data. This is due to the interleaved writing processing for individual 32 pixel writes discussed in Section~\ref{sec:array_Interleaved_write_process}. Reordering data in this manner allows for only 16 pixels of data (or 32 in terms of bitpacking) to be buffered per write. Without the is reordering, double the amount of pixels would need to be buffered per array write increasing both latency and implementation complexity.
+
     \begin{figure}
         \centering
         %includegraphs[trim=L B R T]
@@ -215,6 +217,8 @@ This chapter discusses relevant background information toward the goal of implem
         \caption{Image Encoding: Data Reorder}
         \label{fig:image_encoding_bitpack_reorder}
     \end{figure}
+
+    Figures~\ref{fig:image_encoding_color_example1},~\ref{fig:image_encoding_color_example2},~and~\ref{fig:image_encoding_color_example3} show some examples of what false colored images would look like if processed by the reordering kernels in order to give the reader a better understanding of how different types of data would look when during the intermediate processes. Note the charateristic jagged pattern due to even/odd row reordering present in each image.
 
     \begin{figure}
         \centering
@@ -239,6 +243,8 @@ This chapter discusses relevant background information toward the goal of implem
         \caption{Image Encoding: Color Example 3}
         \label{fig:image_encoding_color_example3}
     \end{figure}
+
+    Figures~\ref{fig:image_encoding_ir_example1},~and~\ref{fig:image_encoding_ir_example2} show IR imagery going through the process of reordering. The image shown in Figure~\ref{fig:image_encoding_ir_example1} is commonly used to focus IR cameras and for testing IR array behavior with various shapes and numbers.
 
     \begin{figure}
         \centering
