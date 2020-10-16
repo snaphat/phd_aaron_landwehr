@@ -10,7 +10,7 @@ Traditional IRLED display systems are typically composed of three components as 
 \begin{figure}
     \centering
         \centering
-        \includegraphics[width=0.75\textwidth]{fig/amm.pdf}
+        \includegraphics[width=0.80\textwidth]{fig/amm.pdf}
         \caption{Abstract Machine Model of the PDP architecture with 1-to-N relationships between components}
         \label{fig:amm}
 \end{figure}
@@ -20,7 +20,6 @@ Traditional IRLED display systems are typically composed of three components as 
         \includegraphics[width=0.85\textwidth]{fig/compositing.pdf}
         \caption{Compositing Process Example}
         \label{fig:compositing}
-    \caption{Abstract Machine Model and Compositing Process}
 \end{figure}
 
 For example consider the simple case, that of a single scene generator. In this case, the compositor will receive data from a single source. As frame data is received, a differencing algorithm must be employed to determine how to segment the overall frame for optimal data transfer based off of the rate of change of individual portions of the frame relative to the prior frame. Portions that rapidly change will be sent more often than portions that change slowly in order to maximize bandwidth for high-speed transfer of {\it hot} portions of an image. This consequently also has the effect of improving the performance of the analog chain of display devices by allowing for devices to reserve more time to drive rapidly changing portions of a display over portions of the display changing relatively slowly.
