@@ -5,6 +5,10 @@
 		}
 	],
 	"settings": {
-		"editor.wordWrap": "on"
+		"editor.wordWrap": "on",
+		"cSpell.words": [
+			"SCBs",
+			"myblue"
+		]
 	}
 }

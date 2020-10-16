@@ -1,0 +1,94 @@
+This chapter discusses the details of display protocols. Firstly, it provides a general discussion of how common display protocols work to send pixel data to a display system (e.g. a television). Then, it discusses how these protocols are utilized within IRSP technology.
+
+\section{Classical Display Protocols}
+    \label{sec:classical_display_protocols}
+
+    Display specifications such as DSI\cite{HDMIForum2017}, DVI\cite{DDWG1999}, HDMI\cite{HDMIForum2018}, and DisplayPort\cite{VESA2016} are the backbone of consumer electronic display devices. They are utilized in a plethora of devices ranging from televisions, monitors, laptops, smart phones, to embedded devices such as point of sale (POS) terminals. Increasingly, they are being utilized in the ever increasing smart display market for applications such as registration, product menus, smart watches, etc.
+
+    These generally provide a standardized feature-set, or display protocol, that is rooted in classical analog video specifications (e.g. VGA, Composite)\cite{NIAnalog} that utilize scan lines\cite{Neal1998}. Scan lines are used to provide video timing information in order to synchronize a display to a given refresh rate. Each scan line consist of an active video region followed by a horizontal blanking period. After all active video scan lines are displayed, a vertical synchronization region is used to indicate the end of a frame.
+
+    %FIXME add crosssectional blowout chart
+
+    An overview of this is shown in Figure~\ref{fig:display_protocol_timing_overview}. The region shown in green is the pixel data for the active video region of the display. It is of size $H_a\times V_a$ which represents the number of pixels to display, for example, 1920 by 1080 for a HDTV high-definition video mode\cite{MythTVWebsite}. The blanking time regions denote pixel data that is sent but not displayed\footnote{Typically data lines are held low during this period, but somtimes it is used for out-of-band communication to send other information such as audio encoding.}. A scan line consist of pixels made up of $h_a$, the horizontal active size; $h_{fp}$, the horizontal front porch before the pulse signal; $h_{sp}$, the horizontal sync pulse; and $h_{bp}$, the horizontal back porch after the sync pulse. The vertical blanking period makes up multiple scanlines and consist of $v_{fp}$, the vertical front porch before the vsync pulse; $v_{sp}$, the vertical sync pulse; $v_{bp}$, the vertical back porch after the vertical sync pulse. Sync pulses are generally active low, meaning that during active display a sync signal is high as shown in the diagram.
+
+    \begin{figure}
+        \centering
+        \includegraphics[width=1.0\textwidth]{fig/display_timing_overview.pdf}
+        \caption{Display Protocol Timing Overview}
+        \label{fig:display_protocol_timing_overview}
+    \end{figure}
+
+    Figure~\ref{fig:display_protocol_line_cross} shows a closeup view of signal lines during the active region of display for two scan lines. A data enable signal denoted by $enable$ is high during the active region shown in green. Following this, it goes low for a period of time denoted by $h_{fp}+h_{sp}+h_{bp}$. The horizontal sync signal goes low only in the region shown in yellow between the front porch and back porches. This process repeats for all scan lines. Once the last active region pixel is drawn, the enable signal will stop going high during the vertical synchronization period.
+
+    \begin{figure}
+        \centering
+        \includegraphics[width=1.0\textwidth]{fig/display_timing_line_cross.pdf}
+        \caption{Display Protocol Horizontal Signal Cross Section Timing}
+        \label{fig:display_protocol_line_cross}
+    \end{figure}
+
+    %FIXME: Fix discussion of DP not using fucking backwards compatibility shitty hdmi fucking mode
+    %FIXME: Talk about CC in the vertical blanking
+
+    Figure~\ref{fig:display_protocol_full_cross} shows a closeup view of signal lines during the transition into the vertical synchronization period. The region donated by $V_a$ indicates the end of the video active region of the display which occurs toward the end of a frame. After the active video region, all data has been drawn to a display. The region denoted by $v_{fp}+v_{sp}+v_{bp}$ is the vertical blanking or vsync period during which no active video data is sent; therefore, data enable denoted by $enable$ is always low during this period. Before the vertical sync pulse period denoted by $v_{sp}$ occurs, a vertical front porch period denoted by $v_{fp}$ occurs. After the vertical sync pulse, a vertical back porch region $v_{bp}$ occurs. Following this the beginning of the next frame occurs as denoted by $v_{a+1}$.
+
+    \begin{figure}
+        \centering
+        \includegraphics[width=1.0\textwidth]{fig/display_timing_full_cross.pdf}
+        \caption{Display Protocol Full Signal Cross Section Timing}
+        \label{fig:display_protocol_full_cross}
+    \end{figure}
+
+    Figure~\ref{fig:modeline_refresh_rate} shows the relationship between between the different regions of a display and the frequency or refresh rate. $l_h$ denotes the scan line size of a display, or total horizontal width, which is made up of the horizontal active and horizontal porch region pixels of a display. $l_v$ denotes the total vertical width of a display, which is made up the vertical active and vertical porch region pixels of a display. Each pixel is sent at a rate denoted by $f_p$, the pixel frequency (also called the pixel clock). $f_f$ denotes the frame frequency or frame rate of a display. This is simply the pixel frequency over the total number of pixels (video active and porches) of a display. $p_t$ denotes the time period a single pixel takes to send. $f_t$ denotes the time period for an entire frame.
+
+    \begin{figure}
+        \centering
+        { \Large
+            $l_h=h_a+h_{fp}+h_{sp}+h_{bp}$ \vspace{8px} \\
+            $l_v=v_a+v_{fp}+v_{sp}+v_{bp}$ \vspace{8px} \\
+            $f_f={\frac{f_p}{l_h \cdot l_v}}$ \\
+            $p_t={\frac{1}{f_p}}$ \vspace{8px} \\
+            $f_t={\frac{1}{f_f}}$ \vspace{8px}
+        }
+        \caption{Total Refresh Rate}
+        \label{fig:modeline_refresh_rate}
+    \end{figure}
+
+    %FIXME: example modeline
+    To illustrate, let us look at the display modeline generated using the VESA Coordinated Video Timing (CVT) standard shown in Figure~\ref{fig:modeline_example}. This modeline operates a total frame frequency of approximately \mbox{30 Hz}. The pixel clock 79.75, denoted in red, is specified in megahertz. The horizontal pixels, denoted in blue; are the end of horizontal active, the end of horizontal front porch, the end of horizontal sync pulse, and the end of horizontal back porch respectively. The vertical pixels (measured in lines), denoted in green; are the end of vertical active, the end of vertical front porch, the end of vertical sync pulse, and the end of horizontal back porch respectively. The sync pulse polarities, denoted in yellow; indicate whether a given sync pulse is active low or active high. A minus symbol indicates active low and a plus symbol indicates active high. If these numbers are placed into into the formulas shown in Figure~\ref{fig:modeline_refresh_rate} the results shown in Figure~\ref{fig:modeline_refresh_rate_plug} are yielded. The astute reader will note that $l_h$ and $l_v$ are the same as the total pixel size for the given modeline. The pixel period is $\sim12.53 ns$, meaning that each pixel is drawn for the given amount of time. The frame period is $\sim33.33 ms$, meaning that each frame is drawn for that given amount of time.
+
+    \begin{figure}
+        \centering
+        { \normalsize
+        \textbf{``1920x1080\_30.00"} {\color{red}79.75}  {\color{blue} 1920 1976 2168 2416}  {\color{darkgreen}1080 1083 1088 1102} {\color{olive}-hsync +vsync}
+        %\vspace{-8px}
+        }
+        \caption{VESA CVT Generated Modeline}
+        \label{fig:modeline_example}
+    \end{figure}
+
+    %FIXME: finish this chart
+    \begin{figure}
+        \centering
+        { \Large
+            $h_a=1920; h_{fp}=1976-h_a; h_{sp}=2168-h_{fp}; h_{bp}=2416-h_{sp};$ \\
+            $v_a=1080; v_{fp}=1083-v_a; v_{sp}=1088-v_{fp}; v_{bp}=1102-v_{sp};$ \\
+            $l_h=2416=1920+56+192+248$ \vspace{8px} \\
+            $l_v=1102=1080+3+5+14$ \vspace{8px} \\
+            $f_p=79.75e6$ \vspace{8px} \\
+            $f_f=30.0={\frac{f_p}{l_s \cdot l_c}}$ \\
+            $p_t=12.53ns={\frac{1}{f_p}}$ \vspace{8px} \\
+            $f_t=33.33ms={\frac{1}{f_f}}$ \vspace{8px}
+        }
+        \caption{Computed Refresh Rate for a 30Hz CVT Modeline}
+        \label{fig:modeline_refresh_rate_plug}
+    \end{figure}
+
+    Section~\ref{sec:displays_within_proj_system}, discusses how these protocols are utilized within an IRLED projector system, briefly highlight the limitations, and . %FIXME: finish this paragraph
+
+\section{Display Protocols within IRSP Technology}
+    \label{sec:displays_within_proj_system}
+    % Finally, it discusses how these protocols are utilized within an IRLED project system.
+    IRSP technology typically utilizes classical display protocol technology in some form in order to drive IR-arrays. In the most basic form a scene generator will provide imagery that is encoded utilizing one of the protocols discussed and send it to some form of CSE which will then simply decode it.
+
+    For scenerios that involve unsynchronized operation where dropped frames are not an issue, these protocols can largely be used without modification. However, scenerios that require synchronization in either open loop or closed loop setups present a challenge. Often, non-standard modifications must be used to compensate for jitter among different system processes and overall system latency. This can range from utilizing off the shelf components such as Nvidia Quadro Sync cards\cite{NVIDIAQuadroSync} or developing additional hardware pipelines capable of buffering and delaying emission of frame data. This presents a particular challenge because the user typically does not have direct control over frame buffers, frame emission, or the software drivers within a system. Moreover, encoders and decoders expect the protocols to work in a defined way that modifications could run afoul of.
