@@ -86,7 +86,7 @@ This chapter discusses the electronics, communication required to drive an IRLED
     \begin{figure}
         \centering
         %includegraphs[trim=L B R T]
-        \includegraphics[width=0.50\textwidth]{fig/superpixel_layout.pdf}
+        \includegraphics[width=0.70\textwidth]{fig/superpixel_layout.pdf}
         \caption{NSLEDS/HDILED Array Super Pixel Layout}
         \label{fig:nsleds_hdiled_array_superpixel_layout}
     \end{figure}
@@ -155,7 +155,7 @@ This chapter discusses the electronics, communication required to drive an IRLED
 
     Figure~\ref{fig:image_encoding_bitpack_reorder} shows a false color input image designed to highlight the data reordering applied to imagery. The blown up sections show 64 labeled rows of input data where the even rows are one color and the odd rows another for ever 32 rows. For every 32 rows, the even and odd rows are de-interlaced into 16 even rows of data follow by 16 odd rows of data. In the example input image this results in every 16 de-interlaced rows to have have a different color. This is due to the interleaved writing processing for individual 32 pixel writes discussed in Chapter~\ref{sec:array_Interleaved_write_process}. Reordering data in this manner allows for only 16 pixels of data (or 32 in terms of bitpacking) to be buffered per write. Without the is reordering, double the amount of pixels would need to be buffered per array write increasing both latency and implementation complexity.
 
-    \begin{figure}
+    \begin{figure}[H]
         \centering
         \includegraphics[width=1.0\textwidth]{fig/image_encoding_reorder.pdf}
         \caption{Image Encoding: Data Reorder}
@@ -164,39 +164,42 @@ This chapter discusses the electronics, communication required to drive an IRLED
 
     Figures~\ref{fig:image_encoding_color_example1},~\ref{fig:image_encoding_color_example2},~and~\ref{fig:image_encoding_color_example3} show some examples of what false colored images would look like if processed by the reordering kernels in order to give the reader a better understanding of how different types of data would look when during the intermediate processes. Note the charateristic jagged pattern due to even/odd row reordering present in each image.
 
-    \begin{figure}
+    \begin{figure}[H]
         \centering
-        \includegraphics[width=1.0\textwidth]{fig/image_encoding_pac.pdf}
+        \includegraphics[trim=0 40pt 0 40pt,width=0.90\textwidth]{fig/image_encoding_pac.pdf}
         \caption{Image Encoding: Color Example 1}
         \label{fig:image_encoding_color_example1}
     \end{figure}
 
-    \begin{figure}
+    \begin{figure}[H]
         \centering
-        \includegraphics[width=1.0\textwidth]{fig/image_encoding_liberty.pdf}
+        \includegraphics[trim=0 40pt 0 40pt,width=0.90\textwidth]{fig/image_encoding_liberty.pdf}
         \caption{Image Encoding: Color Example 2}
         \label{fig:image_encoding_color_example2}
     \end{figure}
 
-    \begin{figure}
+    \begin{figure}[H]
         \centering
-        \includegraphics[width=1.0\textwidth]{fig/image_encoding_origami.pdf}
+        %includegraphs[trim=L B R T]
+        \includegraphics[trim=0 40pt 0 40pt,width=0.90\textwidth]{fig/image_encoding_origami.pdf}
         \caption{Image Encoding: Color Example 3}
         \label{fig:image_encoding_color_example3}
     \end{figure}
 
-    Figures~\ref{fig:image_encoding_ir_example1},~and~\ref{fig:image_encoding_ir_example2} show IR imagery going through the process of reordering. The image shown in Figure~\ref{fig:image_encoding_ir_example1} is commonly used to focus IR cameras and for testing IR array behavior with various shapes and numbers.
+    Figures~\ref{fig:image_encoding_ir_example1},~and~\ref{fig:image_encoding_ir_example2} show IR imagery going through the process of reordering. The image shown in Figure~\ref{fig:image_encoding_ir_example1} is commonly used to focus IR cameras and for testing IR array behavior with various shapes and numbers. The image shown in Figure~\ref{fig:image_encoding_ir_example2} is test imagery from one of my labs projects.
 
-    \begin{figure}
+    \begin{figure}[H]
         \centering
-        \includegraphics[width=1.0\textwidth]{fig/image_encoding_ir1.pdf}
+        %includegraphs[trim=L B R T]
+        \includegraphics[trim=0 40pt 0 0,width=1.0\textwidth]{fig/image_encoding_ir1.pdf}
         \caption{Image Encoding: IR Example 1}
         \label{fig:image_encoding_ir_example1}
     \end{figure}
 
-    \begin{figure}
+    \begin{figure}[H]
         \centering
-        \includegraphics[width=1.0\textwidth]{fig/image_encoding_ir2.pdf}
+        %includegraphs[trim=L B R T]
+        \includegraphics[trim=0 40pt 0 40pt,width=1.0\textwidth]{fig/image_encoding_ir2.pdf}
         \caption{Image Encoding: IR Example 2}
         \label{fig:image_encoding_ir_example2}
     \end{figure}
