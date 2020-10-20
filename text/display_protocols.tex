@@ -32,57 +32,108 @@ This chapter discusses the details of display protocols. Firstly, it provides a 
 
     Figure~\ref{fig:display_protocol_full_cross} shows a closeup view of signal lines during the transition into the vertical synchronization period. The region donated by $V_a$ indicates the end of the video active region of the display which occurs toward the end of a frame. After the active video region, all data has been drawn to a display. The region denoted by $v_{fp}+v_{sp}+v_{bp}$ is the vertical blanking or vsync period during which no active video data is sent; therefore, data enable denoted by $enable$ is always low during this period. Before the vertical sync pulse period denoted by $v_{sp}$ occurs, a vertical front porch period denoted by $v_{fp}$ occurs. After the vertical sync pulse, a vertical back porch region $v_{bp}$ occurs. Following this the beginning of the next frame occurs as denoted by $v_{a+1}$.
 
-    \begin{figure}
+    \begin{figure}[H]
         \centering
         \includegraphics[width=1.0\textwidth]{fig/display_timing_full_cross.pdf}
         \caption{Display Protocol Full Signal Cross Section Timing}
         \label{fig:display_protocol_full_cross}
     \end{figure}
 
-    Figure~\ref{fig:modeline_refresh_rate} shows the relationship between between the different regions of a display and the frequency or refresh rate. $l_h$ denotes the scan line size of a display, or total horizontal width, which is made up of the horizontal active and horizontal porch region pixels of a display. $l_v$ denotes the total vertical width of a display, which is made up the vertical active and vertical porch region pixels of a display. Each pixel is sent at a rate denoted by $f_p$, the pixel frequency (also called the pixel clock). $f_f$ denotes the frame frequency or frame rate of a display. This is simply the pixel frequency over the total number of pixels (video active and porches) of a display. $p_t$ denotes the time period a single pixel takes to send. $f_t$ denotes the time period for an entire frame.
+    Equations~\ref{eq:l_h}~through~\ref{eq:f_t} show the relationship between between the different regions of a display and the frequency or refresh rate. In Equation~\ref{eq:l_h}, $l_h$ denotes the scan line size of a display, or total horizontal width, which is made up of the horizontal active and horizontal porch region pixels of a display. In Equation~\ref{eq:l_v}, $l_v$ denotes the total vertical width of a display, which is made up the vertical active and vertical porch region pixels of a display. In Equation~\ref{eq:f_f}, each pixel is sent at a rate denoted by $f_p$, the pixel frequency (also called the pixel clock)where the result $f_f$ denotes the frame frequency or frame rate of a display. This is simply the pixel frequency over the total number of pixels (video active and porches) of a display. In Equation~\ref{eq:p_t}, $p_t$ denotes the time period a single pixel takes to send. In equation~\ref{eq:f_t}, $f_t$ denotes the time period for an entire frame.
 
-    \begin{figure}
-        \centering
-        { \Large
-            $l_h=h_a+h_{fp}+h_{sp}+h_{bp}$ \vspace{8px} \\
-            $l_v=v_a+v_{fp}+v_{sp}+v_{bp}$ \vspace{8px} \\
-            $f_f={\frac{f_p}{l_h \cdot l_v}}$ \\
-            $p_t={\frac{1}{f_p}}$ \vspace{8px} \\
-            $f_t={\frac{1}{f_f}}$ \vspace{8px}
-        }
-        \caption{Total Refresh Rate}
-        \label{fig:modeline_refresh_rate}
-    \end{figure}
+
+    \begin{equation}
+        l_h=h_a+h_{fp}+h_{sp}+h_{bp}
+        \label{eq:l_h}
+    \end{equation}
+    \begin{equation}
+        l_v=v_a+v_{fp}+v_{sp}+v_{bp}
+        \label{eq:l_v}
+    \end{equation}
+    \begin{equation}
+        f_f={\frac{f_p}{l_h \cdot l_v}}
+        \label{eq:f_f}
+    \end{equation}
+    \begin{equation}
+        p_t={\frac{1}{f_p}}
+        \label{eq:p_t}
+    \end{equation}
+    \begin{equation}
+        f_t={\frac{1}{f_f}}
+        \label{eq:f_t}
+    \end{equation}
 
     %FIXME: example modeline
-    To illustrate, let us look at the display modeline generated using the VESA Coordinated Video Timing (CVT) standard shown in Figure~\ref{fig:modeline_example}. This modeline operates a total frame frequency of approximately \mbox{30 Hz}. The pixel clock 79.75, denoted in red, is specified in megahertz. The horizontal pixels, denoted in blue; are the end of horizontal active, the end of horizontal front porch, the end of horizontal sync pulse, and the end of horizontal back porch respectively. The vertical pixels (measured in lines), denoted in green; are the end of vertical active, the end of vertical front porch, the end of vertical sync pulse, and the end of horizontal back porch respectively. The sync pulse polarities, denoted in yellow; indicate whether a given sync pulse is active low or active high. A minus symbol indicates active low and a plus symbol indicates active high. If these numbers are placed into into the formulas shown in Figure~\ref{fig:modeline_refresh_rate} the results shown in Figure~\ref{fig:modeline_refresh_rate_plug} are yielded. The astute reader will note that $l_h$ and $l_v$ are the same as the total pixel size for the given modeline. The pixel period is $\sim12.53 ns$, meaning that each pixel is drawn for the given amount of time. The frame period is $\sim33.33 ms$, meaning that each frame is drawn for that given amount of time.
+    To illustrate, let us look at the display modeline generated using the VESA Coordinated Video Timing (CVT) standard shown in Table~\ref{tbl:modeline_example}. This modeline operates a total frame frequency of approximately \mbox{30 Hz}. The pixel clock 79.75, denoted in red, is specified in megahertz. The horizontal pixels, denoted in blue; are the end of horizontal active, the end of horizontal front porch, the end of horizontal sync pulse, and the end of horizontal back porch respectively. The vertical pixels (measured in lines), denoted in green; are the end of vertical active, the end of vertical front porch, the end of vertical sync pulse, and the end of horizontal back porch respectively. The sync pulse polarities, denoted in yellow; indicate whether a given sync pulse is active low or active high. A minus symbol indicates active low and a plus symbol indicates active high. If these numbers are placed into into the formulas shown in Equations~\ref{eq:l_h}~through~\ref{eq:f_t}, the results shown in Equations~\ref{eq:h_a_solve}~through~\ref{eq:f_t_solve} are yielded. The astute reader will note that $l_h$ and $l_v$ are the same as the total pixel size for the given modeline. The pixel period is $\sim12.53 ns$, meaning that each pixel is drawn for the given amount of time. The frame period is $\sim33.38 ms$, meaning that each frame is drawn for that given amount of time.
 
-    \begin{figure}
-        \centering
-        { \normalsize
-        \textbf{``1920x1080\_30.00"} {\color{red}79.75}  {\color{blue} 1920 1976 2168 2416}  {\color{darkgreen}1080 1083 1088 1102} {\color{olive}-hsync +vsync}
-        %\vspace{-8px}
-        }
-        \caption{VESA CVT Generated Modeline}
-        \label{fig:modeline_example}
-    \end{figure}
+    \begin{table}
+        \small
+        \setlength\tabcolsep{2pt}
+        \begin{tabular}{| c c c c c |}
+            \hline
+                \textbf{\footnotesize Name} & \begin{tabular}{c} \textbf{\footnotesize Pixel} \\ \textbf{\footnotesize Clock} \\ \textbf{\footnotesize (MHz)} \end{tabular}
+                & \begin{tabular}{c} \textbf{\footnotesize Horizontal} \\ \textbf{\footnotesize Parameters} \\ \textbf{\footnotesize (pixels)} \end{tabular}
+                & \begin{tabular}{c} \textbf{\footnotesize Vertical} \\ \textbf{\footnotesize Parameters} \\ \textbf{\footnotesize (lines)} \end{tabular}
+                & \textbf{\footnotesize Polarity} \\ \hline
+                & $f_p$ & $h_a \quad h_{SS} \quad h_{SE} \quad h_{T}$ & $v_a \quad v_{SS} \quad v_{SE} \quad v_{T}$ &
+                \\
+                \textbf{``1920x1080\_30.00"} & {\color{red}79.75} & {\color{blue} 1920 1976 2168 2416} &  {\color{darkgreen}1080 1083 1088 1102} & {\color{olive}-hsync +vsync} \\
+            \hline
+        \end{tabular}
+        \caption{Bandwidth requirements of a traditional display protocol}
+        \label{tbl:modeline_example}
+        %\end{small}
+    \end{table}
 
     %FIXME: finish this chart
-    \begin{figure}
-        \centering
-        { \Large
-            $h_a=1920; h_{fp}=1976-h_a; h_{sp}=2168-h_{fp}; h_{bp}=2416-h_{sp};$ \\
-            $v_a=1080; v_{fp}=1083-v_a; v_{sp}=1088-v_{fp}; v_{bp}=1102-v_{sp};$ \\
-            $l_h=2416=1920+56+192+248$ \vspace{8px} \\
-            $l_v=1102=1080+3+5+14$ \vspace{8px} \\
-            $f_p=79.75e6$ \vspace{8px} \\
-            $f_f=30.0={\frac{f_p}{l_s \cdot l_c}}$ \\
-            $p_t=12.53ns={\frac{1}{f_p}}$ \vspace{8px} \\
-            $f_t=33.33ms={\frac{1}{f_f}}$ \vspace{8px}
-        }
-        \caption{Computed Refresh Rate for a 30Hz CVT Modeline}
-        \label{fig:modeline_refresh_rate_plug}
-    \end{figure}
+    \begin{equation}
+        \begin{array}{ l l l l }
+            h_a=1920 & h_{fp}=h_{SS}-h_a & h_{sp}=h_{SE}-h_{SS} & h_{bp}=h_T-h_{SE} \\
+            h_a=1920 & h_{fp}=1976-1920 & h_{sp}=2168-1976 & h_{bp}=2416-2168 \\
+            h_a=1920 & h_{fp}=56 & h_{sp}=192 & h_{bp}=248
+            \label{eq:h_a_solve}
+        \end{array}
+    \end{equation}
+    \begin{equation}
+        \begin{array}{ l l l l }
+            v_a=1080 & v_{fp}=v_{SS}-v_a & v_{sp}=v_{SE}-v_{SS} & v_{bp}=v_T-v_{SE} \\
+            v_a=1080 & v_{fp}=1083-1080 & v_{sp}=1088-1083 & v_{bp}=1102-1088 \\
+            v_a=1080 & v_{fp}=3 & v_{sp}=5 & v_{bp}=14
+            \label{eq:v_a_solve}
+        \end{array}
+    \end{equation}
+    \begin{equation}
+        \begin{array}{ l }
+            l_h=h_T=h_a+h_{fp}+h_{sp}+h_{bp} \\
+            l_h=h_T=1920+56+192+248 \\
+            l_h=h_T=2416
+            \label{eq:l_h_solve}
+        \end{array}
+    \end{equation}
+    \begin{equation}
+        \begin{array}{ l }
+            l_v=v_T=v_a+v_{fp}+v_{sp}+v_{bp} \\
+            l_v=v_T=1080+3+5+14 \\
+            l_v=v_T=1102
+            \label{eq:l_v_solve}
+        \end{array}
+    \end{equation}
+    \begin{equation}
+        \begin{array}{ l }
+            f_f={\frac{f_p}{l_h \cdot l_v}} \\
+            f_f={\frac{79.75e^6}{2416 \cdot 1102}} \\
+            f_f={29.95}
+            \label{eq:f_f_solve}
+        \end{array}
+    \end{equation}
+    \begin{equation}
+        p_t=12.53ns={\frac{1}{f_p}}
+        \label{eq:p_t_solve}
+    \end{equation}
+    \begin{equation}
+        f_t=33.38ms={\frac{1}{f_f}}
+        \label{eq:f_t_solve}
+    \end{equation}
 
     Chapter~\ref{sec:displays_within_proj_system}, discusses how these protocols are utilized within an IRLED projector system, briefly highlight the limitations, and . %FIXME: finish this paragraph
 
