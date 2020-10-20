@@ -9,7 +9,7 @@ This chapter discusses the details of display protocols. Firstly, it provides a 
 
     %FIXME add crosssectional blowout chart
 
-    An overview of this is shown in Figure~\ref{fig:display_protocol_timing_overview}. The region shown in green is the pixel data for the active video region of the display. It is of size $H_a\times V_a$ which represents the number of pixels to display, for example, 1920 by 1080 for a HDTV high-definition video mode\cite{MythTVWebsite}. The blanking time regions denote pixel data that is sent but not displayed\footnote{Typically data lines are held low during this period, but somtimes it is used for out-of-band communication to send other information such as audio encoding.}. A scan line consist of pixels made up of $h_a$, the horizontal active size; $h_{fp}$, the horizontal front porch before the pulse signal; $h_{sp}$, the horizontal sync pulse; and $h_{bp}$, the horizontal back porch after the sync pulse. The vertical blanking period makes up multiple scanlines and consist of $v_{fp}$, the vertical front porch before the vsync pulse; $v_{sp}$, the vertical sync pulse; $v_{bp}$, the vertical back porch after the vertical sync pulse. Sync pulses are generally active low, meaning that during active display a sync signal is high as shown in the diagram.
+    An overview of this is shown in Figure~\ref{fig:display_protocol_timing_overview}. The region shown in green is the pixel data for the active video region of the display. It is of size $h_a\cdot v_a$ which represents the number of pixels to display, for example, 1920 by 1080 for a HDTV high-definition video mode\cite{MythTVWebsite}. The blanking time regions denote pixel data that is sent but not displayed\footnote{Typically data lines are held low during this period, but sometimes it is used for out-of-band communication to send other information such as audio encoding.}. A scan line consist of pixels made up of $h_a$, the horizontal active size; $h_{fp}$, the horizontal front porch before the pulse signal; $h_{sp}$, the horizontal sync pulse; and $h_{bp}$, the horizontal back porch after the sync pulse. $v_a$, the vertical active size, indicates the number of scanlines that make up the active region of the display. The vertical blanking period makes up multiple scanlines and consist of $v_{fp}$, the vertical front porch before the vsync pulse; $v_{sp}$, the vertical sync pulse; $v_{bp}$, the vertical back porch after the vertical sync pulse. Sync pulses are generally active low, meaning that during active display a sync signal is high as shown in the diagram. Note, that this terminology is consistent with the VESA Coordinated Video Timings (CVT) Standard\cite{VESA2013}.
 
     \begin{figure}
         \centering
@@ -64,7 +64,7 @@ This chapter discusses the details of display protocols. Firstly, it provides a 
     \end{equation}
 
     %FIXME: example modeline
-    To illustrate, let us look at the display modeline generated using the VESA Coordinated Video Timing (CVT) standard shown in Table~\ref{tbl:modeline_example}. This modeline operates a total frame frequency of approximately \mbox{30 Hz}. The pixel clock 79.75, denoted in red, is specified in megahertz. The horizontal pixels, denoted in blue; are the end of horizontal active, the end of horizontal front porch, the end of horizontal sync pulse, and the end of horizontal back porch respectively. The vertical pixels (measured in lines), denoted in green; are the end of vertical active, the end of vertical front porch, the end of vertical sync pulse, and the end of horizontal back porch respectively. The sync pulse polarities, denoted in yellow; indicate whether a given sync pulse is active low or active high. A minus symbol indicates active low and a plus symbol indicates active high. If these numbers are placed into into the formulas shown in Equations~\ref{eq:l_h}~through~\ref{eq:f_t}, the results shown in Equations~\ref{eq:h_a_solve}~through~\ref{eq:f_t_solve} are yielded. The astute reader will note that $l_h$ and $l_v$ are the same as the total pixel size for the given modeline. The pixel period is $\sim12.53 ns$, meaning that each pixel is drawn for the given amount of time. The frame period is $\sim33.38 ms$, meaning that each frame is drawn for that given amount of time.
+    To illustrate, let us look at the display modeline generated using the VESA Coordinated Video Timing (CVT) standard shown in Table~\ref{tbl:modeline_example}. This modeline operates a total frame frequency of approximately \mbox{30 Hz}. The pixel clock 79.75, denoted in red, is specified in megahertz. The horizontal pixels, denoted in blue; are the horizontal display width, the horizontal sync start, the horizontal sync end, and the horizontal total pixels respectively. The vertical pixels (measured in lines), denoted in green; are the vertical display height, the vertical sync start, the end of vertical sync end, and the horizontal total pixels respectively. The sync pulse polarities, denoted in yellow; indicate whether a given sync pulse is active low or active high. A minus symbol indicates active low and a plus symbol indicates active high. The terminology for these modeline parameters comes from The X Window System\cite{TheOpenGroup2020}, a commonly utilized windowing system in the Linux family of operating systems where the parameters, while equivalent, are specified in a different format from the VESA standards. Equations~\ref{eq:h_a_solve}~and~\ref{eq:v_a_solve} show the relationship between the X Window System parameters and the VESA parameters.
 
     \begin{table}
         \small
@@ -75,7 +75,7 @@ This chapter discusses the details of display protocols. Firstly, it provides a 
                 & \begin{tabular}{c} \textbf{\footnotesize Horizontal} \\ \textbf{\footnotesize Parameters} \\ \textbf{\footnotesize (pixels)} \end{tabular}
                 & \begin{tabular}{c} \textbf{\footnotesize Vertical} \\ \textbf{\footnotesize Parameters} \\ \textbf{\footnotesize (lines)} \end{tabular}
                 & \textbf{\footnotesize Polarity} \\ \hline
-                & $f_p$ & $h_a \quad h_{SS} \quad h_{SE} \quad h_{T}$ & $v_a \quad v_{SS} \quad v_{SE} \quad v_{T}$ &
+                & $f_p$ & $h_D \quad h_{SS} \quad h_{SE} \quad h_{T}$ & $v_D \quad v_{SS} \quad v_{SE} \quad v_{T}$ &
                 \\
                 \textbf{``1920x1080\_30.00"} & {\color{red}79.75} & {\color{blue} 1920 1976 2168 2416} &  {\color{darkgreen}1080 1083 1088 1102} & {\color{olive}-hsync +vsync} \\
             \hline
@@ -85,23 +85,26 @@ This chapter discusses the details of display protocols. Firstly, it provides a 
         %\end{small}
     \end{table}
 
-    %FIXME: finish this chart
     \begin{equation}
         \begin{array}{ l l l l }
-            h_a=1920 & h_{fp}=h_{SS}-h_a & h_{sp}=h_{SE}-h_{SS} & h_{bp}=h_T-h_{SE} \\
+            h_a=h_D & h_{fp}=h_{SS}-h_a & h_{sp}=h_{SE}-h_{SS} & h_{bp}=h_T-h_{SE} \\
             h_a=1920 & h_{fp}=1976-1920 & h_{sp}=2168-1976 & h_{bp}=2416-2168 \\
             h_a=1920 & h_{fp}=56 & h_{sp}=192 & h_{bp}=248
             \label{eq:h_a_solve}
         \end{array}
     \end{equation}
+
     \begin{equation}
         \begin{array}{ l l l l }
-            v_a=1080 & v_{fp}=v_{SS}-v_a & v_{sp}=v_{SE}-v_{SS} & v_{bp}=v_T-v_{SE} \\
+            v_a=v_D & v_{fp}=v_{SS}-v_a & v_{sp}=v_{SE}-v_{SS} & v_{bp}=v_T-v_{SE} \\
             v_a=1080 & v_{fp}=1083-1080 & v_{sp}=1088-1083 & v_{bp}=1102-1088 \\
             v_a=1080 & v_{fp}=3 & v_{sp}=5 & v_{bp}=14
             \label{eq:v_a_solve}
         \end{array}
     \end{equation}
+
+    If the parameters for the modeline in Table~\ref{tbl:modeline_example} are placed into into the formulas shown in Equations~\ref{eq:l_h}~through~\ref{eq:f_t}, the results shown in Equations~\ref{eq:l_h_solve}~through~\ref{eq:f_t_solve} are yielded. The astute reader will note that $l_h$ and $l_v$ are the same as the total pixel size for the given modeline. The pixel period is $\sim12.53 ns$, meaning that each pixel is drawn for the given amount of time. The frame period is $\sim33.38 ms$, meaning that each frame is drawn for that given amount of time.
+
     \begin{equation}
         \begin{array}{ l }
             l_h=h_T=h_a+h_{fp}+h_{sp}+h_{bp} \\
@@ -110,6 +113,7 @@ This chapter discusses the details of display protocols. Firstly, it provides a 
             \label{eq:l_h_solve}
         \end{array}
     \end{equation}
+
     \begin{equation}
         \begin{array}{ l }
             l_v=v_T=v_a+v_{fp}+v_{sp}+v_{bp} \\
@@ -118,6 +122,7 @@ This chapter discusses the details of display protocols. Firstly, it provides a 
             \label{eq:l_v_solve}
         \end{array}
     \end{equation}
+
     \begin{equation}
         \begin{array}{ l }
             f_f={\frac{f_p}{l_h \cdot l_v}} \\
@@ -126,10 +131,12 @@ This chapter discusses the details of display protocols. Firstly, it provides a 
             \label{eq:f_f_solve}
         \end{array}
     \end{equation}
+
     \begin{equation}
         p_t=12.53ns={\frac{1}{f_p}}
         \label{eq:p_t_solve}
     \end{equation}
+
     \begin{equation}
         f_t=33.38ms={\frac{1}{f_f}}
         \label{eq:f_t_solve}
