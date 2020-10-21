@@ -1,3 +1,4 @@
+\label{chap:display_protocls}
 This chapter discusses the details of display protocols. Firstly, it provides a general discussion of how common display protocols work to send pixel data to a display system (e.g. a television). Then, it discusses how these protocols are utilized within IRSP technology.
 
 \section{Classical Display Protocols}
@@ -39,7 +40,7 @@ This chapter discusses the details of display protocols. Firstly, it provides a 
         \label{fig:display_protocol_full_cross}
     \end{figure}
 
-    Equations~\ref{eq:l_h}~through~\ref{eq:f_t} show the relationship between between the different regions of a display and the frequency or refresh rate. In Equation~\ref{eq:l_h}, $l_h$ denotes the scan line size of a display, or total horizontal width, which is made up of the horizontal active and horizontal porch region pixels of a display. In Equation~\ref{eq:l_v}, $l_v$ denotes the total vertical width of a display, which is made up the vertical active and vertical porch region pixels of a display. In Equation~\ref{eq:f_f}, each pixel is sent at a rate denoted by $f_p$, the pixel frequency (also called the pixel clock)where the result $f_f$ denotes the frame frequency or frame rate of a display. This is simply the pixel frequency over the total number of pixels (video active and porches) of a display. In Equation~\ref{eq:p_t}, $p_t$ denotes the time period a single pixel takes to send. In equation~\ref{eq:f_t}, $f_t$ denotes the time period for an entire frame.
+    Equations~\ref{eq:l_h}~through~\ref{eq:f_t} show the relationship between between the different regions of a display and the frequency or refresh rate. In Equation~\ref{eq:l_h}, $l_h$ denotes the scan line size of a display, or total horizontal width, which is made up of the horizontal active and horizontal porch region pixels of a display. In Equation~\ref{eq:l_v}, $l_v$ denotes the total vertical width of a display, which is made up the vertical active and vertical porch region pixels of a display. In Equation~\ref{eq:f_f}, each pixel is sent at a rate denoted by $f_p$, the pixel frequency (also called the pixel clock) where the result $f_f$ denotes the frame frequency or frame rate of a display. This is simply the pixel frequency over the total number of pixels (video active and porches) of a display. In Equation~\ref{eq:p_t}, $p_t$ denotes the time period a single pixel takes to send. In equation~\ref{eq:f_t}, $f_t$ denotes the time period for an entire frame.
 
 
     \begin{equation}
@@ -103,7 +104,7 @@ This chapter discusses the details of display protocols. Firstly, it provides a 
         \end{array}
     \end{equation}
 
-    If the parameters for the modeline in Table~\ref{tbl:modeline_example} are placed into into the formulas shown in Equations~\ref{eq:l_h}~through~\ref{eq:f_t}, the results shown in Equations~\ref{eq:l_h_solve}~through~\ref{eq:f_t_solve} are yielded. The astute reader will note that $l_h$ and $l_v$ are the same as the total pixel size for the given modeline. The pixel period is $\sim12.53 ns$, meaning that each pixel is drawn for the given amount of time. The frame period is $\sim33.38 ms$, meaning that each frame is drawn for that given amount of time.
+    If the parameters for the modeline in Table~\ref{tbl:modeline_example} are placed into into the formulas shown in Equations~\ref{eq:l_h}~through~\ref{eq:f_t}, the results shown in Equations~\ref{eq:l_h_solve}~through~\ref{eq:f_t_solve} are yielded. The astute reader will note that $l_h$ and $l_v$ are the same as the total width and height for the given modeline. The pixel period is $\sim12.53 ns$, meaning that each pixel is drawn for the given amount of time. The frame period is $\sim33.38 ms$, meaning that each frame is drawn for that given amount of time.
 
     \begin{equation}
         \begin{array}{ l }
@@ -147,6 +148,17 @@ This chapter discusses the details of display protocols. Firstly, it provides a 
 \section{Display Protocols within IRSP Technology}
     \label{sec:displays_within_proj_system}
     % Finally, it discusses how these protocols are utilized within an IRLED project system.
-    IRSP technology typically utilizes classical display protocol technology in some form in order to drive IR-arrays. In the most basic form a scene generator will provide imagery that is encoded utilizing one of the protocols discussed and send it to some form of CSE which will then simply decode it.
+    IRSP technology typically utilizes classical display protocol technology in some form in order to drive IR-arrays. In the most basic form a scene generator will provide imagery that is encoded utilizing a display protocol and send it to some form of close support electronics which will then decode the stream pixel by pixel and drive an array as discussed in Chapter~\ref{chap:array_write_process}.
 
-    For scenerios that involve unsynchronized operation where dropped frames are not an issue, these protocols can largely be used without modification. However, scenerios that require synchronization in either open loop or closed loop setups present a challenge. Often, non-standard modifications must be used to compensate for jitter among different system processes and overall system latency. This can range from utilizing off the shelf components such as Nvidia Quadro Sync cards\cite{NVIDIAQuadroSync} or developing additional hardware pipelines capable of buffering and delaying emission of frame data. This presents a particular challenge because the user typically does not have direct control over frame buffers, frame emission, or the software drivers within a system. Moreover, encoders and decoders expect the protocols to work in a defined way that modifications could run afoul of.
+    For scenerios that involve unsynchronized operation where dropped frames are not an issue, these protocols can largely be used without modification. However, scenerios that require synchronization in either open loop or closed loop setups present a challenge. Often, non-standard modifications must be used to compensate for jitter among different system processes and overall system latency. Figure~\ref{fig:custom_sync} shows where in in a system setup a custom solution would need to be inserted in the case of a scene generator connected directly to a CSE. In this diagram, the scene generation, nuc process, and the camera would need to be end-to-end synchronized with compensation for frame latencies.
+
+    \begin{figure}
+        \centering
+        \includegraphics[width=1.0\textwidth]{fig/custom_sync.pdf}
+        \caption{Custom Synchronization Solution}
+        \label{fig:custom_sync}
+    \end{figure}
+
+    This can range from utilizing off the shelf components such as Nvidia Quadro Sync cards\cite{NVIDIAQuadroSync} or developing additional hardware pipelines capable of buffering and delaying emission of frame data such as a intermediate buffer card. This presents a particular challenge because the user typically does not have direct control over frame buffers, frame emission, or the software drivers within a system when utilizing display protocol based technology. Moreover, encoders and decoders expect the protocols to work in a defined way that modifications for enabling synchronization could run afoul of; thus, resulting in the need for non-standard encoder and decoder implementations.
+
+    PDP on the other hand, eases synchronization due to its nature of being packetized, which allows for controlled data to be sent when directed without the need for a custom sync solution. With a PDP based solution, a scene generator could simply synchronize to a camera (if necessary), and send frame data when required under its own direct control. Moreover, hardware links could be replaced in the future with faster technology without the need to design a new hardware specific solution for synchronization. The only requirement being that the PDP protocol be utilized across the new link. Chapter~\ref{chap:pdp_protocol} will discuss the details of the protocol itself.
