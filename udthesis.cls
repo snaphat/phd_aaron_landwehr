@@ -16,6 +16,7 @@
 % Automatically load hyperref for rich PDF
 
 \AtEndOfClass{%
+        \usepackage[hyphens]{url}%
         \usepackage[bookmarksnumbered,linktocpage,colorlinks,%
         linkcolor=black,citecolor=black,urlcolor=black]{hyperref}%
         \def\@pdfcreator{LaTeX2e, UDThesis class, hyperref package}%
