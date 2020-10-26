@@ -3,39 +3,48 @@
 This chapter discusses the underlying communication details of the packetized display protocol (PDP) architecture. First, it gives an overview of the protocol design methodology. Followed by a discussion of the generalized packet format. Finally, it discusses individual packet types. The central purpose of this chapter is to provide the reader with an understanding of the reasoning behind design decisions, as well as, to provide a detailed specification of the protocol.
 
 \section{Design Methodology}
-    The design methodology for the PDP protocol began with a number of critical design goals. The first goal was to design a scalable display system that was distributable and hardware agnostic. The second design goal was to provide a protocol that was relatively simple to implement without unnecessary complexity to ease the encoding and decoding process. A low overhead and fast decode process is crucial to ensuring latency is sub-frame\footnote{This refers to latency of that below the time it would take to buffer an entire frame. Which is a common synchronization method utilized in projector systems.} across the system. Additionally, simplifying these processes also eases potential hardware implementation mistakes, as well as, inefficiencies that could lead to reduced performance. The third goal was to provide dynamic intra-frame variable refresh rate (VRR) to enable better bandwidth utilization. In particular, to allow for regions of a display to be intelligently updated at different rates when driven by a scene generator. The fourth goal was to provide a path to utilize classical display protocol streams such as HDMI with PDP without introducing overhead. This is to allow for interoperability where necessary when utilizing classical display sources, and to ease migration to a PDP based system.
+    The design methodology for the PDP protocol began with a number of critical design goals, which are listed as follows:
+
+    \begin{enumerate}
+         \item {\em To design a scalable display system that is distributable and hardware agnostic.} The display protocols and interfaces utilized within projector systems have systematic issues with remaining in step with current technology in that old standards (such as DVI) continue to be utilized due to the inability for custom synchronization solutions to work with newer hardware and the costs and time associated with implementing newer solutions utilizing newer standards.
+        \item {\em To provide a protocol that is relatively simple to implement without unnecessary complexity to ease the encoding and decoding process.} A low overhead and fast decode process is crucial to ensuring latency is sub-frame\footnote{This refers to latency of that below the time it would take to buffer an entire frame. Which is a common synchronization method utilized in projector systems.} across the system. Additionally, simplifying these processes also eases potential hardware implementation mistakes, as well as, inefficiencies that could lead to reduced performance.
+        \item {\em To provide dynamic intra-frame variable refresh rate (VRR) to enable better bandwidth utilization.} In particular, to allow for regions of a display to be intelligently updated at different rates when driven by a scene generator.
+        \item {\em To provide a path to utilize classical display protocol streams such as HDMI as a backwards compatible tranport layer for PDP without introducing overhead.} This is to allow for interoperability where necessary when utilizing classical display sources, and to ease migration to a PDP based system.
+    \end{enumerate}
 
     \subsection{Comparison to Classical Display Protocols}
         In order to better understand how to design PDP, the constraints of classical display protocols were investigated to discern which features within these protocols conflict with the design goals of PDP. In addition, it was necessary to investigate whether these could provide a path forward in the design and development of PDP. Many versions of these protocols (DVI\cite{DDWG1999}, HDMI\cite{HDMIForum2018}, DisplayPort\cite{VESA2016}, etc.) provide similar feature-sets to end-users with the major focus being on increasing refresh rates and resolutions with each new specification. However, as discussed in Chapter~\ref{sec:classical_display_protocols}, their basis is rooted in the classical analog video specifications that utilize scan lines\cite{Neal1998}. This means, that signal timing utilizes vertical and horizontal blanking periods that consist of a front-porch, sync pulse, and back-porch; in addition to, the active video data to be displayed.
 
-        For early analog display devices, these signals enabled operators to manually adjust horizontal and vertical hold times relative to the sync pulses in order to correct for the imprecise timing of early display hardware; but provide little benefit on modern hardware other than as an embedded method to support sending frames at a static interval, and to enable tearless buffer swapping in either double buffering\cite{FriedbergEtAl1990} or triple buffering schemes\cite{3dfx1997} utilized within GPUs\footnote{This is performed by swapping buffers during the vertical sync (vsync) interval of a frame\cite{3dfx1999,3dfx1999_2}. See Chapter~\ref{chap:display_protocols} for details about the vsync interval.}. In digital display technology, this represents an anachronism that impedes the goal of maximizing bandwidth utilization when driving a display by requiring the transmission of unnecessary data over the digital protocol. For example, a commonly utilized 1920 by 1080 pixel mode operating at \mbox{60 Hz}\cite{MythTVWebsite} on a modern display has a 16 percent blanking period overhead due to the specification of vertical and horizontal sync periods. Other examples can be seen in Table~\ref{tbl:modeline_overhead}. Of note, the smaller resolutions were tested on existing hardware in order to minimize the overhead in blanking. What one sees is that as modelines shrink and data rates decrease higher percentages of blanking is required relative to displayed pixels. This is due to the inability for common implementations of video decoders to operate correctly when blanking is minimized and in many cases simply at all when non-standard resolutions are utilized.
+        For early analog display devices, these signals enabled operators to manually adjust horizontal and vertical hold times relative to the sync pulses in order to correct for the imprecise timing of early display hardware; but provide little benefit on modern hardware other than as an embedded method to support sending frames at a static interval, and to enable tearless buffer swapping in either double buffering\cite{FriedbergEtAl1990} or triple buffering schemes\cite{3dfx1997} utilized within GPUs\footnote{This is performed by swapping buffers during the vertical sync (vsync) interval of a frame\cite{3dfx1999,3dfx1999_2}. See Chapter~\ref{chap:display_protocols} for details about the vsync interval.}.
+
+        In digital display technology, this represents an anachronism that impedes the goal of maximizing bandwidth utilization when driving a display by requiring the transmission of unnecessary data over the digital protocol. For example, a commonly utilized 1920 by 1080 pixel mode operating at \mbox{60 Hz}\cite{MythTVWebsite} on a modern display has a 16 percent blanking period overhead due to the specification of vertical and horizontal sync periods. Other examples can be seen in Table~\ref{tbl:modeline_overhead}. Of note, the smaller resolutions were tested on existing hardware in order to minimize the overhead in blanking. What one sees is that as modelines shrink and data rates decrease higher percentages of blanking is required relative to displayed pixels. This is due to the inability for common implementations of video decoders to operate correctly when blanking is minimized and in many cases simply at all when non-standard resolutions are utilized.
 
         \begin{table}
             \centering
             \large
             \begin{tcolorbox}[tabularx={Y|Y|Y|Y|Y},title=\textbf{Modeline Overhead},boxrule=0.5pt]
-            \textbf{Resolution} & \textbf{Refresh Rate (Hz)} & \textbf{Visible Pixels} & \textbf{Total Pixels} & \textbf{Overhead} \\ \hline
-                \textbf{1920x1080} & \textbf{60}   & 2073600 & 2475000 & 16.2\% \\ \hline
-                \textbf{1600x1200} & \textbf{60}   & 1920000 & 2700000 & 28.9\% \\ \hline
-                \textbf{1280x1024} & \textbf{60}   & 1310720 & 1799408 & 27.2\% \\ \hline
-                \textbf{1280x960}  & \textbf{60}   & 1228800 & 1800000 & 31.7\% \\ \hline
-                \textbf{1280x800}  & \textbf{60}   & 1024000 & 1391040 & 26.4\% \\ \hline
-                \textbf{1024x768}  & \textbf{60}   & 786432  & 1083264 & 27.4\% \\ \hline
-                \textbf{500x500}   & \textbf{500}  & 250000  & 296100  & 15.6\% \\ \hline
-                \textbf{500x500}   & \textbf{400}  & 250000  & 296100  & 15.6\% \\ \hline
-                \textbf{500x500}   & \textbf{300}  & 250000  & 357500  & 30.1\% \\ \hline
-                \textbf{500x500}   & \textbf{100}  & 250000  & 357500  & 30.1\% \\ \hline
-                \textbf{500x500}   & \textbf{60}   & 250000  & 357500  & 30.1\% \\ \hline
-                \textbf{500x500}   & \textbf{50}   & 250000  & 364000  & 31.3\% \\ \hline
-                \textbf{500x500}   & \textbf{30}   & 250000  & 520000  & 51.9\% \\ \hline
-                \textbf{500x500}   & \textbf{30}   & 250000  & 520000  & 51.9\% \\ \hline
-                \textbf{500x256}   & \textbf{1000} & 131072  & 149460  & 12.3\% \\ \hline
-                \textbf{500x256}   & \textbf{500}  & 131072  & 256000  & 48.8\% \\ \hline
-                \textbf{500x256}   & \textbf{200}  & 131072  & 320000  & 51.9\% \\ \hline
-                \textbf{500x256}   & \textbf{100}  & 131072  & 320000  & 59.0\% \\ \hline
-                \textbf{500x256}   & \textbf{60}   & 131072  & 320000  & 59.0\% \\ \hline
+            \textbf{\normalsize Resolution} & \textbf{\normalsize Refresh Rate (Hz)} & \textbf{\normalsize Visible Pixels} & \textbf{\normalsize Total Pixels} & \textbf{\normalsize Overhead} \\ \hline
+                \textbf{\normalsize 1920x1080} & \textbf{\normalsize 60}   & {\normalsize 2073600} & {\normalsize 2475000} & {\normalsize 16.2\%} \\ \hline
+                \textbf{\normalsize 1600x1200} & \textbf{\normalsize 60}   & {\normalsize 1920000} & {\normalsize 2700000} & {\normalsize 28.9\%} \\ \hline
+                \textbf{\normalsize 1280x1024} & \textbf{\normalsize 60}   & {\normalsize 1310720} & {\normalsize 1799408} & {\normalsize 27.2\%} \\ \hline
+                \textbf{\normalsize 1280x960}  & \textbf{\normalsize 60}   & {\normalsize 1228800} & {\normalsize 1800000} & {\normalsize 31.7\%} \\ \hline
+                \textbf{\normalsize 1280x800}  & \textbf{\normalsize 60}   & {\normalsize 1024000} & {\normalsize 1391040} & {\normalsize 26.4\%} \\ \hline
+                \textbf{\normalsize 1024x768}  & \textbf{\normalsize 60}   & {\normalsize 786432 } & {\normalsize 1083264} & {\normalsize 27.4\%} \\ \hline
+                \textbf{\normalsize 512x512}   & \textbf{\normalsize 500}  & {\normalsize 262144 } & {\normalsize 296100 } & {\normalsize 11.5\%} \\ \hline
+                \textbf{\normalsize 512x512}   & \textbf{\normalsize 400}  & {\normalsize 262144 } & {\normalsize 296100 } & {\normalsize 11.5\%} \\ \hline
+                \textbf{\normalsize 512x512}   & \textbf{\normalsize 300}  & {\normalsize 262144 } & {\normalsize 357500 } & {\normalsize 26.7\%} \\ \hline
+                \textbf{\normalsize 512x512}   & \textbf{\normalsize 100}  & {\normalsize 262144 } & {\normalsize 357500 } & {\normalsize 26.7\%} \\ \hline
+                \textbf{\normalsize 512x512}   & \textbf{\normalsize 60}   & {\normalsize 262144 } & {\normalsize 357500 } & {\normalsize 26.7\%} \\ \hline
+                \textbf{\normalsize 512x512}   & \textbf{\normalsize 50}   & {\normalsize 262144 } & {\normalsize 364000 } & {\normalsize 28.0\%} \\ \hline
+                \textbf{\normalsize 512x512}   & \textbf{\normalsize 30}   & {\normalsize 262144 } & {\normalsize 520000 } & {\normalsize 50.0\%} \\ \hline
+                \textbf{\normalsize 512x512}   & \textbf{\normalsize 30}   & {\normalsize 262144 } & {\normalsize 520000 } & {\normalsize 50.0\%} \\ \hline
+                \textbf{\normalsize 512x256}   & \textbf{\normalsize 1000} & {\normalsize 131072 } & {\normalsize 149460 } & {\normalsize 12.3\%} \\ \hline
+                \textbf{\normalsize 512x256}   & \textbf{\normalsize 500}  & {\normalsize 131072 } & {\normalsize 256000 } & {\normalsize 48.8\%} \\ \hline
+                \textbf{\normalsize 512x256}   & \textbf{\normalsize 200}  & {\normalsize 131072 } & {\normalsize 320000 } & {\normalsize 59.0\%} \\ \hline
+                \textbf{\normalsize 512x256}   & \textbf{\normalsize 100}  & {\normalsize 131072 } & {\normalsize 320000 } & {\normalsize 59.0\%} \\ \hline
+                \textbf{\normalsize 512x256}   & \textbf{\normalsize 60}   & {\normalsize 131072 } & {\normalsize 320000 } & {\normalsize 59.0\%} \\ \hline
             \end{tcolorbox}
-            \caption[Modeline Overhead]{Modeline overhead for various resolutions and refresh rates\cite{MythTVWebsite}. Computed using active pixel area over total pixel area. 500x500 and 512x256 are typical modeline resolutions used on IRLED arrays.}
+            \caption[Modeline Overhead]{Modeline overhead for various resolutions and refresh rates\cite{MythTVWebsite}. Computed using active pixel area over total pixel area. 512x512 and 512x256 are typical modeline resolutions used on IRLED arrays.}
             \label{tbl:modeline_overhead}
         \end{table}
 
@@ -62,34 +71,32 @@ This chapter discusses the underlying communication details of the packetized di
             \label{eq:bandwidth_saved}
         \end{equation}
 
-        %FIXME: double table and not referenced here
-        %FIXME: change to incorporate PDP overheads
         \begin{table}
             \centering
             \large
-            \begin{tcolorbox}[tabularx={Y|Y|Y|Y|Y},title=\textbf{Modeline Overhead},boxrule=0.5pt]
-            \textbf{Slow Refresh Rate (Hz)} & \textbf{Fast Refresh Rate (Hz)} & \textbf{Visible Pixels} & \textbf{Total Pixels} & \textbf{Overhead} \\ \hline
-                \textbf{1920x1080} & \textbf{60}   & 2073600 & 2475000 & 16.2\% \\ \hline
-                \textbf{1600x1200} & \textbf{60}   & 1920000 & 2700000 & 28.9\% \\ \hline
-                \textbf{1280x1024} & \textbf{60}   & 1310720 & 1799408 & 27.2\% \\ \hline
-                \textbf{1280x960}  & \textbf{60}   & 1228800 & 1800000 & 31.7\% \\ \hline
-                \textbf{1280x800}  & \textbf{60}   & 1024000 & 1391040 & 26.4\% \\ \hline
-                \textbf{1024x768}  & \textbf{60}   & 786432  & 1083264 & 27.4\% \\ \hline
-                \textbf{500x500}   & \textbf{500}  & 250000  & 296100  & 15.6\% \\ \hline
-                \textbf{500x500}   & \textbf{400}  & 250000  & 296100  & 15.6\% \\ \hline
-                \textbf{500x500}   & \textbf{300}  & 250000  & 357500  & 30.1\% \\ \hline
-                \textbf{500x500}   & \textbf{100}  & 250000  & 357500  & 30.1\% \\ \hline
-                \textbf{500x500}   & \textbf{60}   & 250000  & 357500  & 30.1\% \\ \hline
-                \textbf{500x500}   & \textbf{50}   & 250000  & 364000  & 31.3\% \\ \hline
-                \textbf{500x500}   & \textbf{30}   & 250000  & 520000  & 51.9\% \\ \hline
-                \textbf{500x500}   & \textbf{30}   & 250000  & 520000  & 51.9\% \\ \hline
-                \textbf{500x256}   & \textbf{1000} & 131072  & 149460  & 12.3\% \\ \hline
-                \textbf{500x256}   & \textbf{500}  & 131072  & 256000  & 48.8\% \\ \hline
-                \textbf{500x256}   & \textbf{200}  & 131072  & 320000  & 51.9\% \\ \hline
-                \textbf{500x256}   & \textbf{100}  & 131072  & 320000  & 59.0\% \\ \hline
-                \textbf{500x256}   & \textbf{60}   & 131072  & 320000  & 59.0\% \\ \hline
+            \begin{tcolorbox}[tabularx={Y|Y|Y|Y|Y|Y},title=\textbf{PDP Maximum Packet Overhead},boxrule=0.5pt]
+            \textbf{\normalsize Slow Refresh Rate (Hz)} & \textbf{\normalsize Fast Refresh Rate (Hz)} & \textbf{\normalsize Visible Pixels} & \textbf{\normalsize Total Pixels} & \textbf{\normalsize Overhead} & \textbf{\normalsize Reduction} \\ \hline
+                \textbf{\normalsize 1920x1080} & \textbf{\normalsize 60}   & {\normalsize 2073600} & {\normalsize 2235600} & {\normalsize 7.2\%} &\textbf{\normalsize 9.0 \%} \\ \hline
+                \textbf{\normalsize 1600x1200} & \textbf{\normalsize 60}   & {\normalsize 1920000} & {\normalsize 2070000} & {\normalsize 7.2\%} &\textbf{\normalsize 21.7\%} \\ \hline
+                \textbf{\normalsize 1280x1024} & \textbf{\normalsize 60}   & {\normalsize 1310720} & {\normalsize 1413120} & {\normalsize 7.2\%} &\textbf{\normalsize 20.0\%} \\ \hline
+                \textbf{\normalsize 1280x960}  & \textbf{\normalsize 60}   & {\normalsize 1228800} & {\normalsize 1324800} & {\normalsize 7.2\%} &\textbf{\normalsize 24.5\%} \\ \hline
+                \textbf{\normalsize 1280x800}  & \textbf{\normalsize 60}   & {\normalsize 1024000} & {\normalsize 1104000} & {\normalsize 7.2\%} &\textbf{\normalsize 19.2\%} \\ \hline
+                \textbf{\normalsize 1024x768}  & \textbf{\normalsize 60}   & {\normalsize 786432 } & {\normalsize 847872 } & {\normalsize 7.2\%} &\textbf{\normalsize 20.2\%} \\ \hline
+                \textbf{\normalsize 512x512}   & \textbf{\normalsize 500}  & {\normalsize 262144 } & {\normalsize 282624 } & {\normalsize 7.2\%} &\textbf{\normalsize 4.3\% } \\ \hline
+                \textbf{\normalsize 512x512}   & \textbf{\normalsize 400}  & {\normalsize 262144 } & {\normalsize 282624 } & {\normalsize 7.2\%} &\textbf{\normalsize 4.3\% } \\ \hline
+                \textbf{\normalsize 512x512}   & \textbf{\normalsize 300}  & {\normalsize 262144 } & {\normalsize 282624 } & {\normalsize 7.2\%} &\textbf{\normalsize 19.5\%} \\ \hline
+                \textbf{\normalsize 512x512}   & \textbf{\normalsize 100}  & {\normalsize 262144 } & {\normalsize 282624 } & {\normalsize 7.2\%} &\textbf{\normalsize 19.5\%} \\ \hline
+                \textbf{\normalsize 512x512}   & \textbf{\normalsize 60}   & {\normalsize 262144 } & {\normalsize 282624 } & {\normalsize 7.2\%} &\textbf{\normalsize 19.5\%} \\ \hline
+                \textbf{\normalsize 512x512}   & \textbf{\normalsize 50}   & {\normalsize 262144 } & {\normalsize 282624 } & {\normalsize 7.2\%} &\textbf{\normalsize 20.8\%} \\ \hline
+                \textbf{\normalsize 512x512}   & \textbf{\normalsize 30}   & {\normalsize 262144 } & {\normalsize 282624 } & {\normalsize 7.2\%} &\textbf{\normalsize 42.8\%} \\ \hline
+                \textbf{\normalsize 512x512}   & \textbf{\normalsize 30}   & {\normalsize 262144 } & {\normalsize 282624 } & {\normalsize 7.2\%} &\textbf{\normalsize 42.8\%} \\ \hline
+                \textbf{\normalsize 512x256}   & \textbf{\normalsize 1000} & {\normalsize 131072 } & {\normalsize 141312 } & {\normalsize 7.2\%} &\textbf{\normalsize 5.1\% } \\ \hline
+                \textbf{\normalsize 512x256}   & \textbf{\normalsize 500}  & {\normalsize 131072 } & {\normalsize 141312 } & {\normalsize 7.2\%} &\textbf{\normalsize 41.6\%} \\ \hline
+                \textbf{\normalsize 512x256}   & \textbf{\normalsize 200}  & {\normalsize 131072 } & {\normalsize 141312 } & {\normalsize 7.2\%} &\textbf{\normalsize 51.8\%} \\ \hline
+                \textbf{\normalsize 512x256}   & \textbf{\normalsize 100}  & {\normalsize 131072 } & {\normalsize 141312 } & {\normalsize 7.2\%} &\textbf{\normalsize 51.8\%} \\ \hline
+                \textbf{\normalsize 512x256}   & \textbf{\normalsize 60}   & {\normalsize 131072 } & {\normalsize 141312 } & {\normalsize 7.2\%} &\textbf{\normalsize 51.8\%} \\ \hline
             \end{tcolorbox}
-            \caption[Modeline Overhead]{Modeline overhead for various resolutions and refresh rates\cite{MythTVWebsite}. Computed using active pixel area over total pixel area. 500x500 and 512x256 are typical modeline resolutions used on IRLED arrays.}
+            \caption[PDP Maximum Packet Overhead]{Maximum PDP Packet Overhead for various resolutions and refresh rates in PDP. Computed using active pixel area over total pixel area. The right column shows the reduction in overhead vs normal modelines. 512x512 and 512x256 are typical modeline resolutions used on IRLED arrays.}
             \label{tbl:pdp_efficiency}
         \end{table}
 
