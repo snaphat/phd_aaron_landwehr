@@ -5,13 +5,46 @@
 %FIXME: my research group's arrays?
 %FIXME: talk about fw control modularity
 This chapter describes an FPGA implementation of the PDP architecture. For the purposes of this discussion, only relevant details are included to ease the readers understanding. First, the chapter will discuss the purpose of the implemented architecture. Following this each component will be discussed at a high level. Finally, the operation of sub-components will be discussed.
+\section{HDMI Transport Layer}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.5\textwidth]{fig/packet_refresher.pdf}
+        \caption{Packet Format Refresher}
+        \label{fig:packet_refresher}
+    \end{figure}
+    \begin{figure}
+        \centering
+        \includegraphics[width=1.0\textwidth]{fig/classic_video.pdf}
+        \caption{Normal Frame with Display Data}
+        \label{fig:classic_video}
+    \end{figure}
+    \begin{figure}
+        \centering
+        \includegraphics[width=1.0\textwidth]{fig/embedded_frame.pdf}
+        \caption{Embedded PDP Frame}
+        \label{fig:embedded_frame}
+    \end{figure}
+    \begin{figure}
+        \centering
+        \includegraphics[width=1.0\textwidth]{fig/embedded_frame_to_emitter.pdf}
+        \caption{Embedded PDP Frame to Array Mapping}
+        \label{fig:embedded_frame_to_emitter}
+    \end{figure}
+
+\section{Abstract Architecture}
+    \begin{figure}
+        \centering
+        \includegraphics[width=1.0\textwidth]{fig/abstract_architecture.pdf}
+        \caption{Abstract PDP Firmware Architecture}
+        \label{fig:abstract_architecture}
+    \end{figure}
+
 \section{Frontend Architecture}
     \label{sec:frontend_arch}
 
 \section{Overall Backend Architecture}
     \label{sec:backend_arch}
     The implemented architecture consists of the portion of the AMM that drives an IRLED tile (or emitter array) directly from data packets sent by a compositor. As such, it is responsible for receiving PDP packets, decoding and validating them, and drawing them to an IRLED array. This is shown in Figure~\ref{fig:overall_arch}. In the current implementation, packets are sent using an underlying HDMI protocol layer. The incoming data is synchronized across two distinct clock domains utilizing a synchronized circular buffer (SCB). The input side consists of two separate HDMI inputs in order to meet system bandwidth requirements. Each input is assumed to contain clock skew relative to the other so separate SCBs are used to synchronize these to the system domain. At a high level, individual data words of 24-bit sized values come in per HDMI cycle. These are transitioned to the system domain and stored for retrieval by the array emitter module. The array emitter module is responsible for bringing in each 24-bit word value and emptying the corresponding SCB slot. As it brings in each word, it begins to decode them into PDP commands. Once enough data is buffered for a write or reset command, it sends the data to the write buffer module which then drives an emitter directly through I/O lines.
-
 
     \begin{figure}
         \centering

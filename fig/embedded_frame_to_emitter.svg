@@ -1,0 +1,882 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="951.99969"
+   height="300.99545"
+   overflow="hidden"
+   version="1.1"
+   id="svg232"
+   sodipodi:docname="embedded_frame_to_emitter.svg"
+   inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07)">
+  <metadata
+     id="metadata236">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="3840"
+     inkscape:window-height="2066"
+     id="namedview234"
+     showgrid="false"
+     fit-margin-left="1"
+     fit-margin-top="1"
+     fit-margin-bottom="1"
+     fit-margin-right="1"
+     inkscape:zoom="1.0992187"
+     inkscape:cx="492.00034"
+     inkscape:cy="-16.003906"
+     inkscape:window-x="-11"
+     inkscape:window-y="-11"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g230" />
+  <defs
+     id="defs32">
+    <clipPath
+       id="clip0">
+      <rect
+         x="0"
+         y="0"
+         width="1280"
+         height="720"
+         id="rect2" />
+    </clipPath>
+    <clipPath
+       id="clip1">
+      <rect
+         x="0"
+         y="0"
+         width="647700"
+         height="542925"
+         id="rect5" />
+    </clipPath>
+    <image
+       width="78"
+       height="66"
+       xlink:href="data:image/png;base64,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"
+       preserveAspectRatio="none"
+       id="img2" />
+    <clipPath
+       id="clip3">
+      <rect
+         x="0"
+         y="0"
+         width="641639"
+         height="542925"
+         id="rect9" />
+    </clipPath>
+    <clipPath
+       id="clip4">
+      <rect
+         x="0"
+         y="0"
+         width="514350"
+         height="438150"
+         id="rect12" />
+    </clipPath>
+    <image
+       width="62"
+       height="52"
+       xlink:href="data:image/png;base64,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"
+       preserveAspectRatio="none"
+       id="img5" />
+    <clipPath
+       id="clip6">
+      <rect
+         x="0"
+         y="0"
+         width="514350"
+         height="431390"
+         id="rect16" />
+    </clipPath>
+    <clipPath
+       id="clip7">
+      <rect
+         x="0"
+         y="-9.3132302e-10"
+         width="647700"
+         height="552450"
+         id="rect19" />
+    </clipPath>
+    <clipPath
+       id="clip8">
+      <rect
+         x="0"
+         y="0"
+         width="647700"
+         height="548054"
+         id="rect22" />
+    </clipPath>
+    <clipPath
+       id="clip9">
+      <rect
+         x="0"
+         y="0"
+         width="1676400"
+         height="866775"
+         id="rect25" />
+    </clipPath>
+    <image
+       width="180"
+       height="94"
+       xlink:href="data:image/png;base64,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"
+       preserveAspectRatio="none"
+       id="img10" />
+    <clipPath
+       id="clip11">
+      <rect
+         x="0"
+         y="0"
+         width="1659780"
+         height="866775"
+         id="rect29" />
+    </clipPath>
+  </defs>
+  <g
+     clip-path="url(#clip0)"
+     id="g230"
+     transform="translate(-147.99966,-376.00391)">
+    <rect
+       x="150"
+       y="425"
+       width="332"
+       height="219"
+       fill="#d8e9de"
+       id="rect38" />
+    <rect
+       x="150.83299"
+       y="425.83301"
+       width="330.33301"
+       height="217.33299"
+       stroke="#4b757d"
+       stroke-width="3.66667"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       id="rect40" />
+    <rect
+       x="150"
+       y="425"
+       width="41"
+       height="42"
+       fill="#f7dc74"
+       id="rect42" />
+    <rect
+       x="150.83299"
+       y="425.83301"
+       width="39.333302"
+       height="40.333302"
+       stroke="#4b757d"
+       stroke-width="3.66667"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       id="rect44" />
+    <text
+       font-family="'Franklin Gothic Book', 'Franklin Gothic Book_MSFontService', sans-serif"
+       font-weight="400"
+       font-size="21px"
+       transform="translate(164.114,454)"
+       id="text46">1</text>
+    <rect
+       x="191"
+       y="425"
+       width="41"
+       height="42"
+       fill="#f7dc74"
+       id="rect48" />
+    <rect
+       x="191.83299"
+       y="425.83301"
+       width="39.333302"
+       height="40.333302"
+       stroke="#4b757d"
+       stroke-width="3.66667"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       id="rect50" />
+    <text
+       font-family="'Franklin Gothic Book', 'Franklin Gothic Book_MSFontService', sans-serif"
+       font-weight="400"
+       font-size="19px"
+       transform="translate(201.461,453)"
+       id="text52">XS</text>
+    <rect
+       x="232"
+       y="425"
+       width="42"
+       height="42"
+       fill="#f7dc74"
+       id="rect54" />
+    <rect
+       x="232.83299"
+       y="425.83301"
+       width="40.333302"
+       height="40.333302"
+       stroke="#4b757d"
+       stroke-width="3.66667"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       id="rect56" />
+    <text
+       font-family="'Franklin Gothic Book', 'Franklin Gothic Book_MSFontService', sans-serif"
+       font-weight="400"
+       font-size="19px"
+       transform="translate(243.395,453)"
+       id="text58">XE</text>
+    <rect
+       x="274"
+       y="425"
+       width="42"
+       height="42"
+       fill="#f7dc74"
+       id="rect60" />
+    <rect
+       x="274.83301"
+       y="425.83301"
+       width="40.333302"
+       height="40.333302"
+       stroke="#4b757d"
+       stroke-width="3.66667"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       id="rect62" />
+    <text
+       font-family="'Franklin Gothic Book', 'Franklin Gothic Book_MSFontService', sans-serif"
+       font-weight="400"
+       font-size="19px"
+       transform="translate(285.016,453)"
+       id="text64">YS</text>
+    <rect
+       x="315"
+       y="425"
+       width="42"
+       height="42"
+       fill="#f7dc74"
+       id="rect66" />
+    <rect
+       x="315.83301"
+       y="425.83301"
+       width="40.333302"
+       height="40.333302"
+       stroke="#4b757d"
+       stroke-width="3.66667"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       id="rect68" />
+    <text
+       font-family="'Franklin Gothic Book', 'Franklin Gothic Book_MSFontService', sans-serif"
+       font-weight="400"
+       font-size="19px"
+       transform="translate(326.426,453)"
+       id="text70">YE</text>
+    <rect
+       x="357"
+       y="425"
+       width="42"
+       height="42"
+       fill="#d8e9de"
+       id="rect72" />
+    <rect
+       x="357.83301"
+       y="425.83301"
+       width="40.333302"
+       height="40.333302"
+       stroke="#4b757d"
+       stroke-width="3.66667"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       id="rect74" />
+    <text
+       font-family="'Franklin Gothic Book', 'Franklin Gothic Book_MSFontService', sans-serif"
+       font-weight="400"
+       font-size="19px"
+       transform="translate(371.943,453)"
+       id="text76">D</text>
+    <rect
+       x="398"
+       y="425"
+       width="42"
+       height="42"
+       fill="#d8e9de"
+       id="rect78" />
+    <rect
+       x="398.83301"
+       y="425.83301"
+       width="40.333302"
+       height="40.333302"
+       stroke="#4b757d"
+       stroke-width="3.66667"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       id="rect80" />
+    <text
+       font-family="'Franklin Gothic Book', 'Franklin Gothic Book_MSFontService', sans-serif"
+       font-weight="400"
+       font-size="19px"
+       transform="translate(413.206,453)"
+       id="text82">D</text>
+    <rect
+       x="440"
+       y="425"
+       width="41"
+       height="42"
+       fill="#f7dc74"
+       id="rect84" />
+    <rect
+       x="440.83301"
+       y="425.83301"
+       width="39.333302"
+       height="40.333302"
+       stroke="#4b757d"
+       stroke-width="3.66667"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       id="rect86" />
+    <text
+       font-family="'Franklin Gothic Book', 'Franklin Gothic Book_MSFontService', sans-serif"
+       font-weight="400"
+       font-size="21px"
+       transform="translate(454.372,454)"
+       id="text88">1</text>
+    <rect
+       x="150"
+       y="467"
+       width="41"
+       height="43"
+       fill="#f7dc74"
+       id="rect90" />
+    <rect
+       x="150.83299"
+       y="467.83301"
+       width="39.333302"
+       height="41.333302"
+       stroke="#4b757d"
+       stroke-width="3.66667"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       id="rect92" />
+    <text
+       font-family="'Franklin Gothic Book', 'Franklin Gothic Book_MSFontService', sans-serif"
+       font-weight="400"
+       font-size="19px"
+       transform="translate(160.198,496)"
+       id="text94">XS</text>
+    <rect
+       x="191"
+       y="467"
+       width="41"
+       height="43"
+       fill="#f7dc74"
+       id="rect96" />
+    <rect
+       x="191.83299"
+       y="467.83301"
+       width="39.333302"
+       height="41.333302"
+       stroke="#4b757d"
+       stroke-width="3.66667"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       id="rect98" />
+    <text
+       font-family="'Franklin Gothic Book', 'Franklin Gothic Book_MSFontService', sans-serif"
+       font-weight="400"
+       font-size="19px"
+       transform="translate(201.711,496)"
+       id="text100">XE</text>
+    <rect
+       x="232"
+       y="467"
+       width="42"
+       height="43"
+       fill="#f7dc74"
+       id="rect102" />
+    <rect
+       x="232.83299"
+       y="467.83301"
+       width="40.333302"
+       height="41.333302"
+       stroke="#4b757d"
+       stroke-width="3.66667"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       id="rect104" />
+    <text
+       font-family="'Franklin Gothic Book', 'Franklin Gothic Book_MSFontService', sans-serif"
+       font-weight="400"
+       font-size="19px"
+       transform="translate(243.332,496)"
+       id="text106">YS</text>
+    <rect
+       x="274"
+       y="467"
+       width="42"
+       height="43"
+       fill="#f7dc74"
+       id="rect108" />
+    <rect
+       x="274.83301"
+       y="467.83301"
+       width="40.333302"
+       height="41.333302"
+       stroke="#4b757d"
+       stroke-width="3.66667"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       id="rect110" />
+    <text
+       font-family="'Franklin Gothic Book', 'Franklin Gothic Book_MSFontService', sans-serif"
+       font-weight="400"
+       font-size="19px"
+       transform="translate(285.162,496)"
+       id="text112">YE</text>
+    <rect
+       x="315"
+       y="467"
+       width="42"
+       height="43"
+       fill="#d8e9de"
+       id="rect114" />
+    <rect
+       x="315.83301"
+       y="467.83301"
+       width="40.333302"
+       height="41.333302"
+       stroke="#4b757d"
+       stroke-width="3.66667"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       id="rect116" />
+    <text
+       font-family="'Franklin Gothic Book', 'Franklin Gothic Book_MSFontService', sans-serif"
+       font-weight="400"
+       font-size="19px"
+       transform="translate(330.259,496)"
+       id="text118">D</text>
+    <rect
+       x="357"
+       y="467"
+       width="42"
+       height="43"
+       fill="#d8e9de"
+       id="rect120" />
+    <rect
+       x="357.83301"
+       y="467.83301"
+       width="40.333302"
+       height="41.333302"
+       stroke="#4b757d"
+       stroke-width="3.66667"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       id="rect122" />
+    <text
+       font-family="'Franklin Gothic Book', 'Franklin Gothic Book_MSFontService', sans-serif"
+       font-weight="400"
+       font-size="19px"
+       transform="translate(371.943,496)"
+       id="text124">D</text>
+    <rect
+       x="398"
+       y="467"
+       width="42"
+       height="43"
+       fill="#d8e9de"
+       id="rect126" />
+    <rect
+       x="398.83301"
+       y="467.83301"
+       width="40.333302"
+       height="41.333302"
+       stroke="#4b757d"
+       stroke-width="3.66667"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       id="rect128" />
+    <text
+       font-family="'Franklin Gothic Book', 'Franklin Gothic Book_MSFontService', sans-serif"
+       font-weight="400"
+       font-size="19px"
+       transform="translate(413.206,496)"
+       id="text130">D</text>
+    <rect
+       x="440"
+       y="467"
+       width="41"
+       height="43"
+       fill="#d8e9de"
+       id="rect132" />
+    <rect
+       x="440.83301"
+       y="467.83301"
+       width="39.333302"
+       height="41.333302"
+       stroke="#4b757d"
+       stroke-width="3.66667"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       id="rect134" />
+    <text
+       font-family="'Franklin Gothic Book', 'Franklin Gothic Book_MSFontService', sans-serif"
+       font-weight="400"
+       font-size="19px"
+       transform="translate(454.622,496)"
+       id="text136">D</text>
+    <rect
+       x="150"
+       y="510"
+       width="42"
+       height="43"
+       fill="#f7dc74"
+       id="rect138" />
+    <rect
+       x="150.83299"
+       y="510.83301"
+       width="40.333302"
+       height="41.333302"
+       stroke="#4b757d"
+       stroke-width="3.66667"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       id="rect140" />
+    <text
+       font-family="'Franklin Gothic Book', 'Franklin Gothic Book_MSFontService', sans-serif"
+       font-weight="400"
+       font-size="21px"
+       transform="translate(164.503,540)"
+       id="text142">1</text>
+    <rect
+       x="191"
+       y="510"
+       width="42"
+       height="43"
+       fill="#f7dc74"
+       id="rect144" />
+    <rect
+       x="191.83299"
+       y="510.83301"
+       width="40.333302"
+       height="41.333302"
+       stroke="#4b757d"
+       stroke-width="3.66667"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       id="rect146" />
+    <text
+       font-family="'Franklin Gothic Book', 'Franklin Gothic Book_MSFontService', sans-serif"
+       font-weight="400"
+       font-size="19px"
+       transform="translate(201.759,539)"
+       id="text148">XS</text>
+    <rect
+       x="233"
+       y="510"
+       width="41"
+       height="43"
+       fill="#f7dc74"
+       id="rect150" />
+    <rect
+       x="233.83299"
+       y="510.83301"
+       width="39.333302"
+       height="41.333302"
+       stroke="#4b757d"
+       stroke-width="3.66667"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       id="rect152" />
+    <text
+       font-family="'Franklin Gothic Book', 'Franklin Gothic Book_MSFontService', sans-serif"
+       font-weight="400"
+       font-size="19px"
+       transform="translate(243.58,539)"
+       id="text154">XE</text>
+    <rect
+       x="274"
+       y="510"
+       width="43"
+       height="43"
+       fill="#f7dc74"
+       id="rect156" />
+    <rect
+       x="274.83301"
+       y="510.83301"
+       width="41.333302"
+       height="41.333302"
+       stroke="#4b757d"
+       stroke-width="3.66667"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       id="rect158" />
+    <text
+       font-family="'Franklin Gothic Book', 'Franklin Gothic Book_MSFontService', sans-serif"
+       font-weight="400"
+       font-size="19px"
+       transform="translate(285.524,539)"
+       id="text160">YS</text>
+    <rect
+       x="315"
+       y="510"
+       width="42"
+       height="43"
+       fill="#f7dc74"
+       id="rect162" />
+    <rect
+       x="315.83301"
+       y="510.83301"
+       width="40.333302"
+       height="41.333302"
+       stroke="#4b757d"
+       stroke-width="3.66667"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       id="rect164" />
+    <text
+       font-family="'Franklin Gothic Book', 'Franklin Gothic Book_MSFontService', sans-serif"
+       font-weight="400"
+       font-size="19px"
+       transform="translate(326.309,539)"
+       id="text166">YE</text>
+    <rect
+       x="357"
+       y="510"
+       width="42"
+       height="43"
+       fill="#d8e9de"
+       id="rect168" />
+    <rect
+       x="357.83301"
+       y="510.83301"
+       width="40.333302"
+       height="41.333302"
+       stroke="#4b757d"
+       stroke-width="3.66667"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       id="rect170" />
+    <text
+       font-family="'Franklin Gothic Book', 'Franklin Gothic Book_MSFontService', sans-serif"
+       font-weight="400"
+       font-size="19px"
+       transform="translate(371.885,539)"
+       id="text172">D</text>
+    <rect
+       x="398"
+       y="510"
+       width="42"
+       height="43"
+       fill="#d8e9de"
+       id="rect174" />
+    <rect
+       x="398.83301"
+       y="510.83301"
+       width="40.333302"
+       height="41.333302"
+       stroke="#4b757d"
+       stroke-width="3.66667"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       id="rect176" />
+    <text
+       font-family="'Franklin Gothic Book', 'Franklin Gothic Book_MSFontService', sans-serif"
+       font-weight="400"
+       font-size="19px"
+       transform="translate(413.148,539)"
+       id="text178">D</text>
+    <rect
+       x="440"
+       y="510"
+       width="41"
+       height="43"
+       fill="#d8e9de"
+       id="rect180" />
+    <rect
+       x="440.83301"
+       y="510.83301"
+       width="39.333302"
+       height="41.333302"
+       stroke="#4b757d"
+       stroke-width="3.66667"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       id="rect182" />
+    <text
+       font-family="'Franklin Gothic Book', 'Franklin Gothic Book_MSFontService', sans-serif"
+       font-weight="400"
+       font-size="19px"
+       transform="translate(454.622,539)"
+       id="text186">D<tspan
+   font-size="24px"
+   x="-301.022"
+   y="-123"
+   id="tspan184">Small Data Frame (not to scale)</tspan></text>
+    <rect
+       x="713"
+       y="407"
+       width="385"
+       height="268"
+       fill="#69a1ab"
+       id="rect188" />
+    <rect
+       x="713.83301"
+       y="407.83301"
+       width="383.33301"
+       height="266.33301"
+       stroke="#4b757d"
+       stroke-width="3.66667"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       id="rect190" />
+    <path
+       d="m 535,507.75 h 80.5 V 489 L 653,526.5 615.5,564 V 545.25 H 535 Z"
+       fill="#69a1ab"
+       fill-rule="evenodd"
+       id="path192" />
+    <path
+       d="m 535,507.75 h 80.5 V 489 L 653,526.5 615.5,564 V 545.25 H 535 Z m 3.667,33.833 h 80.5 v 13.565 L 647.815,526.5 619.167,497.852 v 13.565 h -80.5 z"
+       fill="#4b757d"
+       id="path194" />
+    <text
+       font-family="'Franklin Gothic Book', 'Franklin Gothic Book_MSFontService', sans-serif"
+       font-weight="400"
+       font-size="24px"
+       transform="translate(839.776,393)"
+       id="text198">Array Emitter<tspan
+   fill="#c00000"
+   font-size="19px"
+   x="91.910599"
+   y="67"
+   id="tspan196">High Speed</tspan></text>
+    <g
+       clip-path="url(#clip1)"
+       transform="matrix(1.04987e-4,0,0,1.04987e-4,821,587)"
+       id="g204">
+      <g
+         clip-path="url(#clip3)"
+         transform="matrix(1.00945,0,0,1,-0.5,0)"
+         id="g202">
+        <use
+           width="100%"
+           height="100%"
+           xlink:href="#img2"
+           transform="scale(8226.14)"
+           id="use200"
+           x="0"
+           y="0" />
+      </g>
+    </g>
+    <g
+       clip-path="url(#clip4)"
+       transform="matrix(1.04987e-4,0,0,1.04987e-4,775,489)"
+       id="g210">
+      <g
+         clip-path="url(#clip6)"
+         transform="scale(1,1.01567)"
+         id="g208">
+        <use
+           width="100%"
+           height="100%"
+           xlink:href="#img5"
+           transform="scale(8295.97)"
+           id="use206"
+           x="0"
+           y="0" />
+      </g>
+    </g>
+    <g
+       clip-path="url(#clip7)"
+       transform="matrix(1.04987e-4,0,0,1.04987e-4,946,601)"
+       id="g216">
+      <g
+         clip-path="url(#clip8)"
+         transform="matrix(1,0,0,1.00802,0,-0.5)"
+         id="g214">
+        <use
+           width="100%"
+           height="100%"
+           xlink:href="#img2"
+           transform="scale(8303.85)"
+           id="use212"
+           x="0"
+           y="0" />
+      </g>
+    </g>
+    <text
+       fill="#ffff00"
+       font-family="'Franklin Gothic Book', 'Franklin Gothic Book_MSFontService', sans-serif"
+       font-weight="400"
+       font-size="16px"
+       transform="translate(762.759,481)"
+       id="text222">Low Speed<tspan
+   x="54.356201"
+   y="100"
+   id="tspan218">Low Speed</tspan><tspan
+   x="177.935"
+   y="118"
+   id="tspan220">Low Speed</tspan></text>
+    <g
+       clip-path="url(#clip9)"
+       transform="matrix(1.04987e-4,0,0,1.04987e-4,875,453)"
+       id="g228">
+      <g
+         clip-path="url(#clip11)"
+         transform="scale(1.01001,1)"
+         id="g226">
+        <use
+           width="100%"
+           height="100%"
+           xlink:href="#img10"
+           transform="scale(9221.01)"
+           id="use224"
+           x="0"
+           y="0" />
+      </g>
+    </g>
+  </g>
+</svg>
