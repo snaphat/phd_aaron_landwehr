@@ -99,7 +99,7 @@ This chapter discusses the underlying communication details of the packetized di
         \label{tbl:pdp_efficiency}
     \end{table}
 
-    The numbers in Table~\ref{tbl:pdp_efficiency} are computed by taking the visible resolution and dividing it by the minimum pixel write size supported on an array. The minimum pixel write size is also synonymous with minimum possible PDP packet payload size excluding headers, and thus, is denoted as $S_{pkt}$. This yields the maximum possible packet count, $C_{pkt}$, for a given resolution as shown in Equation~\ref{eq:packet_max}. The visible resolution parameters are denoted as horizontal active, $h_a$, and vertical active, $v_a$, respectively to keep consistent with the naming conventions used in Chapter~\ref{chap:display_protocols}. Within the NSLEDS and HDILED arrays, the minimal packet size, $S_{pkt}$, is 2 by 32 due to the interleaved array write process discussed in Chapter~\ref{chap:array_write_process}.
+    The numbers in Table~\ref{tbl:pdp_efficiency} are computed by taking the visible resolution and dividing it by the minimum pixel write size supported on an array. The minimum pixel write size is also synonymous with minimum possible PDP packet payload size excluding headers, and thus, is denoted as $S_{pkt}$. This yields the maximum possible packet count, $C_{pkt}$, for a given resolution as shown in Equation~\eqref{eq:packet_max}. The visible resolution parameters are denoted as horizontal active, $h_a$, and vertical active, $v_a$, respectively to keep consistent with the naming conventions used in Chapter~\ref{chap:display_protocols}. Within the NSLEDS and HDILED arrays, the minimal packet size, $S_{pkt}$, is 2 by 32 due to the interleaved array write process discussed in Chapter~\ref{chap:array_write_process}.
 
     \begin{equation}
         \begin{array}{ l }
@@ -109,7 +109,7 @@ This chapter discusses the underlying communication details of the packetized di
         \label{eq:packet_max}
     \end{equation}
 
-    The total pixel overhead, $O_{px}$, is computed by multiplying the total packet count, $C_{pkt}$, by the packet overhead, $O_{pkt}$, as shown in Equation~\ref{eq:overhead_pixel}. The overhead is determined by looking at the total number of additional words added for PDP header data. Header details are discussed in Chapter~\ref{sec:packet_format}.
+    The total pixel overhead, $O_{px}$, is computed by multiplying the total packet count, $C_{pkt}$, by the packet overhead, $O_{pkt}$, as shown in Equation~\eqref{eq:overhead_pixel}. The overhead is determined by looking at the total number of additional words added for PDP header data. Header details are discussed in Chapter~\ref{sec:packet_format}.
 
     \begin{equation}
         \begin{array}{ l }
@@ -119,7 +119,7 @@ This chapter discusses the underlying communication details of the packetized di
         \label{eq:overhead_pixel}
     \end{equation}
 
-    The total pixel count, $T_{px}$, is determined by adding the total pixel overhead, $O_{px}$ or the result of Equation~\ref{eq:overhead_pixel} to the visible pixel size as shown in Equation~\ref{eq:total_pixel}.
+    The total pixel count, $T_{px}$, is determined by adding the total pixel overhead, $O_{px}$ or the result of Equation~\eqref{eq:overhead_pixel} to the visible pixel size as shown in Equation~\eqref{eq:total_pixel}.
 
     \begin{equation}
         \begin{array}{ l }
@@ -130,7 +130,7 @@ This chapter discusses the underlying communication details of the packetized di
         \label{eq:total_pixel}
     \end{equation}
 
-    Putting the input variables together and simplifying yields Equation~\ref{eq:total_pixel2} where $T_{px}$ is the total pixels.
+    Putting the input variables together and simplifying yields Equation~\eqref{eq:total_pixel2} where $T_{px}$ is the total pixels.
 
     \begin{equation}
         \begin{array}{ l }
@@ -141,12 +141,12 @@ This chapter discusses the underlying communication details of the packetized di
         \label{eq:total_pixel2}
     \end{equation}
 
-    To compute overhead percentage is simply a matter of dividing the total pixel overhead, $O_{px}$ by the total pixels, $T_{px}$.
+    Computing the overhead percentage, $O_{pdp}$, is simply a matter of dividing the total pixel overhead, $O_{px}$, by the total pixels, $T_{px}$.
 
     \begin{equation}
         \begin{array}{ l }
-            \displaystyle O_{\%}=\frac{O_{pkt}\cdot C_{pkt}}{T_{px}} \cdot 100 \\[13pt]
-            \displaystyle O_{\%}=\frac{O_{px}}{T_{px}} \cdot 100 \\[13pt]
+            \displaystyle O_{pdp}=\frac{O_{pkt}\cdot C_{pkt}}{T_{px}} \cdot 100 \\[13pt]
+            \displaystyle O_{pdp}=\frac{O_{px}}{T_{px}} \cdot 100 \\[13pt]
         \end{array}
         \label{eq:overhead}
     \end{equation}
@@ -155,12 +155,13 @@ This chapter discusses the underlying communication details of the packetized di
 
     \begin{equation}
         \begin{array}{ l }
-            \displaystyle O_{\%}=\frac{O_{pkt}\cdot \frac{h_a \cdot v_a}{S_{pkt}}}{O_{pkt} \cdot \frac{h_a \cdot v_a}{S_{pkt}} + h_a \cdot v_a} \cdot 100 \\[16pt]
-            \displaystyle O_{\%}=\frac{O_{pkt}\cdot \frac{\cancelto{1}{h_a \cdot v_a}}{S_{pkt}}}{O_{pkt} \cdot \frac{\cancelto{1}{h_a \cdot v_a}}{S_{pkt}} + \cancelto{1}{h_a \cdot v_a}} \cdot 100 \\[25pt]
-            \displaystyle O_{\%}=\frac{O_{pkt}\cdot \frac{1}{S_{pkt}}}{O_{pkt} \cdot \frac{1}{S_{pkt}} + 1} \cdot 100 \\[16pt]
-            \displaystyle O_{\%}=\frac{\frac{O_{pkt}}{S_{pkt}}}{\frac{O_{pkt}}{S_{pkt}} + 1} \cdot 100 \\[19pt]
-            \displaystyle O_{\%}=\frac{\frac{5}{2 \cdot 32}}{\frac{5}{2 \cdot 32} + 1} \cdot 100 \\[13pt]
-            \displaystyle O_{\%}=7.2 \\[13pt]
+            \displaystyle O_{pdp}=\frac{O_{pkt}\cdot \frac{h_a \cdot v_a}{S_{pkt}}}{O_{pkt} \cdot \frac{h_a \cdot v_a}{S_{pkt}} + h_a \cdot v_a} \cdot 100 \\[16pt]
+            \displaystyle O_{pdp}=\frac{O_{pkt}\cdot \frac{\cancelto{1}{h_a \cdot v_a}}{S_{pkt}}}{O_{pkt} \cdot \frac{\cancelto{1}{h_a \cdot v_a}}{S_{pkt}} + \cancelto{1}{h_a \cdot v_a}} \cdot 100 \\[25pt]
+            \displaystyle O_{pdp}=\frac{O_{pkt}\cdot \frac{1}{S_{pkt}}}{O_{pkt} \cdot \frac{1}{S_{pkt}} + 1} \cdot 100 \\[16pt]
+            \displaystyle O_{pdp}=\frac{\frac{O_{pkt}}{S_{pkt}}}{\frac{O_{pkt}}{S_{pkt}} + 1} \cdot 100 \\[19pt]
+            \displaystyle O_{pdp}=\frac{O_{pkt}}{O_{pkt}+S_{pkt}} \cdot 100 \\[19pt]
+            \displaystyle O_{pdp}=\frac{5}{5 + 2 \cdot 32} \cdot 100 \\[19pt]
+            \displaystyle O_{pdp}=7.2 \\[13pt]
         \end{array}
         \label{eq:cancel}
     \end{equation}
@@ -169,10 +170,18 @@ This chapter discusses the underlying communication details of the packetized di
 
 \section{Multi-framerate Performance}
     \label{sec:multi_framerate_performance}
-    Furthermore, because PDP allows for control over individual segments a large amount of bandwidth can be saved by updating parts of a frame at slower frame rates than other sections of a frame. Equation~\eqref{eq:bandwidth_saved} shows computing the savings where $p$ is the proportion of pixels operating at a slow frame rate, $r_f$ is the fast frame rate, $r_s$ is the slow frame rate, and $b_s$ the percentage of bandwidth saved.
+    Furthermore, because PDP allows for control over individual segments a large amount of bandwidth can be saved by updating parts of a frame at slower frame rates than other sections of a frame. Equation~\eqref{eq:bandwidth_saved} and the subsequent simplification shows how to compute the percentage of saved bandwidth, $b_s$, where the proportion of pixels operating at a slow frame rate is $p$, the fast framerate is $r_f$, and the slow frame rate is $r_s$. The final simplified form is simply the percentage of pixels operating at a slow rate multiplied by the proportion of pixels that have that difference.
 
     \begin{equation}
-        b_s=1-\frac{(1-p)\cdot r_f + p\cdot r_s}{r_f}
+        \begin{array}{ l }
+            \displaystyle b_s=\left(1-\frac{(1-p)\cdot r_f + p\cdot r_s}{r_f}\right)\cdot 100 \\[16pt]
+            \displaystyle b_s \cdot r_f=\left(r_f-r_f \cdot \frac{(1-p)\cdot r_f + p\cdot r_s}{r_f}\right)\cdot 100 \\[13pt]
+            \displaystyle b_s \cdot r_f= (r_f - (1-p)\cdot r_f - p\cdot r_s)\cdot 100 \\[13pt]
+            \displaystyle b_s \cdot r_f= (r_f - r_f + p \cdot r_f - p\cdot r_s)\cdot 100 \\[13pt]
+            \displaystyle b_s \cdot r_f= (p \cdot r_f - p\cdot r_s)\cdot 100 \\[13pt]
+            \displaystyle b_s \cdot r_f= (p \cdot (r_f - r_s))\cdot 100 \\[13pt]
+            \displaystyle b_s=\left(\frac{p \cdot (r_f-r_s)}{r_f}\right)\cdot 100
+        \end{array}
         \label{eq:bandwidth_saved}
     \end{equation}
 
