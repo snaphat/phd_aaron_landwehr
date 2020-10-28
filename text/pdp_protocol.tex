@@ -185,7 +185,49 @@ This chapter discusses the underlying communication details of the packetized di
         \label{eq:bandwidth_saved}
     \end{equation}
 
-        %FIXME: Add figure that shows better bandwidth utilization of PDP?
+    \begin{table}
+        \centering
+        \large
+        \begin{tcolorbox}[tabularx={Y|Y|Y|Y},title=\textbf{Multi-framerate Bandwidth Savings},boxrule=0.5pt]
+        \textbf{\normalsize Slow Framerate (Hz)} & \textbf{\normalsize Fast Framerate (Hz)} & \textbf{\normalsize Proportion of Slow Pixels (p)} & \textbf{\normalsize Bandwidth Saved (\%)} \\ \hline
+            \textbf{\normalsize 10} & \textbf{\normalsize 100} & {\normalsize 0.1} & {\normalsize 9.0} \\ \hline
+            \textbf{\normalsize 10} & \textbf{\normalsize 100} & {\normalsize 0.2} & {\normalsize 18.0} \\ \hline
+            \textbf{\normalsize 10} & \textbf{\normalsize 100} & {\normalsize 0.3} & {\normalsize 27.0} \\ \hline
+            \textbf{\normalsize 10} & \textbf{\normalsize 100} & {\normalsize 0.4} & {\normalsize 36.0} \\ \hline
+            \textbf{\normalsize 10} & \textbf{\normalsize 100} & {\normalsize 0.5} & {\normalsize 45.0} \\ \hline
+            \textbf{\normalsize 10} & \textbf{\normalsize 100} & {\normalsize 0.6} & {\normalsize 54.0} \\ \hline
+            \textbf{\normalsize 10} & \textbf{\normalsize 100} & {\normalsize 0.7} & {\normalsize 63.0} \\ \hline
+            \textbf{\normalsize 10} & \textbf{\normalsize 100} & {\normalsize 0.8} & {\normalsize 72.0} \\ \hline
+            \textbf{\normalsize 10} & \textbf{\normalsize 100} & {\normalsize 0.9} & {\normalsize 81.0} \\ \hline
+            \textbf{\normalsize 10} & \textbf{\normalsize 100} & {\normalsize 1.0} & {\normalsize 90.0} \\ \hline
+
+            %\textbf{\normalsize 10} & \textbf{\normalsize 250} & {\normalsize 0.1} & {\normalsize 9.6} \\ \hline
+            %\textbf{\normalsize 10} & \textbf{\normalsize 250} & {\normalsize 0.2} & {\normalsize 19.2} \\ \hline
+            %\textbf{\normalsize 10} & \textbf{\normalsize 250} & {\normalsize 0.3} & {\normalsize 28.8} \\ \hline
+            %\textbf{\normalsize 10} & \textbf{\normalsize 250} & {\normalsize 0.4} & {\normalsize 38.4} \\ \hline
+            %\textbf{\normalsize 10} & \textbf{\normalsize 250} & {\normalsize 0.5} & {\normalsize 48.0} \\ \hline
+
+            %\textbf{\normalsize 10} & \textbf{\normalsize 500} & {\normalsize 0.1} & {\normalsize 9.8} \\ \hline
+            %\textbf{\normalsize 10} & \textbf{\normalsize 500} & {\normalsize 0.2} & {\normalsize 19.6} \\ \hline
+            %\textbf{\normalsize 10} & \textbf{\normalsize 500} & {\normalsize 0.3} & {\normalsize 29.4} \\ \hline
+            %\textbf{\normalsize 10} & \textbf{\normalsize 500} & {\normalsize 0.4} & {\normalsize 39.2} \\ \hline
+            %\textbf{\normalsize 10} & \textbf{\normalsize 500} & {\normalsize 0.5} & {\normalsize 49.0} \\ \hline
+
+            \textbf{\normalsize 10} & \textbf{\normalsize 1000} & {\normalsize 0.1} & {\normalsize 9.9} \\ \hline
+            \textbf{\normalsize 10} & \textbf{\normalsize 1000} & {\normalsize 0.2} & {\normalsize 19.8} \\ \hline
+            \textbf{\normalsize 10} & \textbf{\normalsize 1000} & {\normalsize 0.3} & {\normalsize 29.7} \\ \hline
+            \textbf{\normalsize 10} & \textbf{\normalsize 1000} & {\normalsize 0.4} & {\normalsize 39.6} \\ \hline
+            \textbf{\normalsize 10} & \textbf{\normalsize 1000} & {\normalsize 0.5} & {\normalsize 49.5} \\ \hline
+            \textbf{\normalsize 10} & \textbf{\normalsize 1000} & {\normalsize 0.6} & {\normalsize 59.4} \\ \hline
+            \textbf{\normalsize 10} & \textbf{\normalsize 1000} & {\normalsize 0.7} & {\normalsize 69.3} \\ \hline
+            \textbf{\normalsize 10} & \textbf{\normalsize 1000} & {\normalsize 0.8} & {\normalsize 79.2} \\ \hline
+            \textbf{\normalsize 10} & \textbf{\normalsize 1000} & {\normalsize 0.9} & {\normalsize 89.1} \\ \hline
+            \textbf{\normalsize 10} & \textbf{\normalsize 1000} & {\normalsize 1.0} & {\normalsize 99.9} \\ \hline
+        \end{tcolorbox}
+        \caption[Multi-framerate Bandwidth Savings]{Bandwidth saved relative to operating all pixels at the given fast framerate for PDP operation with two framerates.}
+        \label{tbl:multi_framerate_bandwidth_savings}
+    \end{table}
+
         %FIXME: Relate back to the design goals of PDP
 
 
