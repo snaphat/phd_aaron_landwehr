@@ -1,8 +1,8 @@
 \label{chap:display_protocols}
 This chapter discusses the details of display protocols. Firstly, it provides a general discussion of how common display protocols work to send pixel data to a display system (e.g. a television). Then, it discusses how these protocols are utilized within IRSP technology.
 
-\section{Classical Display Protocols}
-    \label{sec:classical_display_protocols}
+\section{Conventional Display Protocols}
+    \label{sec:conventional_display_protocols}
 
     Display specifications such as DSI\cite{HDMIForum2017}, DVI\cite{DDWG1999}, HDMI\cite{HDMIForum2018}, and DisplayPort.\cite{VESA2016} are the backbone of consumer electronic display devices\footnote{Some newer additions such as Variable Refresh Rate (VRR) and the framing of DisplayPort are discussed in Chapter~\ref{chap:pdp_protocol} in order to allow for a direct comparison with PDP.} They are utilized in a plethora of devices ranging from televisions, monitors, laptops, smart phones, to embedded devices such as point of sale (POS) terminals. Increasingly, they are being utilized in the ever increasing smart display market for applications such as registration, product menus, smart watches, etc.
 
@@ -146,7 +146,7 @@ This chapter discusses the details of display protocols. Firstly, it provides a 
 
 \section{Display Protocols within IRSP Technology}
     \label{sec:displays_within_proj_system}
-    IRSP technology typically utilizes classical display protocol technology in some form in order to drive IR-arrays. In the most basic form a scene generator will provide imagery that is encoded utilizing a display protocol and send it to some form of close support electronics which will then decode the stream pixel by pixel and drive an array as discussed in Chapter~\ref{chap:array_write_process}.
+    IRSP technology typically utilizes conventional display protocol technology in some form in order to drive IR-arrays. In the most basic form a scene generator will provide imagery that is encoded utilizing a display protocol and send it to some form of close support electronics which will then decode the stream pixel by pixel and drive an array as discussed in Chapter~\ref{chap:array_write_process}.
 
     For scenerios that involve unsynchronized operation where dropped frames are not an issue, these protocols can largely be used without modification. However, scenerios that require synchronization in either open loop or closed loop setups present a challenge. Often, non-standard modifications must be used to compensate for jitter among different system processes and overall system latency. Figure~\ref{fig:custom_sync} shows where in in a system setup a custom solution would need to be inserted in the case of a scene generator connected directly to a CSE. In this diagram, the scene generation, nuc process, and the camera would need to be end-to-end synchronized with compensation for frame latencies.
 
@@ -161,4 +161,4 @@ This chapter discusses the details of display protocols. Firstly, it provides a 
 
     PDP on the other hand, eases synchronization due to its nature of being packetized, which allows for controlled data to be sent when directed without the need for a custom sync solution. With a PDP based solution, a scene generator could simply synchronize to a camera (if necessary), and send frame data when required under its own direct control. Moreover, hardware links could be replaced in the future with faster technology without the need to design a new hardware specific solution for synchronization. The only requirement being that the PDP protocol be utilized across the new link. Chapter~\ref{chap:pdp_protocol} will discuss the details of the protocol itself.
 
-    Now that the background of display protocols has been discussed, Chapter~\ref{chap:pdp_protocol} shifts focus to a discussion of the design of PDP itself followed by a protocol specification. Some of the more protocol specific details left out here, such as variable refresh rate (VRR), are discussed there in order to compare PDP features to classical display protocols.
+    Now that the background of display protocols has been discussed, Chapter~\ref{chap:pdp_protocol} shifts focus to a discussion of the design of PDP itself followed by a protocol specification. Some of the more protocol specific details left out here, such as variable refresh rate (VRR), are discussed there in order to compare PDP features to conventional display protocols.
