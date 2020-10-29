@@ -67,6 +67,75 @@ This chapter discusses the underlying communication details of the packetized di
 
     This differs from PDP in that PDP allows for completely arbitrary packets to be sent and decoded with differing packet sizes which enables PDP with the ability to support dynamic sub-frame framerates, and to be extendable for future packet types. Additionally, PDP carries no internal notion of horizontal or vertical blanking intervals which allows PDP to operate as fast as possible and give scene generators direct control over framerates at the user level. For example, the transport upon which PDP is implemented can operate at the maximum possible data rate allowable in hardware; then, the user in turn simply sends packets over the data link at the desired rate inserting empty space where necessary. In the backend, a PDP decoder would decode the data as quickly as possible and display it. From a higher level, this could be viewed as the user simply issuing commands to send data packets similar to that of how TCP based programs send data over a link with a remote environment executing the actual commands. It is up to the user where and when they want data displayed which enables PDP to fit a larger set of use cases, and to be simpler to integrate within projector systems.
 
+\section{Packet Format}
+    \label{sec:packet_format}
+    %FIXME: REAL PROPOSAL slides 31 and 32 talk about packet considerations and details
+    %slide 31:
+        %- Minimize what we need
+        %- Possible Solutions
+            %- X, Y, Size, Variable pixel data format
+            %- X start, X end, Y start, Y end, Variable pixel data format
+            %- Consider the sizes of each field and resolutions
+            %- Efficiency
+        %- Considerations
+            %- Byte alignment: Most computer architectures and HW use at-least 8-bit alignment for ISA and bus widths
+            %- Computations/Comparisons needed
+    %slide 32:
+        %- Fix-width fields
+            %- simplify decoding/processing HW and implementation
+        %WORD size >= 2^16, assume power of 2
+            %- 65536 by 65536 array size
+            %- Need to consider pixel resolution as well
+            %- Simplify operations through alignment
+        %Region: X start, X end, Y start, Y end
+            %- Utilize a single unified coordinate system minimize translations
+            %- Reduce computational complexity in HW and compositor
+                %- Avoid 2N2additional comparisons for compositing (for translation)
+                %- Remove unneeded computations in back-end
+
+    %FIXME: insert packet format from REAL PROPOSAL slide 34 and 36
+        %- picture
+        %- picture of classic active video frame vs pdp frame (discuss using hdmi as a transport)
+
+
+\section{Packet Types}
+    \label{sec:packet_types}
+
+    Figure~\ref{fig:packets} shows the basic packets used for communication within PDP. These are strictly for data transfer and synchronization of system operations, and do not include other aspects such as system setup or enumeration\footnote{System setup and enumeration are typically system specific operations and outside of the current PDP Design, but may be incorporated in the future}. These packets are organized into type specific fields of some set word-size. The exact size of word fields is left abstracted to allow for an optimal implementation to be used in practice. For example, a system may utilize 24-bit word size if an array has a native 24-bit pixel size, or 32-bit word size if the hardware transport layer has a specific optimal word size. Typically, a multiple of 8-bit word size would be utilized in practice, as most hardware architectures (such as x86) utilize some multiple of this size. In any given implementation, the word size of all fields must match, in order to simplify decoding operations. This allows for fixed-size decoding of incoming data, which simplifies processing and firmware implementation, as well as, can ease timing constraints and enforce non-variability in the decoding time of incoming packets of data. In general, PDP packets are designed to send a minimal amount of header data to lower overhead and ordered in a way to minimize buffering requirements to enable real-time processing.
+
+    \begin{figure}
+        \centering
+        \includegraphics[width=1.0\textwidth]{fig/packet_chart.pdf}
+        \caption{List of PDP Packets}
+        \label{fig:packets}
+    \end{figure}
+
+    In terms of the protocol itself, PDP uses a single global coordinate system to refer to pixel locations on a display array. For example, a 512 by 512 pixel array would have coordinates from 0 to 511 in both the horizontal and vertical directions. All packets referencing sub-regions of this display would utilize coordinates that map to some rectangular sub-region of the display. Any overlapping regions of data would be composited during system operation with priority given to data segments sent at higher frame rates.
+
+    PDP Packets are segmented into four types, a no operation packet, a draw region packet, array reset packet, and trigger packet. All packets consist of a Type ID field of word-size.
+
+    The first packet type, {\it No Operation}, is simply indicating that OP codes of 0x0 will be ignored.
+
+    The second packet type, {\it Draw Region}, is used to send a rectangular sub-region of pixel data in global array coordinates. It has fields for the start and stop horizontal and vertical coordinates (defined inclusively) followed by individual pixel data. For example, suppose a scene generator were to send a packet of data from array region 10 to 19 along the X axis and 20 to 29 along the Y axis, a total of 100 pixels of data would follow the packet coordinates given that the packet specifies a 100 pixel sized region.
+
+    The third packet type, {\it Array Reset}, is utilized to indicate that quadrants on a given array should be cleared. It consists of an array specific quadrant bit-mask used to indicate which quadrant to reset. Any unused bits are reserved. This type of packet would be utilized exclusively between compositor and array tile links to control clearing of quadrants which may be necessary on certain types of array architectures.
+
+    The fourth packet type, {\it Trigger}, could be used to implement a trigger based synchronization within in PDP. It consists of a system specific action bit-mask used to indicate the type of operation to trigger. In IRLED array systems, the coordinator of synchronization is dependent on the array itself and the different components within the system. In some systems, a sensor may be used as the source of synchronization, in other systems, another component may be utilized. Other aspects of system operation may even be triggered outside of the system synchronization interval based off of other events. For the reason, PDP has opted for a trigger based approach to synchronization. This approach allows for synchronization, data transfer, and computation to be custom tailored to an individual systems use-case. For example, the action mask could be used to trigger the generation of the next frame to be displayed when needed, the source of which is defined by the system itself. Another example would be utilize the action mask to indicate that further computations (such as scene generation) stall until otherwise indicated.
+
+\section{PDP Stream Decoding}
+    In this section, a discussion of how PDP might operate with actual data is provided in order to aid the reader with understanding of how packets are envisioned to be decoded and how a generalized write process to an array may occur. An actual implementation of PDP on a real system is discussed in Chapter~\ref{chap:implementation} with experimental results discussed in Chapter~\ref{chap:experimental_results}.
+
+    Figure~\ref{fig:pdp_stream} demonstrates a PDP stream for an architecture with a minimum write size of four pixels and a column major write process. Represented is the streaming of each word within a PDP packet. Time is represented moving downwards with the internal PDP state and buffer data changing as each word is streamed in.
+
+    \begin{figure}
+        \centering
+        \includegraphics[width=1.0\textwidth]{fig/pdp_stream.pdf}
+        \caption[Example PDP Stream]{Example PDP Stream: Shown is a stream consisting of a PDP packet being decoded for an architecture that has minimum payload size of 4. DR stands for draw region, XS for x start, XE for x end, YS for y start, YE for y end.}
+        \label{fig:pdp_stream}
+    \end{figure}
+
+    {\it One} is the opcode for a draw region packet which is denoted as {\it DR} in the diagram. {\it XS} stands for x start. {\it XE} stands for x end. {\it YS} stands for y start. {\it YE} stands for y end. These are the header words for a PDP draw region packet. {\it D} stands for data which represents each pixel word to draw to an array. At the beginning of time, PDP state is empty. Once the opcode is read in, PDP would enter the draw region state. Then each each word for the region boundaries would be read in one by one until entire header has been parsed. Next, pixel data is streamed in starting with {\it D0}. Once all the words necessary for a single array draw are buffered in, which in the case of the example architecture, is four pixels, the buffered data is then written to the array. Subsequently, {\it YS} is incremented to move to the next write area on the array, and {\it D4} is buffered in. This process is continued until the end of the column when {\it YS} equals {\it YE}. Then {\it XS} would be incremented and {\it YS} reset to the start of the region. Then each column would be buffered and written in the same manner as the first until {\it YS} equals {\it YE} and {\it XS} equals {\it XE}, which indicates the end of the frame. After that any new packets would be streamed in in the same manner.
+
 \section{Overhead}
     As mentioned previously, internally PDP has no notion of blanking periods or porches for providing synchronization, and therefore does not encapsulate the inefficiencies inherent in the aforementioned protocols. Instead synchronization and framerates within PDP are controlled by the source through timing when data is sent. This means that high overheads due to blanking can be mitigated. Table~\ref{tbl:pdp_efficiency} shows the maximum packet overhead due to packet encapsulation when PDP is utilized for the same resolutions and frequencies listed in Table~\ref{tbl:modeline_overhead}. These numbers represent a worst-case scenerio when PDP is implemented within a transport layer that does not require blanking intervals. In actual usage, larger packets consisting of more pixels would be utilized therefore, the overhead would be lower on average. However, even in worst-case scenerios PDP has a vast reduction on bandwidth requirements on average meaning that faster refresh rates can be utilized in bandwidth limited situations. Additionally, higher interation times could be utilized within IR cameras and sensors due to less time being needed for writing the same visible data to an IR array. For example, with the 512 by 256 modeline operating at 200hz, integrations times could be increased by up to 51.8 percent over a traditional modeline.
 
@@ -229,58 +298,3 @@ This chapter discusses the underlying communication details of the packetized di
     \end{table}
 
         %FIXME: Relate back to the design goals of PDP
-
-
-\section{Packet Format}
-    \label{sec:packet_format}
-    %FIXME: REAL PROPOSAL slides 31 and 32 talk about packet considerations and details
-    %slide 31:
-        %- Minimize what we need
-        %- Possible Solutions
-            %- X, Y, Size, Variable pixel data format
-            %- X start, X end, Y start, Y end, Variable pixel data format
-            %- Consider the sizes of each field and resolutions
-            %- Efficiency
-        %- Considerations
-            %- Byte alignment: Most computer architectures and HW use at-least 8-bit alignment for ISA and bus widths
-            %- Computations/Comparisons needed
-    %slide 32:
-        %- Fix-width fields
-            %- simplify decoding/processing HW and implementation
-        %WORD size >= 2^16, assume power of 2
-            %- 65536 by 65536 array size
-            %- Need to consider pixel resolution as well
-            %- Simplify operations through alignment
-        %Region: X start, X end, Y start, Y end
-            %- Utilize a single unified coordinate system minimize translations
-            %- Reduce computational complexity in HW and compositor
-                %- Avoid 2N2additional comparisons for compositing (for translation)
-                %- Remove unneeded computations in back-end
-
-    %FIXME: insert packet format from REAL PROPOSAL slide 34 and 36
-        %- picture
-        %- picture of classic active video frame vs pdp frame (discuss using hdmi as a transport)
-
-
-\section{Packet Types}
-    \label{sec:packet_types}
-
-    Figure~\ref{fig:packets} shows the basic packets used for communication within PDP. These are strictly for data transfer and synchronization of system operations, and do not include other aspects such as system setup or enumeration\footnote{System setup and enumeration are typically system specific operations and outside of the current PDP Design, but may be incorporated in the future}. These packets are organized into type specific fields of some set word-size. The exact size of word fields is left abstracted to allow for an optimal implementation to be used in practice. For example, a system may utilize 24-bit word size if an array has a native 24-bit pixel size, or 32-bit word size if the hardware transport layer has a specific optimal word size. Typically, a multiple of 8-bit word size would be utilized in practice, as most hardware architectures (such as x86) utilize some multiple of this size. In any given implementation, the word size of all fields must match, in order to simplify decoding operations. This allows for fixed-size decoding of incoming data, which simplifies processing and firmware implementation, as well as, can ease timing constraints and enforce non-variability in the decoding time of incoming packets of data. In general, PDP packets are designed to send a minimal amount of header data to lower overhead and ordered in a way to minimize buffering requirements to enable real-time processing.
-
-    \begin{figure}
-        \centering
-        \includegraphics[width=1.0\textwidth]{fig/packet_chart.pdf}
-        \caption{List of PDP Packets}
-        \label{fig:packets}
-    \end{figure}
-
-    In terms of the protocol itself, PDP uses a single global coordinate system to refer to pixel locations on a display array. For example, a 512 by 512 pixel array would have coordinates from 0 to 511 in both the horizontal and vertical directions. All packets referencing sub-regions of this display would utilize coordinates that map to some rectangular sub-region of the display. Any overlapping regions of data would be composited during system operation with priority given to data segments sent at higher frame rates.
-
-    PDP Packets are segmented into three types, a draw region packet, array reset packet, and trigger packet. All packets consist of a Type ID field of word-size. The draw region packet is used to send a rectangular sub-region of pixel data in global array coordinates. It has fields for the start and stop horizontal and vertical coordinates (defined inclusively) followed by individual pixel data. For example, suppose a scene generator were to send a packet of data from array region 10 to 19 along the X axis and 20 to 29 along the Y axis, a total of 100 pixels of data would follow the packet coordinates given that the packet specifies a 100 pixel sized region.
-
-    The second packet, array reset, is utilized to indicate that quadrants on a given array should be cleared. It consists of an array specific quadrant bit-mask used to indicate which quadrant to reset. Any unused bits are reserved. This type of packet would be utilized exclusively between compositor and array tile links.
-
-    The third packet, trigger, is used to implement a trigger based synchronization within in PDP. It consists of a system specific action bit-mask used to indicate the type of operation to trigger. In IRLED array systems, the coordinator of synchronization is dependent on the array itself and the different components within the system. In some systems, a sensor may be used as the source of synchronization, in other systems, another component may be utilized. Other aspects of system operation may even be triggered outside of the system synchronization interval based off of other events. For the reason, PDP has opted for a trigger based approach to synchronization. This approach allows for synchronization, data transfer, and computation to be custom tailored to an individual systems use-case. For example, the action mask could be used to trigger the generation of the next frame to be displayed when needed, the source of which is defined by the system itself. Another example would be utilize the action mask to indicate that further computations (such as scene generation) stall until otherwise indicated.
-
-\section{PDP Frames}
-    %FIXME: insert picture from slide 38 of real proposal
