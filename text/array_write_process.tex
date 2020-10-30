@@ -1,5 +1,5 @@
 \label{chap:array_write_process}
-This chapter provides the reader with an overview of the formatting of data required to drive an IRLED array, and hardware specific details of the underlying array write process in order to facilitate an understanding of the context in which PDP is implemented, as well as, highlight some of the challenges with high speed operation. Firstly, it discusses the interleaved write process required to directly drive LEDs on an LED IRSP. Then, it discusses the data re-ordering done to optimize the write process. Protocol level details of how external data is received are discussed in Chapter~\ref{chap:display_protocols}.
+This chapter provides the reader with an overview of the data formatting required to drive an IRLED array, and hardware specific details of the underlying array write process in order to facilitate an understanding of the context in which PDP is implemented, as well as, highlight some of the challenges with high speed operation. Firstly, it discusses the interleaved write process required to directly drive LEDs on an LED IRSP. Then, it discusses the data re-ordering done to optimize the write process. Protocol level details of how external data is received are discussed in Chapter~\ref{chap:display_protocols}.
 
 
 \section{Array Interleaved Write Process}
@@ -97,7 +97,7 @@ This chapter provides the reader with an overview of the formatting of data requ
 
     Figure~\ref{fig:image_encoding_bitpack_reorder} shows a false color input image designed to highlight the data reordering applied to imagery. The blown up sections show 64 labeled rows of input data where the even rows are one color and the odd rows another for ever 32 rows. For every 32 rows, the even and odd rows are de-interlaced into 16 even rows of data follow by 16 odd rows of data. In the example input image this results in every 16 de-interlaced rows to have have a different color. This is due to the interleaved writing processing for individual 32 pixel writes discussed in Chapter~\ref{sec:array_Interleaved_write_process}. Reordering data in this manner allows for only 16 pixels of data (or 32 in terms of bitpacking) to be buffered per write. Without the is reordering, double the amount of pixels would need to be buffered per array write increasing both latency and implementation complexity.
 
-    \begin{figure}[H]
+    \begin{figure}
         \centering
         \includegraphics[width=1.0\textwidth]{fig/image_encoding_reorder.pdf}
         \caption{Image Encoding: Data Reorder}
@@ -108,14 +108,14 @@ This chapter provides the reader with an overview of the formatting of data requ
 
     \begin{figure}[H]
         \centering
-        \includegraphics[width=1.0\textwidth]{fig/image_encoding_pac.pdf}
+        \includegraphics[width=0.98\textwidth]{fig/image_encoding_pac.pdf}
         \caption{Image Encoding: Color Example 1}
         \label{fig:image_encoding_color_example1}
     \end{figure}
 
     \begin{figure}[H]
         \centering
-        \includegraphics[width=1.0\textwidth]{fig/image_encoding_liberty.pdf}
+        \includegraphics[width=0.98\textwidth]{fig/image_encoding_liberty.pdf}
         \caption{Image Encoding: Color Example 2}
         \label{fig:image_encoding_color_example2}
     \end{figure}
@@ -123,7 +123,7 @@ This chapter provides the reader with an overview of the formatting of data requ
     \begin{figure}[H]
         \centering
         %includegraphs[trim=L B R T]
-        \includegraphics[width=1.0\textwidth]{fig/image_encoding_origami.pdf}
+        \includegraphics[width=0.98\textwidth]{fig/image_encoding_origami.pdf}
         \caption{Image Encoding: Color Example 3}
         \label{fig:image_encoding_color_example3}
     \end{figure}
