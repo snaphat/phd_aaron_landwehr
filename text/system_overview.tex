@@ -18,6 +18,16 @@ This chapter provides the reader with an overview of IRLED electronics. Firstly,
 
     Once enough data is buffered for one of the inputs, the firmware will control the write process to drive the 8 DAC cards which each house 2 16-bit DAC integrated circuits per card, with each circuit consisting of 2 channels per DAC. Yielding 32 parallel channels with 512 total signals. Once the DAC process is done, the analog output of the 32 channels is then routed to 8 amplifier card which contain 4 amplifiers each. Following this, the amplified signals are routed through 2 interface boards which contain ribbon cables that attach to an array hybrid. The ribbon cabling carries both the amplified signals as well as other control signals from the firmware that are routed directly from the main FPGA board to one of the interface boards.
 
+    Figure ~\ref{fig:round_board} shows an example of a circuit board which ribbon cables would be attached to via receptacles (not shown). Four ribbon cables can be attached to bring signaling to an array.
+
+    \begin{figure}
+        \centering
+        %includegraphs[trim=L B R T]
+        \includegraphics[width=1.0\textwidth]{fig/round_board.png}
+        \caption{Example Hybrid Round Boards}
+        \label{fig:round_board}
+    \end{figure}
+
     Figure~\ref{fig:nessie_enclosure_internals} shows the components installed within a CSE chassis. Multicolored ribbon cables are shown in the top right. Mounted to the bottom is the main FPGA board. The two large boards at the top are the 2 interface boards with 8 amplifier cards plugged into them along the bottom. The boards in between the FPGA are and amplifer cards are the DAC boards. The power supply is on the left.
 
     \begin{figure}
