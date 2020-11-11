@@ -66,7 +66,7 @@ This chapter discusses the underlying communication details of the packetized di
         \label{fig:display_port_framing}
     \end{figure}
 
-    This differs from PDP in that PDP allows for completely arbitrary packets to be sent and decoded with differing packet sizes which enables PDP with the ability to support dynamic sub-frame framerates, and to be extendable for future packet types. Additionally, PDP carries no internal notion of horizontal or vertical blanking intervals which allows PDP to operate as fast as possible and give scene generators direct control over framerates at the user level. For example, the transport upon which PDP is implemented can operate at the maximum possible data rate allowable in hardware; then, the user in turn can simply send packets over the data link at the desired rate while inserting empty space where necessary. In the backend, a PDP decoder would decode the data as quickly as possible and display it. From a higher level, this could be viewed as the user simply issuing commands to send data packets similar to that of how TCP based programs send data over a link with a remote environment executing the actual commands. It is up to the user where and when they want data displayed which enables PDP to fit a larger set of use cases, and to be simpler to integrate within projector systems.
+    This differs from PDP in that PDP allows for completely arbitrary packets to be sent and decoded with differing packet sizes which gives PDP the ability to support dynamic sub-frame framerates, and to be extendable to future packet types. Additionally, PDP carries no internal notion of horizontal or vertical blanking intervals which allows PDP to operate as fast as possible and give scene generators direct control over framerates at the user level. For example, the transport upon which PDP is implemented can operate at the maximum possible data rate allowable in hardware; then, the user in turn can simply send packets over the data link at the desired rate while inserting empty space where necessary. In the backend, a PDP decoder would decode the data as quickly as possible and display it. From a higher level, this could be viewed as the user simply issuing commands to send data packets similar to that of how TCP based programs send data over a link with a remote environment executing the actual commands. It is up to the user where and when they want data displayed which enables PDP to fit a larger set of use cases, and to be simpler to integrate within projector systems.
 
 \section{Packet Format}
     \label{sec:packet_format}
@@ -202,7 +202,7 @@ This chapter discusses the underlying communication details of the packetized di
         \label{eq:overhead}
     \end{equation}
 
-    Due to the nature of the total pixel overhead being proportional to the visible pixel size for each resolution, the overhead percentage under worst-case conditions cancels out to be a constant consisting of only a relationship between the minimum packet size and packet overhead.
+    Due to the nature of the total pixel overhead being proportional to the visible pixel size for each resolution, the overhead percentage under worst-case conditions cancels out to a constant consisting of only a relationship between the minimum packet size and packet overhead.
 
     %FIXME: Add 3d graphic from wolfram alpha
 
