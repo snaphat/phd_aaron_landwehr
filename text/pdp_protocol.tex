@@ -1,7 +1,7 @@
 \label{chap:pdp_protocol}
 
 %$FIXME: wrong now
-This chapter discusses the underlying communication details of the packetized display protocol (PDP) architecture. First, it gives an overview of the protocol design methodology. Followed by a discussion of the generalized packet format. Finally, it discusses individual packet types. The central purpose of this chapter is to provide the reader with an understanding of the reasoning behind design decisions, as well as, to provide a detailed specification of the protocol.
+This chapter discusses the underlying communication details of the packetized display protocol (PDP) architecture. First, it gives an overview of the protocol design methodology. Secondly, it provides comparison with conventional display technology. Thirdly, it discusses requirements for packet formatting. Fourthly, it discusses individual packet types. Fifthly, it delves into the overhead of utilizing PDP packets. Sixthly, it discusses multi-framerate performance within PDP through an example of a dual framerate operation. Finally, it provides an example of how utilizing compositing and PDP in tandem could provide performance benefits. The central purpose of this chapter is to provide the reader with an understanding of the reasoning behind design decisions, as well as, to provide a detailed specification of the protocol and its performance characteristics when utilized in different scenerios.
 
 \section{Design Methodology}
     \label{sec:design_methodology}
@@ -10,7 +10,7 @@ This chapter discusses the underlying communication details of the packetized di
     \begin{enumerate}
         \item {\em To design a scalable display system that is distributable and hardware agnostic.} The display protocols and interfaces utilized within projector systems have systematic issues with remaining up to date with current technology in that old standards (such as DVI) continue to be utilized due to the inability for custom synchronization solutions to work with newer hardware, as well as, due to the costs and time associated with implementing newer solutions utilizing newer standards. This will be touched upon throughout this chapter and discussed more extensively in Chapter~\ref{chap:machine_model}.
         \item {\em To provide a protocol that is relatively simple to implement without unnecessary complexity to ease the encoding and decoding process.} A low overhead and fast decode process is crucial to ensuring latency is sub-frame\footnote{This refers to latency of that below the time it would take to buffer an entire frame. Which is a common synchronization method utilized in projector systems.} across an end-to-end system. Additionally, simplifying these processes also eases potential hardware implementation mistakes, as well as, inefficiencies that could lead to reduced performance. This will be touched upon in Chapters~ \ref{sec:packet_format},~\ref{sec:packet_types}, and~\ref{sec:pdp_stream_decoding}.
-        \item {\em To provide dynamic intra-frame variable refresh rate (VRR) in order to enable better bandwidth utilization.} In particular, to allow for regions of a display to be intelligently updated at different rates when driven by a scene generator. This will be discussed upon in Chapter~\ref{sec:multi_framerate_performance}.
+        \item {\em To provide dynamic intra-frame variable refresh rate (VRR) in order to enable better bandwidth utilization.} In particular, to allow for regions of a display to be intelligently updated at different rates when driven by a scene generator. This will be discussed upon in Chapters~\ref{sec:multi_framerate_performance} and \ref{sec:compositing}.
         \item {\em To provide a path to utilize conventional display protocol streams such as HDMI as a backwards compatible tranport layer for PDP without introducing overhead.} This is to allow for interoperability where necessary when utilizing conventional display sources, and to ease migration to a PDP based system. This will be touched upon in Chapter~\ref{sec:pdp_stream_decoding}, and discussed more extensively in Chapter~\ref{chap:implementation}.
     \end{enumerate}
 
@@ -76,34 +76,8 @@ This chapter discusses the underlying communication details of the packetized di
 
     The coordinate system being utilized within PDP is another important consideration because sub-optimal choices could lead to unnecessary translations which increase operation costs and computational complexity for manipulating data. For example, if one were to store the beginning X coordinate within a packet with a coordinate offset for the range instead of the end coordinate itself, then computing the ending coordinate for the range would require an addition on the backend. And potentially, $2N^2$ additional mathematical operations to allow comparing region boundaries if PDP were being composited where N is the number of independent regions to draw.
 
-
-    %FIXME: REAL PROPOSAL slides 31 and 32 talk about packet considerations and details
-    %slide 31:
-        %- Minimize what we need
-        %- Possible Solutions
-            %- X, Y, Size, Variable pixel data format
-            %- X start, X end, Y start, Y end, Variable pixel data format
-            %- Consider the sizes of each field and resolutions
-            %- Efficiency
-        %- Considerations
-            %- Byte alignment: Most computer architectures and HW use at-least 8-bit alignment for ISA and bus widths
-            %- Computations/Comparisons needed
-    %slide 32:
-        %- Fix-width fields
-            %- simplify decoding/processing HW and implementation
-        %WORD size >= 2^16, assume power of 2
-            %- 65536 by 65536 array size
-            %- Need to consider pixel resolution as well
-            %- Simplify operations through alignment
-        %Region: X start, X end, Y start, Y end
-            %- Utilize a single unified coordinate system minimize translations
-            %- Reduce computational complexity in HW and compositor
-                %- Avoid 2N2additional comparisons for compositing (for translation)
-                %- Remove unneeded computations in back-end
-
 \section{Packet Types}
     \label{sec:packet_types}
-
     Table~\ref{tbl:packets} shows the basic packets used for communication within PDP. These are strictly for data transfer and synchronization of system operations, and do not include other aspects such as system setup or enumeration\footnote{System setup and enumeration are typically system specific operations and outside of the current PDP Design, but may be incorporated in the future.}. These packets are organized into type specific fields of some set word-size. The exact size of word fields is left abstracted to allow for an optimal implementation to be used in practice. For example, a system may utilize 24-bit word size if an array has a native 24-bit pixel size, or 32-bit word size if the hardware transport layer has a specific optimal word size. Typically, a multiple of 8-bit word size would be utilized in practice, as most hardware architectures (such as x86) utilize some multiple of this size. In any given implementation, the word size of all fields must match, in order to simplify decoding operations. This allows for fixed-size decoding of incoming data, which simplifies processing and firmware implementation, as well as, can ease timing constraints and enforce non-variability in the decoding time of incoming packets of data. In general, PDP packets are designed to send a minimal amount of header data to lower overhead and are ordered in a way to minimize buffering requirements in order to enable real-time processing.
 
     \begin{table}
@@ -145,7 +119,7 @@ This chapter discusses the underlying communication details of the packetized di
     As one of the goals of PDP is to provide backwards compatibility, an important consideration is how this decoding process might be implemented within an display protocol transport layer. Most of the details regarding this will be discussed in Chapter~\ref{sec:hdmi_transport_layer}, for now, it is worth noting that for an implementation that is backwards compatible with HDMI, draw packet headers could be transmitted by a secondary data channel leaving the main stream channel for pixel data. This would allow for pixels data to be transmitted exactly as normal while utilizing normal display protocol modelines, thus, allowing users to be able to utilize their array technology transparently as-is without any changes while utilizing an array that internally supports PDP via its close support electronics.
 
 \section{Overhead}
-    As mentioned previously, internally PDP has no notion of blanking periods or porches for providing synchronization, and therefore does not encapsulate the inefficiencies inherent in the aforementioned protocols. Instead synchronization and framerates within PDP are controlled by the source through timing when data is sent. This means that high overheads due to blanking can be mitigated. Table~\ref{tbl:pdp_efficiency} shows the maximum packet overhead due to packet encapsulation when PDP is utilized for the same resolutions and frequencies listed in Table~\ref{tbl:modeline_overhead}. These numbers represent a worst-case scenerio when PDP is implemented within a transport layer that does not require blanking intervals. In actual usage, larger packets consisting of more pixels would be utilized therefore, the overhead would be lower on average. However, even in worst-case scenerios PDP has a vast reduction on bandwidth requirements on average which means that faster refresh rates can be utilized in bandwidth limited situations. Additionally, higher interation times could be utilized within IR cameras and sensors due to less time being needed for writing the same visible data to an IR array. For example, with the 512 by 256 modeline operating at 200Hz, integrations times could be increased by up to 51.8 percent over a traditional modeline.
+    As mentioned previously, internally PDP has no notion of blanking periods or porches for providing synchronization, and therefore does not encapsulate the inefficiencies inherent in the aforementioned protocols. Instead synchronization and framerates within PDP are controlled by the source through timing when data is sent. This means that high overheads due to blanking can be mitigated. Table~\ref{tbl:pdp_efficiency} shows the maximum packet overhead due to packet encapsulation when PDP is utilized for the same resolutions and frequencies listed in Table~\ref{tbl:modeline_overhead}. These are computed using active pixel area over total pixel area. The right column shows the reduction in overhead vs normal modelines. {\it 512 by 512} and {\it 512 by 256} are typical modeline resolutions used on IRLED arrays. These numbers represent a worst-case scenerio when PDP is implemented within a transport layer that does not require blanking intervals. In actual usage, larger packets consisting of more pixels would be utilized therefore, the overhead would be lower on average. However, even in worst-case scenerios PDP has a vast reduction on bandwidth requirements on average which means that faster refresh rates can be utilized in bandwidth limited situations. Additionally, higher interation times could be utilized within IR cameras and sensors due to less time being needed for writing the same visible data to an IR array. For example, with the 512 by 256 modeline operating at 200Hz, integrations times could be increased by up to 51.8 percent over a traditional modeline.
 
     \begin{table}
         \centering
@@ -172,7 +146,7 @@ This chapter discusses the underlying communication details of the packetized di
             \textbf{\normalsize 512x256}   & \textbf{\normalsize 100}  & {\normalsize 131072 } & {\normalsize 141312 } & {\normalsize 7.2\%} &\textbf{\normalsize 51.8\%} \\ \hline
             \textbf{\normalsize 512x256}   & \textbf{\normalsize 60}   & {\normalsize 131072 } & {\normalsize 141312 } & {\normalsize 7.2\%} &\textbf{\normalsize 51.8\%} \\ \hline
         \end{tcolorbox}
-        \caption[PDP Maximum Packet Overhead]{Maximum PDP Packet Overhead for various resolutions and refresh rates in PDP. Computed using active pixel area over total pixel area. The right column shows the reduction in overhead vs normal modelines. 512x512 and 512x256 are typical modeline resolutions used on IRLED arrays.}
+        \caption{PDP Maximum Packet Overhead}
         \label{tbl:pdp_efficiency}
     \end{table}
 
@@ -228,7 +202,9 @@ This chapter discusses the underlying communication details of the packetized di
         \label{eq:overhead}
     \end{equation}
 
-    Due to the nature of the total pixel overhead being proportional to the visible pixel size for each resolution, the overhead percentage cancels out to be a constant consisting of only a relationship between the minimum packet size and packet overhead.
+    Due to the nature of the total pixel overhead being proportional to the visible pixel size for each resolution, the overhead percentage under worst-case conditions cancels out to be a constant consisting of only a relationship between the minimum packet size and packet overhead.
+
+    %FIXME: Add 3d graphic from wolfram alpha
 
     \begin{equation}
         \begin{array}{ l }
@@ -243,10 +219,9 @@ This chapter discusses the underlying communication details of the packetized di
         \label{eq:cancel}
     \end{equation}
 
-    The overhead reduction in Table~\ref{tbl:pdp_efficiency} is computed by subtracting the PDP overhead from the overheads listed in Table~\ref{tbl:modeline_overhead}. It is worth restating for posterity that these numbers represent worst-case scenerios for PDP when implemented on top of a transport layer that does not require blanking intervals.
+    The overhead reduction in Table~\ref{tbl:pdp_efficiency} is computed by subtracting the PDP overhead from the overheads listed in Table~\ref{tbl:modeline_overhead}. It is worth restating for posterity that these numbers represent worst-case scenerios for PDP when implemented on top of a transport layer that does not require blanking intervals. If the underlying transport layer upon which PDP is implemented cannot function without additional overhead then the performance would be worse in practice as is the case if PDP is utilized with a display protocol based transport layer. However, in the case of display protocols, overhead can be minimized relative to normal non-PDP operation by utilizing the fastest frequency the hardware allows and minimizing modeline porches. This would enable PDP to use much smaller porches than normal modelines. Additionally, horizontal porch overhead can be mitigated by timing an arrays inherit analog settling delays to occur during the porches. This can be done by ensuring that there is enough data for a write prior to a horizontal blanking period.
 
 \section{Multi-framerate Performance}
-    %FIXME: discuss goal 3
     \label{sec:multi_framerate_performance}
 
     This section discusses the benefits of utilizing a PDP based approach for reaching high frame-rates. In high performance systems, data movement\cite{LeeEtAl1984}, bandwidth\cite{LaiBaker1999}, and latency\cite{ZhengEtAl2014} are of primary concern due to the nature of these typically impeding performance requirements. In many cases, minimizing data movement can vastly improve the performance of systems\cite{BandyopadhyayCoyle2004,LiEtAl2009,Hall2020}. In real time systems\cite{Kopetz2011}, such as IR projector systems, where end-to-end latency is important for driving arrays, and the observation of real-time IR behavior is important for characterizing temperature changes\cite{ZhouEtAl2000} minimizing data movement, and choosing appropriate hardware with high bandwidth as well as low latency is extremely important.
@@ -266,7 +241,7 @@ This chapter discusses the underlying communication details of the packetized di
         \label{eq:bandwidth_saved}
     \end{equation}
 
-    Table~\ref{tbl:multi_framerate_bandwidth_savings} shows various examples computed using Equation~\eqref{eq:bandwidth_saved} to give the reader an understanding of the kinds of savings that are possible by utilizing this method of operation. Of note, driving just half of of the pixels at a slow rate can save near 50 percent of the bandwidth in these scenarios. This is of particular importance because many types of IR test scenerios utilized in practice contain sparse objects with low intensity backgrounds. In this types of scenerios, the bandwidth reduction would translate into the ability to display fast imagery at much higher rates than possible with conventual display technology. Indeed, display of small objects could have bandwidth reductions of over 95 percent. While these equations demonstrate a simplified use case for PDP, they provide a powerful argument for why this type of display technology has the potential to provide orders of magnitude better performance in bandwidth starved environments. In practice, many current projector systems struggle to achieve framerates above 200Hz in practice due to the inability to deliver data at higher rates when utilizing conventional display technology.
+    Table~\ref{tbl:multi_framerate_bandwidth_savings} shows various examples of the bandwidth saved relative to operating all pixels at a given fast framerate for PDP operation when two framerates are utilized. The results are computed using Equation~\eqref{eq:bandwidth_saved} to give the reader an understanding of the kinds of savings that are possible by utilizing this method of operation. Of note, driving just half of of the pixels at a slow rate can save near 50 percent of the bandwidth in these scenarios. This is of particular importance because many types of IR test scenerios utilized in practice contain sparse objects with low intensity backgrounds. In this types of scenerios, the bandwidth reduction would translate into the ability to display fast imagery at much higher rates than possible with conventual display technology. Indeed, display of small objects could have bandwidth reductions of over 95 percent. While these equations demonstrate a simplified use case for PDP, they provide a powerful argument for why the intra-frame variable refresh rate technology within PDP has the potential to provide orders of magnitude better performance in bandwidth starved environments. In practice, many current projector systems struggle to achieve framerates above 200Hz due to the inability to deliver data at higher rates when utilizing conventional display technology.
 
     \begin{table}
         \centering
@@ -283,19 +258,6 @@ This chapter discusses the underlying communication details of the packetized di
             \textbf{\normalsize 10} & \textbf{\normalsize 100} & {\normalsize 0.8} & {\normalsize 72.0} \\ \hline
             \textbf{\normalsize 10} & \textbf{\normalsize 100} & {\normalsize 0.9} & {\normalsize 81.0} \\ \hline
             \textbf{\normalsize 10} & \textbf{\normalsize 100} & {\normalsize 1.0} & {\normalsize 90.0} \\ \hline
-
-            %\textbf{\normalsize 10} & \textbf{\normalsize 250} & {\normalsize 0.1} & {\normalsize 9.6} \\ \hline
-            %\textbf{\normalsize 10} & \textbf{\normalsize 250} & {\normalsize 0.2} & {\normalsize 19.2} \\ \hline
-            %\textbf{\normalsize 10} & \textbf{\normalsize 250} & {\normalsize 0.3} & {\normalsize 28.8} \\ \hline
-            %\textbf{\normalsize 10} & \textbf{\normalsize 250} & {\normalsize 0.4} & {\normalsize 38.4} \\ \hline
-            %\textbf{\normalsize 10} & \textbf{\normalsize 250} & {\normalsize 0.5} & {\normalsize 48.0} \\ \hline
-
-            %\textbf{\normalsize 10} & \textbf{\normalsize 500} & {\normalsize 0.1} & {\normalsize 9.8} \\ \hline
-            %\textbf{\normalsize 10} & \textbf{\normalsize 500} & {\normalsize 0.2} & {\normalsize 19.6} \\ \hline
-            %\textbf{\normalsize 10} & \textbf{\normalsize 500} & {\normalsize 0.3} & {\normalsize 29.4} \\ \hline
-            %\textbf{\normalsize 10} & \textbf{\normalsize 500} & {\normalsize 0.4} & {\normalsize 39.2} \\ \hline
-            %\textbf{\normalsize 10} & \textbf{\normalsize 500} & {\normalsize 0.5} & {\normalsize 49.0} \\ \hline
-
             \textbf{\normalsize 10} & \textbf{\normalsize 1000} & {\normalsize 0.1} & {\normalsize 9.9} \\ \hline
             \textbf{\normalsize 10} & \textbf{\normalsize 1000} & {\normalsize 0.2} & {\normalsize 19.8} \\ \hline
             \textbf{\normalsize 10} & \textbf{\normalsize 1000} & {\normalsize 0.3} & {\normalsize 29.7} \\ \hline
@@ -307,6 +269,23 @@ This chapter discusses the underlying communication details of the packetized di
             \textbf{\normalsize 10} & \textbf{\normalsize 1000} & {\normalsize 0.9} & {\normalsize 89.1} \\ \hline
             \textbf{\normalsize 10} & \textbf{\normalsize 1000} & {\normalsize 1.0} & {\normalsize 99.9} \\ \hline
         \end{tcolorbox}
-        \caption[Multi-framerate Bandwidth Savings]{Bandwidth saved relative to operating all pixels at the given fast framerate for PDP operation with two framerates.}
+        \caption{Multi-framerate Bandwidth Savings}
         \label{tbl:multi_framerate_bandwidth_savings}
     \end{table}
+
+\section{Compositing}
+    \label{sec:compositing}
+    This section discusses a possible compositing layer analysis that could be implemented into a system utilizing PDP to show another possible use case for PDP. Compositing is the process of combining two or more images into a single picture. In high speed systems imagery could be generated in individual pieces and combined via a compositor layer. This process might be done by a single system or via separate systems. For purposes of this discussion, it is assumed all data has arrived and is avaliable for analysis by a compositing layer.
+
+    Figure~\ref{fig:intensity_map} shows a series of composited frames with segmented regions that could be sent as individual PDP draw region packets to an array. Each region is a representation of the average intensity of all pixels contained within that region. Darker regions indicate higher intensity and lighter regions lower intensity. During the compositing process of each frame, the average intensity of light output for each segment could be computed. The outlined segments for a given frame indicate a large change in intensity from the previous frame. The compositor could assign a weight to indicate which regions have a large absolute change in intensity from frame to frame. This information could be utilized for deciding which segments of an image to send at high speed operation or low speed operation. Segments with larger changes in intensity would be higher priority than segments with lower changes. The PDP protocol could be utilized to send these regions at a much higher frame rate than the more slowly changing segments to reflect the fast changes in intensity. In practice, this would most likely look like a weighted score where regions with higher weighted scores would be sent more frequently than regions with lower scores; with the remaining bandwidth devoted to lower regions.
+
+    \begin{figure}
+        \centering
+        \includegraphics[width=1.0\textwidth]{fig/frames.pdf}
+        \caption{Average Intensity Map of PDP Regions for Composited Frames}
+        \label{fig:intensity_map}
+    \end{figure}
+
+    In a real system, frames would be segmented more finely than in this example, allowing for small segments to be dynamically transmitted as necessary. This would then give the ability for fast changing data to update at rates far greater than a static fixed frame rate display would be capable of doing under the same hardware constraints. An added benefit is that by prioritizing segments, and decreasing the rates of slowly changing segments, more analog bandwidth can be utilized for drawing the highspeed portions of a display since the close support electronics no longer need to devote DAC and amplifer resources toward drawing low speed regions as often. Ultimately this would result in improved image fidelity by giving additional settling time to rapidly changing regions of an array. Though only touched upon in passing in Chapter~\ref{sec:array_Interleaved_write_process}, analog performance is of primary concern in IRSPs because a higher performance chain yields in more thermally accurate imagery. Low analog performance can result in the same intensity data having different results over multiple captured frames due to DACs, Amplifiers, and emitters not having the time to completely settle in high speed operation.
+
+    Now that the PDP protocol design methodology, underlying protocol details, performance characteristics, and potential operation within a system have been explored. Discussion is shifted to the abstract architecture upon which the PDP protocol operates to show the generalized type of environment PDP is envisioned to be utilized within in the future.

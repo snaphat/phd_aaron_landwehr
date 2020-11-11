@@ -92,5 +92,12 @@ This chapter discusses in detail the limitations with current display protocol t
 
     In contrast to a normal display protocols, the proposed architecture, is designed to utilize a dynamic source driven refresh rate through the coordination of both source (scene generator) and sink (display). In this architecture, frames are segmented into pieces or sub-frames and sent to the display based upon how often these segments need to update. An example of this is shown in Figure~\ref{fig:variable_display} where different regions of the display operate at different frame rates. By utilizing dynamic frame rate control at sub-frame resolutions, substantial bandwidth reductions can occur. This will be discussed in further detail in subsequent chapters.
 
+    \begin{figure}
+        \centering
+        \includegraphics[width=1.0\textwidth]{fig/variable_display.pdf}
+        \caption{Dynamic frame rate display with multiple regions updating at different frame rates}
+        \label{fig:variable_display}
+    \end{figure}
+
     %FIXME: what mechanisms to synchronize displays?
     As will be discussed in Chapter~\ref{chap:pdp_protocol}, the underlying PDP protocol itself is designed to allow for fine-grained control over when and what data is transmitted, as well as, incorporate mechanisms to synchronize displays. Furthermore, the protocol architecture is abstracted in such a way that the physical interconnect layers are transparent in order to enable it to be capable of operating over a wide-spectrum of hardware, as well as, to allow the protocol to be extended and used within future hardware. This allows for risk reduction because it allows simpler migration to new platforms as new hardware becomes available. For example, a hardware system implementing this protocol could switch or upgrade physical components and still utilize the same protocol within the software stack given an appropriately compatible physical layer. To further facilitate this, a packetized protocol structure capable of transmitting pixel data in a generalized way has been chosen. will discuss the architecture of the protocol.
