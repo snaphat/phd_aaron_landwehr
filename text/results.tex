@@ -14,7 +14,7 @@
     \label{fig:random_noise}
 \end{figure}
 
-This section provides a few captures of simulation inputs and outputs in order to show how packets arrive and are processed by the architecture.
+This section provides a few captures of simulation inputs and outputs to show how packets arrive and are processed by the architecture.
 
 In Figure~\ref{fig:input_example} simulated HDMI is shown. When video data enable (write enable) goes high words of data representing PDP packets start to stream in. These are indicated by Packet ID, X start, X end, Y start, Y end, and Packet Data. Each word would be stored in an SCB slot as indicated in the previous section. The final piece of data indicated is a reset packet. Note, that the data prior to Packet ID would be ignored as it does not represent a valid PDP command. It would be discarded by the valid controller.
 
