@@ -1,7 +1,7 @@
 \label{chap:pdp_protocol}
 
 %$FIXME: wrong now
-This chapter discusses the underlying communication details of the packetized display protocol (PDP) architecture. First, it gives an overview of the protocol design methodology. Secondly, it provides comparison with conventional display technology. Thirdly, it discusses requirements for packet formatting. Fourthly, it discusses individual packet types. Fifthly, it delves into the overhead of utilizing PDP packets. Sixthly, it discusses multi-framerate performance within PDP through an example of a dual framerate operation. Finally, it provides an example of how utilizing compositing and PDP in tandem could provide performance benefits. The central purpose of this chapter is to provide the reader with an understanding of the reasoning behind design decisions as well as to provide a detailed specification of the protocol and its performance characteristics when utilized in different scenarios.
+This chapter discusses the underlying communication details of the packetized display protocol (PDP) architecture. First, it gives an overview of the protocol design methodology. Secondly, it provides comparison with conventional display technology. Thirdly, it discusses requirements for packet formatting. Fourthly, it discusses individual packet types. Fifthly, it delves into the overhead of utilizing PDP packets. Sixthly, it discusses multi-framerate performance within PDP through an example of a dual framerate operation. The central purpose of this chapter is to provide the reader with an understanding of the reasoning behind design decisions as well as to provide a detailed specification of the protocol and its performance characteristics when utilized in different scenarios.
 
 \section{Design Methodology}
     \label{sec:design_methodology}
@@ -272,20 +272,5 @@ This chapter discusses the underlying communication details of the packetized di
         \caption{Multi-framerate Bandwidth Savings}
         \label{tbl:multi_framerate_bandwidth_savings}
     \end{table}
-
-\section{Compositing}
-    \label{sec:compositing}
-    This section discusses a possible compositing layer analysis that could be implemented into a system utilizing PDP to show another possible use case for PDP. Compositing is the process of combining two or more images into a single picture. In high speed systems imagery could be generated in individual pieces and combined via a compositor layer. This process might be done by a single system or via separate systems. For purposes of this discussion, it is assumed all data has arrived and is available for analysis by a compositing layer.
-
-    Figure~\ref{fig:intensity_map} shows a series of composited frames with segmented regions that could be sent as individual PDP draw region packets to an array. Each region is a representation of the average intensity of all pixels contained within that region. Darker regions indicate higher intensity and lighter regions lower intensity. During the compositing process of each frame, the average intensity of light output for each segment could be computed. The outlined segments for a given frame indicate a large change in intensity from the previous frame. The compositor could assign a weight to indicate which regions have a large absolute change in intensity from frame to frame. This information could be utilized for deciding which segments of an image to send at high speed operation or low speed operation. Segments with larger changes in intensity would be higher priority than segments with lower changes. The PDP protocol could be utilized to send these regions at a much higher frame rate than the more slowly changing segments to reflect the fast changes in intensity. In practice, this would most likely look like a weighted score where regions with higher weighted scores would be sent more frequently than regions with lower scores; with the remaining bandwidth devoted to lower regions.
-
-    \begin{figure}
-        \centering
-        \includegraphics[width=1.0\textwidth]{fig/frames.pdf}
-        \caption{Average Intensity Map of PDP Regions for Composited Frames}
-        \label{fig:intensity_map}
-    \end{figure}
-
-    In a real system, frames would be segmented more finely than in this example, allowing for small segments to be dynamically transmitted, as necessary. This would then give the ability for fast changing data to update at rates far greater than a static fixed frame rate display would be capable of doing under the same hardware constraints. An added benefit is that by prioritizing segments, and decreasing the rates of slowly changing segments, more analog bandwidth can be utilized for drawing the highspeed portions of a display since the close support electronics no longer need to devote DAC and amplifier resources toward drawing low speed regions as often. Ultimately this would result in improved image fidelity by giving additional settling time to rapidly changing regions of an array. Though only touched upon in passing in Chapter~\ref{sec:array_Interleaved_write_process}, analog performance is of primary concern in IRSPs because a higher performance chain yields in more thermally accurate imagery. Low analog performance can result in the same intensity data having different results over multiple captured frames due to DACs, Amplifiers, and emitters not having the time to completely settle in high speed operation.
 
     Now that the PDP protocol design methodology, underlying protocol details, performance characteristics, and potential operation within a system have been explored. Discussion is shifted to the abstract architecture upon which the PDP protocol operates to show the generalized type of environment PDP is envisioned to be utilized within in the future.
