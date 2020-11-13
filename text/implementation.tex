@@ -52,23 +52,54 @@ This chapter describes an FPGA implementation of the PDP architecture~\cite{Land
         \label{fig:embedded_frame_to_emitter}
     \end{figure}
 
-    For backwards compatible operation with normal HDMI, one will note that a normal HDMI frame could be expressed as a single draw region packet with a header at the start the start of a frame. For purposes of backwards compatibility it is not necessary to send the header over HDMI itself. Instead, the header information could be sent as configuration information to PDP firmware and the HDMI data stream treated as normal display data. This allows for the same decoding and array write logic to be used both for embedded PDP frames and normal HDMI frames without requiring a separate implementation. Thus, users can operate the firmware in either a backwards compatible mode of operation or normal PDP mode of operation.
-
+    For backwards compatible operation with normal HDMI, one will note that a normal HDMI frame could be expressed as a single draw region packet with a header at the start the start of a frame. For purposes of backwards compatibility it is not necessary to send the header over HDMI itself. Instead, the header information could be sent as configuration information to PDP firmware and the HDMI data stream treated as normal display data. This allows for the same decoding and array write logic to be used both for embedded PDP frames and normal HDMI frames without requiring a separate implementation. Thus, users can operate the firmware in either a backwards compatible mode of operation or normal PDP mode of operation. Now that the format of data moving into PDP firmware has been discussed, the next section moves to a general discussion of the PDP firmware layout.
 
 \section{Abstract Architecture}
+    There are many important considerations when implementing a PDP based firmware for IRSPs. These range from pulling data into the FPGA over physical pins to clock domain crossing and timing issues.
+
+    HDMI itself operates with a given pixel clock that's specified on the source side of the connection (at the machine generating the HDMI stream), meaning that the PDP firmware needs to support configurable HDMI speeds. The decoding of the HDMI stream itself is performed by off the shelf HDMI cards as noted in Chapter~\ref{sec:close_support_electronics}; therefore, the PDP firmware does not need to directly handle the protocol. Instead the firmware receives individual pixels at the pixel clock rate over two inputs simultaneously due to CSEs having two separate HDMI inputs.
+
+    The array itself requires a specific timing for its signaling as well as enough time to completely settle any analog data lines; otherwise, pixels will flicker due to metastability issues with the signaling. This means that the HDMI clock cannot be directly utilized for timing array writes without introducing severe complications for correct timing. In fact, older non-PDP firmware implementations operated this way which resulted in image quality being negatively impacted at high speeds.
+
+    In order to correct for these issues and guarantee stable operation at high speed, the PDP firmware implementation instead opted to isolate firmware operation into separate clock domains as shown in Figure~\ref{fig:abstract_architecture}. Ideally, there would simply be write and read clock domains where the write clock domain is clocked by the input HDMI pixel clock, and pixel data is buffered over an asynchronous boundary to the read clock domain. The read clock domain would operate at a static predefined speed that is faster than the write clock domain in order to ensure that under normal operation data cannot be lost. It would be responsible for decoding pixel data into headers and array data and drive an arrays signaling directly. In practice, the writer clock domain is separated into two separate clock domains for each HDMI input so that the HDMI input clocks do not need to be perfectly synchronized. As will be discussed shortly in subsequent sections, a correct and performant asynchronous boundary proved challenging in practice due to metastability issues and varability in FPGA synthesis from build to build.
+
     \begin{figure}
         \centering
         \includegraphics[width=1.0\textwidth]{fig/abstract_architecture.pdf}
-        \caption{Abstract PDP Firmware Architecture}
+        \caption{Abstract PDP Firmware Backend Architecture}
         \label{fig:abstract_architecture}
     \end{figure}
 
 \section{Frontend Architecture}
     \label{sec:frontend_arch}
+    This section will discuss the PDP frontend architecture. This is the portion of the firmware that is controllable and allows for user configuration. Recall from Figure~\ref{fig:cse_comm_block} in Chapter~\ref{sec:communication_flow} that CSE communication utilizes the cvorg protocol which is brought into a soft Microblaze soft-processor. PDP opted to retrofit this layer for its own configuration. Essentially, the frontend architecture works by decoding cvorg protocol commands which in turn set internal PDP registers which are read by the backend architecture for configuration. These include such things as controlling the length of time an individual array write occurs for, controlling delays in the signaling going to an array, and to control whether to operate the firmware in backwards compatibility mode where header data is read from internal PDP registers (called AXI mode) or PDP stream mode where header data is embedded into HDMI streams. Select APIs are shown in Table~\ref{tbl:apis}.
+
+    \begin{table}
+        \centering
+        \small
+        \begin{tabular}{| l l |}
+            \hline
+            API & Description \\ \hline
+            get\_axi\_dimensions     & Gets AXI mode dimensions as 32-bit unsigned integers.        \\
+            get\_axi\_mode           & Gets AXI mode. 0 is stream mode. 1 is backwards compat mode. \\
+            get\_post\_write\_ticks  & Gets the post write duration for PDP.                        \\
+            get\_state               & Gets current firmware state information.                     \\
+            get\_write\_ticks        & Gets the delay and duration for pixel writes in PDP.         \\
+            set\_axi\_dimensions     & Sets AXI dimensions.                                         \\
+            set\_axi\_mode           & Sets AXI mode. 0 is stream mode. 1 is backwards compat mode. \\
+            set\_error\_clear        & Sets clear bit for sticky error flags (overflow, stall).     \\
+            set\_post\_write\_ticks  & Sets the post write duration for PDP.                        \\
+            set\_write\_ticks        & Sets the delay and duration for pixel writes in PDP.         \\
+            \hline
+        \end{tabular}
+        \caption{PDP Select Communication APIs}
+        \label{tbl:apis}
+        %\end{small}
+    \end{table}
 
 \section{Overall Backend Architecture}
     \label{sec:backend_arch}
-    The implemented architecture consists of the portion of the AMM that drives an IRLED tile (or emitter array) directly from data packets sent by a compositor. As such, it is responsible for receiving PDP packets, decoding, validating, and drawing them to an IRLED array. This is shown in Figure~\ref{fig:overall_arch}. In the current implementation, packets are sent using an underlying HDMI protocol layer. The incoming data is synchronized across two distinct clock domains utilizing a synchronized circular buffer (SCB). The input side consists of two separate HDMI inputs to meet system bandwidth requirements. Each input is assumed to contain clock skew relative to the other so separate SCBs are used to synchronize these to the system domain. At a high-level, individual data words of 24-bit sized values come in per HDMI cycle. These are transitioned to the system domain and stored for retrieval by the array emitter module. The array emitter module is responsible for bringing in each 24-bit word value and emptying the corresponding SCB slot. As it brings in each word, it begins to decode them into PDP commands. Once enough data is buffered for a write or reset command, it sends the data to the write buffer module which then drives an emitter directly through I/O lines.
+    The implemented backend architecture consists of the portion of the AMM that drives an IRLED tile (or emitter array) directly from data packets sent by a compositor. As such, it is responsible for receiving PDP packets, decoding, validating, and drawing them to an IRLED array. This is shown in Figure~\ref{fig:overall_arch}. In the current implementation, packets are sent using an underlying HDMI protocol layer. The incoming data is synchronized across two distinct clock domains utilizing a synchronized circular buffer (SCB). The input side consists of two separate HDMI inputs to meet system bandwidth requirements. Each input is assumed to contain clock skew relative to the other so separate SCBs are used to synchronize these to the system domain. At a high-level, individual data words of 24-bit sized values come in per HDMI cycle. These are transitioned to the system domain and stored for retrieval by the array emitter module. The array emitter module is responsible for bringing in each 24-bit word value and emptying the corresponding SCB slot. As it brings in each word, it begins to decode them into PDP commands. Once enough data is buffered for a write or reset command, it sends the data to the write buffer module which then drives an emitter directly through I/O lines.
 
     \begin{figure}
         \centering
