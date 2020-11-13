@@ -43,7 +43,7 @@ This chapter describes an FPGA implementation of the PDP architecture~\cite{Land
         \label{fig:embedded_frame}
     \end{figure}
 
-    This effectively separates the location a pixel is drawn at from the location in which it exist within an HDMI stream allowing for pixels to be driven independently of the HDMI stream resolution. Moreover, pixels can be driven more than one time within an embedded PDP frame by simply specifying another packet with the same overlapping locations. This allows for pixels to be driven at a faster rate then the base HDMI resolution. In fact, with the separation of pixel draw location from stream location, a specific HDMI resolution is not even necessary. Smaller faster resolutions can be utilized to draw arrays with larger resolutions than a modeline specifies as shown in Figure~\ref{fig:embedded_frame_to_emitter}. Ultimately, this allows for costume tailored modelines with different resolutions and base framerates to be utilizable with PDP over HDMI. Moreover, these benefits would hold for other display protocols if used as a PDP transport layer such as DisplayPort, and would allow PDP to be utilized by simply replacing the HDMI decoder hardware with other off the shelf decoder components without requiring changes to the PDP decoding logic or implementation.
+    This effectively separates the location a pixel is drawn at from the location in which it exist within an HDMI stream allowing for pixels to be driven independently of the HDMI stream resolution. Moreover, pixels can be driven more than one time within an embedded PDP frame by simply specifying another packet with the same overlapping locations. This allows for pixels to be driven at a faster rate then the base HDMI resolution. In fact, with the separation of pixel draw location from stream location, a specific HDMI resolution is not even necessary. Smaller faster resolutions can be utilized to draw arrays with larger resolutions than a modeline specifies as shown in Figure~\ref{fig:embedded_frame_to_emitter}. Ultimately, this allows for costume tailored modelines with different resolutions and base framerates to be utilizable with PDP over HDMI. Moreover, these benefits would hold for other display protocols if used as a PDP transport layer such as DisplayPort, and would allow PDP to be utilized by simply replacing the HDMI decoder hardware with other off the shelf decoder components without requiring changes to the PDP decoding logic or implementation, thus easing hardware requirements and vendor lock-in for PDP based implementations.
 
     \begin{figure}
         \centering
@@ -51,6 +51,9 @@ This chapter describes an FPGA implementation of the PDP architecture~\cite{Land
         \caption{Embedded PDP Frame to Array Mapping}
         \label{fig:embedded_frame_to_emitter}
     \end{figure}
+
+    For backwards compatible operation with normal HDMI, one will note that a normal HDMI frame could be expressed as a single draw region packet with a header at the start the start of a frame. For purposes of backwards compatibility it is not necessary to send the header over HDMI itself. Instead, the header information could be sent as configuration information to PDP firmware and the HDMI data stream treated as normal display data. This allows for the same decoding and array write logic to be used both for embedded PDP frames and normal HDMI frames without requiring a separate implementation. Thus, users can operate the firmware in either a backwards compatible mode of operation or normal PDP mode of operation.
+
 
 \section{Abstract Architecture}
     \begin{figure}
