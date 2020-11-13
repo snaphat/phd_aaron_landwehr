@@ -4,28 +4,47 @@
 %FIXME: Add information about the development history thingies from the repo
 %FIXME: my research group's arrays?
 %FIXME: talk about fw control modularity
+
+%FIXME: fix this paragraph
 This chapter describes an FPGA implementation of the PDP architecture~\cite{LandwehrEtAl2019_2,JacksonEtAl2019,BrowningEtAl2020}. For the purposes of this discussion, only relevant details are included to ease the readers understanding. First, the chapter will discuss the purpose of the implemented architecture. Following this each component will be discussed at a high-level. Finally, the operation of sub-components will be discussed.
+
 \section{HDMI Transport Layer}
     \label{sec:hdmi_transport_layer}
     %FIXME: Discuss goal 4
-    \begin{figure}
-        \centering
-        \includegraphics[width=0.5\textwidth]{fig/packet_refresher.pdf}
-        \caption{Packet Format Refresher}
-        \label{fig:packet_refresher}
-    \end{figure}
+
+    This section discusses utilizing HDMI as a transport layer for PDP. HDMI was chosen for the first implementation of PDP for several reasons. Firstly, current IRSP technology typically utilizes display protocols and the cooresponding links so from the perspective of hardware compatibility a display based protocol layer is ideal. Secondly, providing a backwards compatible implementation of PDP is a design goal as discussed in Chapter~\ref{sec:design_methodology}. Thirdly, utilizing existing hardware and systems is much cheaper and quicker than designing new hardware. Fourthly, minimizing barriers to entry for users of the protocol is important. Fifthly, it allows for a direct comparison with the same hardware. Sixthly, the systems in my lab utilize HDMI directly already.
+
+    Recall that HDMI is a display protocol with blanking regions as discussed extensively in Chapter~\ref{sec:conventional_display_protocols}. Display protocols have an {\it Active Video} region as shown in Figure~\ref{fig:display_protocol_timing_overview}. This region is made up of scanlines that represent rows of pixels. In normal HDMI operation, the active video region is is simply representation of all visible pixels for a projector to display similar to when HDMI is utilized with a normal computer monitor. At the start of a frame, the first pixel will be streamed to an HDMI decoder and translated to an analog voltage to physically drive the first pixel of a display starting from the top left corner. Following this, subsequent pixels as streamed in and drive each pixel moving toward the right. When an hsync pulse occurs, the display moves to the next row and begins again. this is a typical rasterisation process.
+
+    Traditional IRSP technology uses display protocols quite similarly but reorders data depending on how the rasterization process differs for the projector hardware. Recall the NSLEDS and HDILED array write process discussed in Chapter~\ref{sec:array_Interleaved_write_process} which includes a transpose and data reordering. For purposes of this discussion let us put aside any data reordering and blanking regions. Without lost of generality, drawing to an IRSP looks like Figure~\ref{fig:classic_video} where {\it D} represents an individual 24-bit pixel. Each {\it D} pixel would be decoded one by one as the data is streamed over HDMI to a decoder, and mapped to physical pixel on an array.
+
     \begin{figure}
         \centering
         \includegraphics[width=1.0\textwidth]{fig/classic_video.pdf}
         \caption{Normal Frame with Display Data}
         \label{fig:classic_video}
     \end{figure}
+
+    Now let us review the details of the PDP {\it Draw Region} packet shown in Figure~\ref{fig:packet_refresher}. Recall that it consist of an ID number, x start address, x end address, y start address, end y address, and trailing pixel data. The header data is denoted in yellow and the pixel data denoted in green. Recall additionally, that PDP allows its internal word size to be implementation specific; as such, for HDMI it is ideal to use a 24-bit word size in order to allow for fixed width pixel decoder logic. Additionally, this allows for each PDP word to be directly embeddable within an HDMI display stream with a one to one mapping between an HDMI pixel and a PDP word.
+
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.5\textwidth]{fig/packet_refresher.pdf}
+        \caption{Draw Region Packet}
+        \label{fig:packet_refresher}
+    \end{figure}
+
+    Extrapolating, PDP region packets can be embedded into a HDMI data stream as shown in Figure~\ref{fig:embedded_frame} where each PDP word would be represented as a 24-bit pixel in the HDMI data stream. However, the meaning of the pixels differs from a normal frame in that only some pixels will be displayed to an array, and the location of displayed pixels is dependent on the header data preceding the pixels instead of using the start of the frame and the hsync regions to determine the location as is the case with normal HDMI. As the pixel words are streamed in, they are decoded one by one and examined for a context. For example, at the start of the example stream, an ID word would be streamed and decoded, signaling to the firmware that a Draw Region packet is being streamed in. From there, the four header words representing the region size would be streamed in, and stored for determining where to draw the pixel data that follows. As the pixel data is streamed in, the firmware would actively draw pixels in the cooresponding locations on the array where the header says the data should be located. This process would be continued until the end of a packet, and then the subsequent packet would undergo the same process.
+
     \begin{figure}
         \centering
         \includegraphics[width=1.0\textwidth]{fig/embedded_frame.pdf}
         \caption{Embedded PDP Frame}
         \label{fig:embedded_frame}
     \end{figure}
+
+    This effectively separates the location a pixel is drawn at from the location in which it exist within an HDMI stream allowing for pixels to be driven independently of the HDMI stream resolution. Moreover, pixels can be driven more than one time within an embedded PDP frame by simply specifying another packet with the same overlapping locations. This allows for pixels to be driven at a faster rate then the base HDMI resolution. In fact, with the separation of pixel draw location from stream location, a specific HDMI resolution is not even necessary. Smaller faster resolutions can be utilized to draw arrays with larger resolutions than a modeline specifies as shown in Figure~\ref{fig:embedded_frame_to_emitter}. Ultimately, this allows for costume tailored modelines with different resolutions and base framerates to be utilizable with PDP over HDMI. Moreover, these benefits would hold for other display protocols if used as a PDP transport layer such as DisplayPort, and would allow PDP to be utilized by simply replacing the HDMI decoder hardware with other off the shelf decoder components without requiring changes to the PDP decoding logic or implementation.
+
     \begin{figure}
         \centering
         \includegraphics[width=1.0\textwidth]{fig/embedded_frame_to_emitter.pdf}
