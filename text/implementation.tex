@@ -147,7 +147,7 @@ This chapter describes an FPGA implementation of the PDP architecture~\cite{Land
 
     \begin{figure}[t]
         \centering
-        \includegraphics[width=0.90\textwidth]{fig/pdp_ae_arch.pdf}
+        \includegraphics[width=0.95\textwidth]{fig/pdp_ae_arch.pdf}
         \caption{Array Emitter Architecture}
         \label{fig:ae_arch}
     \end{figure}
@@ -158,17 +158,27 @@ This chapter describes an FPGA implementation of the PDP architecture~\cite{Land
 
 \section{State Machines}
     \label{sec:state_machines}
-    When a packet ID matching an operation handled by a given controller arrives, the corresponding controller will switch states and then wait for the rest of the incoming packet data to arrive. This is shown in Figure~\ref{fig:state_machine}. For example, item 3 shows each state machine waiting for a corresponding PDP OP code. If a draw region packet ID were to arrive, then the state machine would wait for the X start address, X end address, Y start address, and Y end address shown in item 4. Finally, the state machine would buffer the needed data for a write and move to the write state once all data has been buffered. In the write state it would send the data to the write buffer. If more data needs to be written for the PDP packet, it would then continue buffering the needed data, and wait for the write buffer to be idle to send the next set of data. The busy line in Figure~\ref{fig:ae_arch} indicates when the write buffer is in the process of writing to the array. This would continue until all data was written for the packet, finally proceeding to the idle state. The reset controller contains similar logic, but for the reset process. The valid controller is used to ensure that incorrect or corrupt packet data is cleared. If an invalid packet OP code arrives during an array emitter idle phase, the valid controller will simply empty the corresponding SCB slot. In future revisions, it will perform CRC checks on packet data to ensure the header and body are valid. The Active-Out, Active-In, and Select lines are used to coordinate which array emitter module has control over the write buffer. After an array write, normally an array emitter will signal the write buffer that it is ceding control to the other array emitter, but only in cases where the other array emitter is currently active and waiting to write.
+    Figure~\ref{fig:state_machine} shows a block diagram of the PDP state machines for the draw region and array reset controllers. Each cycle of the system clock, an array emitter will attempt to read a word of data stored within an SCB. For simplicity, an example draw region packet is shown.
 
-    \begin{figure}
+    \begin{figure}[t]
         \centering
-        \includegraphics[width=1.0\textwidth]{fig/pdp_state_machine.pdf}
+        \includegraphics[width=0.95\textwidth]{fig/pdp_state_machine.pdf}
         \caption{PDP State Machine}
         \label{fig:state_machine}
     \end{figure}
 
+
+    When a packet ID matching an operation handled by a given controller arrives, the corresponding controller will switch states and then wait for the rest of the incoming packet data to arrive. For example, if a draw region packet ID were to arrive, then the state machine would wait for the X start address, X end address, Y start address, and Y end address to arrive word by word by performing a check for valid data each system clock cycle. Finally, after data arrives and the header is decoded, the state machine would load the necessary pixel data for a write and move to the write data state once all data has been buffered. In this state it would send the data to the write buffer. If more data needs to be written for the PDP packet, it would then continue buffering the needed data, and wait for the write buffer to be idle to send the next set of data. This would continue until all data was written for the packet, finally proceeding to the idle state. For more incite, recall that Figure~\ref{fig:pdp_stream} in Chapter~\ref{sec:packet_types} shows an example PDP stream being decoded cycle by cycle. This state machine is simply an implemented version of the decoding process shown there.
+
+    The reset controller contains similar logic. When a packet ID matching a reset packet arrives, the reset controller will begin the array reset process. This is a system specific process but for an NSLEDS array requires enabling all quadrant bits, writing a load signal of 0, and driving the reset signal located on the RIIC high. Following this, it requires enabling all quadrant bits, writing a load signal of 1, and driving the array reset signal to high. The reset controller does this by sending a request for both operations to the write buffer and going back to an idle state afterwards. For more information about these signals see Chapter~\ref{sec:array_Interleaved_write_process}.
+
+    The valid controller (not shown) is used to ensure that incorrect or corrupt packet data is cleared. If an invalid packet OP code arrives during an array emitter idle phase, the valid controller will simply empty the corresponding SCB slot.
+
 \section{Write Buffer}
-     Figure~\ref{fig:wb_arch} shows the details of the write buffer architectures inputs and outputs along with important signaling to other modules. The write buffer is responsible for driving the I/O pins that go to the array.
+
+    The busy line in Figure~\ref{fig:ae_arch} indicates when the write buffer is in the process of writing to the array.
+
+    Figure~\ref{fig:wb_arch} shows the details of the write buffer architectures inputs and outputs along with important signaling to other modules. The write buffer is responsible for driving the I/O pins that go to the array.
 
     \begin{figure}[t]
         \centering
@@ -176,3 +186,5 @@ This chapter describes an FPGA implementation of the PDP architecture~\cite{Land
         \caption{Write Buffer Architecture}
         \label{fig:wb_arch}
     \end{figure}
+
+    The Active-Out, Active-In, and Select lines are used to coordinate which array emitter module has control over the write buffer. After an array write, normally an array emitter will signal to the write buffer that it is ceding control to the other array emitter, but only in cases where the other array emitter is currently active and waiting to write.
