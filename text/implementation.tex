@@ -99,7 +99,7 @@ This chapter describes an FPGA implementation of the PDP architecture~\cite{Land
 
 \section{Overall Backend Architecture}
     \label{sec:backend_arch}
-    The implemented backend architecture consists of the portion of the AMM that drives an IRLED tile (or emitter array) directly from data packets sent by a compositor. As such, it is responsible for receiving PDP packets, decoding, validating, and drawing them to an IRLED array. This is shown in Figure~\ref{fig:overall_arch}. In the current implementation, packets are sent using an underlying HDMI protocol layer. The incoming data is synchronized across two distinct clock domains utilizing a synchronized circular buffer (SCB). The input side consists of two separate HDMI inputs to meet system bandwidth requirements. Each input is assumed to contain clock skew relative to the other so separate SCBs are used to synchronize these to the system domain. At a high-level, individual data words of 24-bit sized values come in per HDMI cycle. These are transitioned to the system domain and stored for retrieval by the array emitter module. The array emitter module is responsible for bringing in each 24-bit word value and emptying the corresponding SCB slot. As it brings in each word, it begins to decode them into PDP commands. Once enough data is buffered for a command, the data is sent to the write buffer module which then drives an emitter directly through I/O lines.
+    The implemented backend architecture consists of the portion of the AMM that drives an IRLED tile (or emitter array) directly from data packets sent by a compositor. As such, it is responsible for receiving PDP packets, decoding, validating, and drawing them to an IRLED array. This is shown in Figure~\ref{fig:overall_arch}. In the current implementation, packets are sent using an underlying HDMI protocol layer. The incoming data is synchronized across two distinct clock domains utilizing a synchronized circular buffer (SCB). The input side consists of two separate HDMI inputs to meet system bandwidth requirements. Each input is assumed to contain clock skew relative to the other so separate SCBs are used to synchronize these to the system domain. At a high-level, individual data words of 24-bit sized values come in each HDMI cycle. These are transitioned to the system domain and stored for retrieval by the array emitter module. The array emitter module is responsible for bringing in each 24-bit word value and emptying the corresponding SCB slot. As it brings in each word, it begins to decode them into PDP commands. Once enough data is buffered for a command, the data is sent to the write buffer module which then drives an emitter directly through I/O lines.
 
     \begin{figure}
         \centering
@@ -110,7 +110,7 @@ This chapter describes an FPGA implementation of the PDP architecture~\cite{Land
 
 \section{Synchronized Circular Buffer}
 
-    Figure~\ref{fig:scb_arch} shows the submodule details of the synchronized circular buffer utilized in the implementation. Internally, it consists of two controllers, two data routers, and the actual internal buffer storage with a built-in synchronizer circuit.
+    Figure~\ref{fig:scb_arch} shows the submodule details of the synchronized circular buffer utilized within the implementation. It is used to handle clock domain crossing for data sent from the HDMI domain to the System domain. Internally, it consists of two controllers, two data routers, and the actual internal buffer storage with a built-in synchronizer circuit. The details of each will be explained in following subsections.
 
     \begin{figure}
         \centering
@@ -119,48 +119,45 @@ This chapter describes an FPGA implementation of the PDP architecture~\cite{Land
         \label{fig:scb_arch}
     \end{figure}
 
-    The write controller is used to coordinate which internal buffer to write data to. A buffer is marked as full when a write trigger comes in which in turn causes a new buffer to be selected in the same clock cycle. In terms of HDMI, when a pixel is streamed in, the HDMI write enable go high, clocking the pixel into the synchronized buffer and causing the buffer swap to occur. The write router performs the actual data redirection based off the buffer selected by the write controller. At high-level, internally, a request-acknowledgment handshake is used to ensure the data has transitioned correctly across clock domains and is available on the other side. The details of this implementation will be discussed in Chapter~\ref{Sec:MemorySync}. Once data becomes available, the read router will output the data lines as well as a valid signal indicating that the data can be read and cleared. The read controller will clear it once an empty trigger is sent from the array emitter indicating that the corresponding word has been read. It will then select the next buffer. Once the last buffer is written or read by either controller, the first buffer will be selected again. To note here for clarity, the actual filling and clearing of the buffers is done by HDMI write enable on the writer side, and the array emitter on the reader side.
-
     \subsection{Controllers}
+        The write controller is used to coordinate which internal buffer to write pixel data to. At a given clock cycle, when a pixel is streamed in, the {\it write enable} is used as a {\it write trigger} which causes the write controller to immediately set the current buffer to full, and select the next buffer. On the same clock cycle, the incoming pixel data is stored in the current buffer. In practice, this process repeats for each HDMI clock cycle when write enable is high. The write router performs the actual data redirection based off the buffer selected by the write controller. This will be discussed shortly.
+
+        The read controller behaves similarly to the write controller, but is used to coordinate the reading of stored data from the internal SCB buffers. A {\it valid} signal is used to indicate whether a buffer is filled. If valid is low then the data line output is undefined. In operation, an array emitter will watch for a buffer to be filled then once it is, the array emitter will decode the data and send an {\it empty trigger}, causing the read controller to set the selected buffer to empty and select the next buffer or slot. The array emitter then polls the valid line for the next buffer and the process repeats. The read router performs the actual data redirection based off the {\it select} line controlled by the read controller. This will be discussed shortly.
 
     \subsection{Routing}
+        Figure~\ref{fig:sb_arch} shows the internals of the synchronized buffers used by the SCB with attached data routers. While only four buffers are shown for demonstration purposes, the number of buffers is compile time definable in the implementation. In the system both, both the writer and reader of the buffers have independent views of the the SCB state and data stored within. As mentioned previously, data is mapped based off the select lines. This causes a given buffer's internal lines to be routed in or out depending on the direction of the signals. The {\it empty flag} is used to determine if an overflow has occurred. This may occur if all buffers are filled and the writer has no place for new data. This will result in an error flag being set so that a user can determine that there is an operational problem occurring. The {\it full flag} is mapped as a {\it valid flag} to the array emitter which uses it to determine if a buffer is full as noted previously. The {\it set\_full} and {\it set\_empty} lines are used simply to change the state of the internal buffers depending on whether they are now empty or full. The {\it hold} lines are used to hold any shift register data when a buffer isn't selected. Any unselected shift register automatically hold their contents. A selected shift register will conditionally hold its contents if a {\it write trigger} is not occuring and update its contents otherwise. Data into the SCB is selectively routed to each shift register to allow for the data to be stored and data out of the SCB is selectively routed to an array emitter for decoding.
+
+        \begin{figure}
+            \centering
+            \includegraphics[width=1.0\textwidth]{fig/pdp_sb_arch.pdf}
+            \caption{Synchronized Internal Buffer Architecture}
+            \label{fig:sb_arch}
+        \end{figure}
 
     \subsection{Internal Buffer and Memory Synchronizer}
-    \label{Sec:MemorySync}
+        \label{Sec:MemorySync}
+        At high-level, internally, a request-acknowledgment handshake is used to ensure the data has transitioned correctly across clock domains and is available on the other side. The details of this implementation will be discussed in Chapter~\ref{Sec:MemorySync}. Once data becomes available, the read router will output the data lines as well as a valid signal indicating that the data can be read and cleared. The read controller will clear it once an empty trigger is sent from the array emitter indicating that the corresponding word has been read. It will then select the next buffer. Once the last buffer is written or read by either controller, the first buffer will be selected again. To note here for clarity, the actual filling and clearing of the buffers is done by HDMI write enable on the writer side, and the array emitter on the reader side.
 
-    Figure~\ref{fig:sb_arch} shows the internals of the internal buffers used by the SCB.
-    \begin{figure}
-        \centering
-        \includegraphics[width=1.0\textwidth]{fig/pdp_sb_arch.pdf}
-        \caption{Synchronized Internal Buffer Architecture}
-        \label{fig:sb_arch}
-    \end{figure}
-
-    Figure~\ref{blah} shows the internals of the memory synchronizer utilized by the SCB architecture.
+        %FIXME: add figure
+        %Figure~\ref{blah} shows the internals of the memory synchronizer utilized by the SCB architecture.
 
 \section{Array Emitter}
 
-    Figure~\ref{fig:ae_arch} shows the details of the array emitter module used in the implementation. Internally, the array emitter consists of individual controllers that each perform a particular role. Currently these are the write enable controller, which controls writing draw region packets; the reset controller, which controls the resetting process per frame; and the valid controller which does validation checks on the input to verify the correctness of packets. Each controller takes in similar input signals and produces similar output signals with some exceptions depending on the actual function of the individual controller module. On the input side, each controller takes in a valid and data line corresponding to an individual word of a PDP packet. Additionally, an active line is brought into each controller to indicate whether another controller module is active or not. This is used to ensure that other modules do not become active (for correctness purposes) while another is currently processing a packet. During an idle phase, the write enable and reset controllers will wait for a corresponding packet ID to come in.
+    Figure~\ref{fig:ae_arch} shows the details of the array emitter module used in the implementation. The logic for handling the PDP protocol is encapsulated completely here. An array emitter module is responsible for decoding the words of PDP packets and sending pixel data or array reset requests to the write buffer which will either draw to the array or reset the array depending on the requested operation.
 
-    \begin{figure}
+    \begin{figure}[t]
         \centering
-        \includegraphics[width=1.0\textwidth]{fig/pdp_ae_arch.pdf}
+        \includegraphics[width=0.90\textwidth]{fig/pdp_ae_arch.pdf}
         \caption{Array Emitter Architecture}
         \label{fig:ae_arch}
     \end{figure}
 
+    Internally, the array emitter consists of individual state machine controllers that each handle a particular packet type. The current implemantion includes a write enable controller, which controls decoding of draw region packets; a reset controller, which controls the array reset process; and a valid controller which does validation checks on the input to verify the correctness of packets discarding any unknown data. For example, unknown packet IDs.
 
-\section{Write Buffer}
-     Figure~\ref{fig:wb_arch} shows the details of the write buffer architectures inputs and outputs along with important signaling to other modules. The write buffer is responsible for driving the I/O pins that go to the array.
+    Each controller takes in similar input signals and produces similar output signals with some exceptions depending on the actual function of the individual controller module. On the input side, each controller takes in a valid and data line corresponding to an individual word of a PDP packet. Additionally, an active line is brought into each controller to indicate whether another controller module is active or not. This is used to ensure that other modules do not become active (for correctness purposes) while another is currently processing a packet. During an idle phase, the write enable and reset controllers wait for a corresponding packet ID to come in before beginning operation. The details of the state machine will be discussed in the following section.
 
-    \begin{figure}
-        \centering
-        \includegraphics[width=1.0\textwidth]{fig/pdp_wb_arch.pdf}
-        \caption{Write Buffer Architecture}
-        \label{fig:wb_arch}
-    \end{figure}
-
-\section{State Machine}
+\section{State Machines}
+    \label{sec:state_machines}
     When a packet ID matching an operation handled by a given controller arrives, the corresponding controller will switch states and then wait for the rest of the incoming packet data to arrive. This is shown in Figure~\ref{fig:state_machine}. For example, item 3 shows each state machine waiting for a corresponding PDP OP code. If a draw region packet ID were to arrive, then the state machine would wait for the X start address, X end address, Y start address, and Y end address shown in item 4. Finally, the state machine would buffer the needed data for a write and move to the write state once all data has been buffered. In the write state it would send the data to the write buffer. If more data needs to be written for the PDP packet, it would then continue buffering the needed data, and wait for the write buffer to be idle to send the next set of data. The busy line in Figure~\ref{fig:ae_arch} indicates when the write buffer is in the process of writing to the array. This would continue until all data was written for the packet, finally proceeding to the idle state. The reset controller contains similar logic, but for the reset process. The valid controller is used to ensure that incorrect or corrupt packet data is cleared. If an invalid packet OP code arrives during an array emitter idle phase, the valid controller will simply empty the corresponding SCB slot. In future revisions, it will perform CRC checks on packet data to ensure the header and body are valid. The Active-Out, Active-In, and Select lines are used to coordinate which array emitter module has control over the write buffer. After an array write, normally an array emitter will signal the write buffer that it is ceding control to the other array emitter, but only in cases where the other array emitter is currently active and waiting to write.
 
     \begin{figure}
@@ -168,4 +165,14 @@ This chapter describes an FPGA implementation of the PDP architecture~\cite{Land
         \includegraphics[width=1.0\textwidth]{fig/pdp_state_machine.pdf}
         \caption{PDP State Machine}
         \label{fig:state_machine}
+    \end{figure}
+
+\section{Write Buffer}
+     Figure~\ref{fig:wb_arch} shows the details of the write buffer architectures inputs and outputs along with important signaling to other modules. The write buffer is responsible for driving the I/O pins that go to the array.
+
+    \begin{figure}[t]
+        \centering
+        \includegraphics[width=1.0\textwidth]{fig/pdp_wb_arch.pdf}
+        \caption{Write Buffer Architecture}
+        \label{fig:wb_arch}
     \end{figure}
