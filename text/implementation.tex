@@ -176,15 +176,13 @@ This chapter describes an FPGA implementation of the PDP architecture~\cite{Land
 
 \section{Write Buffer}
 
-    The busy line in Figure~\ref{fig:ae_arch} indicates when the write buffer is in the process of writing to the array.
+    Figure~\ref{fig:wb_arch} shows the details of the write buffer architectures inputs and outputs along with important signaling to other modules. The write buffer is responsible for driving the I/O pins that go to the array. At a high level, the write buffer is responsible for coordinating writes between the two array emitters shown. Generally, this is done by handing off write buffer privileges every other write through the Select line in order to ensure starvation does not occur for either HDMI input. The busy line is used to indicate when the write buffer is in the process of writing to the array in order to ensure that array emitter modules do not attempt to send new data to the write buffer while it is currently active.
 
-    Figure~\ref{fig:wb_arch} shows the details of the write buffer architectures inputs and outputs along with important signaling to other modules. The write buffer is responsible for driving the I/O pins that go to the array.
-
-    \begin{figure}[t]
+    \begin{figure}[H]
         \centering
         \includegraphics[width=1.0\textwidth]{fig/pdp_wb_arch.pdf}
         \caption{Write Buffer Architecture}
         \label{fig:wb_arch}
     \end{figure}
 
-    The Active-Out, Active-In, and Select lines are used to coordinate which array emitter module has control over the write buffer. After an array write, normally an array emitter will signal to the write buffer that it is ceding control to the other array emitter, but only in cases where the other array emitter is currently active and waiting to write.
+    For input, the write buffer takes bits representing the signal I/O going to the RIIC. This includes all of the output signals discussed in Chapter~\ref{sec:array_Interleaved_write_process}. Configuration information is sent to indicate for how long a write or reset should occur as well as when during the write process specific signaling should go high and back to low. These signals are configurable through the frontend APIs discussed in Chapter~\ref{sec:frontend_arch}. It is worth noting that in practice, that this timing is array specific but must be long enough for the analog signaling to settle.
