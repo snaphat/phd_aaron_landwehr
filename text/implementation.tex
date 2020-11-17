@@ -141,30 +141,94 @@ This chapter describes an FPGA implementation of the PDP architecture~\cite{Land
             \centering
             \includegraphics[width=1.0\textwidth]{fig/full_empty_circuit.pdf}
             \caption{Full/Empty Memory Synchronizer}
-            \label{fig:sb_arch}
+            \label{fig:full_empty_circuit}
         \end{figure}
 
-        \begin{minted}{vhdl}
-            process (rd_clk)
-            begin
-                if (rising_edge(rd_clk)) then
-                    -- transition request to reader domain.
-                    req_int <= req;
-                    req_reg <= req_int;
-                    if rd_reset = '1' then
-                        ack <= '0';
-                        req_int <= '0';
-                        req_reg <= '0';
-                    else
-                        if set_empty = '1' then -- set empty, signal request.
-                            ack <= '1';
-                        end if;
-                        if req_reg = '0' then   -- if writer transitioned request low.
-                            ack <= '0';         -- then transition acknowledgment low.
-                        end if;
+        \begin{minted}[
+        frame=lines,
+        framesep=2mm,
+        baselinestretch=1.0,
+        %bgcolor=lightgray,%
+        fontsize=\small,
+        linenos
+        ]{vhdl}
+library IEEE;
+use IEEE.std_logic_1164.all;
+library UNISIM;
+use UNISIM.VComponents.all;
+
+entity memory_synchronizer is
+    port (
+        -- wr domain in:
+        wr_reset    : in std_ulogic;         -- global reset
+        wr_clk      : in std_ulogic;         -- writer clock
+        set_full    : in std_ulogic;         -- writer set_full trigger
+        -- wr domain out:
+        full_flag   : out std_ulogic := '0'; -- full flag
+        -- rd domain in:
+        rd_reset    : in std_ulogic;         -- global reset
+        rd_clk      : in std_ulogic;         -- reader clock
+        set_empty   : in std_ulogic;         -- reader set_empty trigger
+        -- rd domain out:
+        empty_flag  : out std_ulogic := '1'  -- empty flag
+    );
+end entity;
+
+architecture Behavioral of memory_synchronizer is
+    signal req      : std_ulogic := '0'; -- request writer domain
+    signal req_int  : std_ulogic := '0'; -- request buffer
+    signal req_reg  : std_ulogic := '0'; -- request reader domain
+    signal ack      : std_ulogic := '0'; -- acknowledgement reader domain
+    signal ack_int  : std_ulogic := '0'; -- acknowledgement buffer
+    signal ack_reg  : std_ulogic := '0'; -- acknowledgement writer domain
+begin
+    empty_flag <=  req nor ack_reg;
+    full_flag <= req_reg and not ack;
+
+    process (wr_clk)
+    begin
+        if (rising_edge(wr_clk)) then
+            -- transition acknowledgement to writer domain.
+            ack_int <= ack;
+            ack_reg <= ack_int;
+            if wr_reset = '1' then
+                req <= '0';
+                ack_int <= '0';
+                ack_reg <= '0';
+            else
+                if set_full = '1' then  -- set full to signal request.
+                    if req = '0' then
+                        req <= '1';
                     end if;
                 end if;
-            end process;
+                if ack_reg = '1' then   -- if reader transitioned ack high
+                    req <= '0';         -- then transition request low.
+                end if;
+            end if;
+        end if;
+    end process;
+
+    process (rd_clk)
+    begin
+        if (rising_edge(rd_clk)) then
+            -- transition request to reader domain.
+            req_int <= req;
+            req_reg <= req_int;
+            if rd_reset = '1' then
+                ack <= '0';
+                req_int <= '0';
+                req_reg <= '0';
+            else
+                if set_empty = '1' then -- set empty to signal ack.
+                    ack <= '1';
+                end if;
+                if req_reg = '0' then -- if writer transitioned request low
+                    ack <= '0';       -- then transition ack low.
+                end if;
+            end if;
+        end if;
+    end process;
+end architecture;
         \end{minted}
 
         %Figure~\ref{blah} shows the internals of the memory synchronizer utilized by the SCB architecture.
