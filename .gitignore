@@ -13,3 +13,4 @@
 *.toc
 *.gz
 ~$*.pptx
+_minted-*

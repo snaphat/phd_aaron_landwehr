@@ -144,6 +144,29 @@ This chapter describes an FPGA implementation of the PDP architecture~\cite{Land
             \label{fig:sb_arch}
         \end{figure}
 
+        \begin{minted}{vhdl}
+            process (rd_clk)
+            begin
+                if (rising_edge(rd_clk)) then
+                    -- transition request to reader domain.
+                    req_int <= req;
+                    req_reg <= req_int;
+                    if rd_reset = '1' then
+                        ack <= '0';
+                        req_int <= '0';
+                        req_reg <= '0';
+                    else
+                        if set_empty = '1' then -- set empty, signal request.
+                            ack <= '1';
+                        end if;
+                        if req_reg = '0' then   -- if writer transitioned request low.
+                            ack <= '0';         -- then transition acknowledgment low.
+                        end if;
+                    end if;
+                end if;
+            end process;
+        \end{minted}
+
         %Figure~\ref{blah} shows the internals of the memory synchronizer utilized by the SCB architecture.
 
 \section{Array Emitter}

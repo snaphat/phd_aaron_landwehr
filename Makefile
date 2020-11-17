@@ -47,7 +47,7 @@ version		:= 2.2.1-alpha9
 # BUILD_STRATEGY := latex
 BUILD_STRATEGY		?= pdflatex
 # This can be used to pass extra options to latex.
-LATEX_OPTS		?=
+LATEX_OPTS		?= -shell-escape
 #
 # Sets LC_ALL=C, by default, so that the locale-aware tools, like sort, be
 # # immune to changes to the locale in the user environment.
@@ -3406,6 +3406,7 @@ clean-generated:
 .PHONY: clean-deps
 clean-deps:
 	$(QUIET)$(call clean-files,$(all_d_targets) *.make *.make.temp *.cookie)
+	rm -rf _minted-*
 
 .PHONY: clean-tex
 clean-tex: clean-deps
