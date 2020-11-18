@@ -13,8 +13,9 @@
 \makeatletter
 \providecommand{\toclevel@prefacesection}{0}
 \makeatother
-
-\usepackage[labelfont=bf,format=hang,belowskip=12pt]{caption}
+\usepackage{silence}
+\WarningFilter{caption}{Unknown document class}
+\usepackage[style=default,labelfont=bf,format=hang,belowskip=12pt]{caption}
 \usepackage[usenames,dvipsnames]{xcolor}
 \usepackage{tcolorbox}
 \usepackage{tabularx}
@@ -36,9 +37,12 @@ colback=gray!01!white,colframe=myblue,colbacktitle=myblue2,
 coltitle=black,center title,shrink tight}
 
 \newcommand{\unt}[2]{\mbox{#1\,#2}}
-\renewcommand\theFancyVerbLine{\small\arabic{FancyVerbLine}}
+\renewcommand\theFancyVerbLine{\normalsize\arabic{FancyVerbLine}}
+
+\apptocmd{\sloppy}{\hbadness 10000\relax}{}{}
 
 \usepackage{draftwatermark}
+\SetWatermarkFontSize{24.88pt}
 \SetWatermarkScale{8}
 \SetWatermarkLightness{0.96}
 
