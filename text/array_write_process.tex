@@ -1,5 +1,5 @@
 \label{chap:array_write_process}
-This chapter provides the reader with an overview of the data formatting required to drive an IRLED array, and hardware specific details of the underlying array write process to facilitate an understanding of the context in which PDP is implemented as well as highlight some of the challenges with high speed operation. Firstly, it discusses the interleaved write process required to directly drive LEDs on an LED IRSP. Then, it discusses the data re-ordering done to optimize the write process. Protocol level details of how external data is received are discussed in Chapter~\ref{chap:display_protocols}.
+This chapter provides the reader with an overview of the data formatting required to drive an IRLED array, and hardware specific details of the underlying array write process to facilitate an understanding of the context in which PDP is implemented as well as highlight some of the challenges with high speed operation. Firstly, it discusses the interleaved write process required to directly drive LEDs on an IRLED IRSP. Then, it discusses the data re-ordering done to optimize the write process. Protocol level details of how external data is received are discussed in Chapter~\ref{chap:display_protocols}.
 
 
 \section{Array Interleaved Write Process}
@@ -149,4 +149,4 @@ This chapter provides the reader with an overview of the data formatting require
         \label{fig:image_encoding_ir_example2}
     \end{figure}
 
-    While this chapter discussed the internal details of how imagery received within the array is formatted and written to an array, Chapter~\ref{chap:display_protocols} shifts to a discussion of how imagery is sent to an array at the protocol level within an IRLED system while providing details of the limitations and challenges present there.
+    While this chapter discussed the internal details of how imagery received within the array is formatted and written to an array, Chapter~\ref{chap:display_protocols} shifts to a discussion of how imagery is sent to an array at the protocol level within an IRSP system while providing details of the limitations and challenges present there.
