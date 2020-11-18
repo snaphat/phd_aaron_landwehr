@@ -91,7 +91,7 @@ This chapter discusses the underlying communication details of the packetized di
 
     PDP Packets are divided into four types, a no operation packet, a draw region packet, array reset packet, and trigger packet. All packets consist of a Type ID field of word-size. The type ID is used by the decoder to determine the packet type.
 
-    The first packet type, {\it No Operation}, is simply indicating that OP codes of 0x0 will be ignored.
+    The first packet type, {\it No Operation}, is simply indicating that command IDs of 0x0 will be ignored.
 
     The second packet type, {\it Draw Region}, is used to send a rectangular sub-region of pixel data in global array coordinates to minimize computations and translations. It has fields for the start and stop horizontal and vertical coordinates (defined inclusively) followed by individual pixel data. For example, suppose a scene generator were to send a packet of data from array region 10 to 19 along the X axis and 20 to 29 along the Y axis, a total of 100 pixels of data would follow the packet coordinates given that the packet specifies a 100 pixel sized region.
 
