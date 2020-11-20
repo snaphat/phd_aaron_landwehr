@@ -53,7 +53,7 @@ This chapter discusses in detail the limitations with current display protocol t
         %\end{small}
     \end{table}
 
-\section{High-speed IRLED Projector Systems}
+\section{High-speed IRLED Scene Projector Systems}
 % How these limitations affect IRSP
 % Bottlenecks:
 % Hardware limitations:
@@ -69,7 +69,7 @@ This chapter discusses in detail the limitations with current display protocol t
 %
 
 %FIXME: stick section BLAH in
-    In the field, these conventional display protocols, which are designed for driving relatively low speed consumer electronics as indicated in Chapter~\ref{chap:display_protocols}, are often utilized in High-speed IRLED Projector systems. This results in a combination of unnecessary hardware and software limitations being incorporated into systems. This section will discuss these limitations and the general methodology toward alleviating them. Hardware limitations will be discussed followed by software.
+    In the field, these conventional display protocols, which are designed for driving relatively low speed consumer electronics as indicated in Chapter~\ref{chap:display_protocols}, are often utilized in High-speed IRLED IRSP systems. This results in a combination of unnecessary hardware and software limitations being incorporated into systems. This section will discuss these limitations and the general methodology toward alleviating them. Hardware limitations will be discussed followed by software.
 
     \subsection{Hardware Limitations}
         There are several hardware limitations including physical bandwidth, latency, IC clock rates, and analog chain settling times. Often the hardware that data is transferred over within these systems has inherent bandwidth and latency limitations that cannot be overcome either due to the nature of physics or simply because faster hardware is not available. One solution toward working around bandwidth issues is to introduce more parallel links into a system. A similar issue arises with respect to the clock rates of components within a system, such as, projector driver firmware, and scene generator. Ideally, these components will operate as fast as possible, but the reality is that the large fan out of I/O signaling needed by arrays can cause critical timing closure issues within FPGA based firmware implementations. Careful routing and planning can help alleviate these issue as well as parallelizing projector drivers such that less signals are driven from a single FPGA component. The speed of the analog chain in these systems is dictated by the digital to analog converter (DAC) and amplifier settling times which can be alleviated by increasing the number of converters utilized within a system if supported by an array. This could increase write speeds by allowing more DACs and amplifiers to drive smaller portions of an array in parallel. All the solutions discussed in this section involve increasing the amount of parallelized components operating within a system in order to reduce physical bottlenecks.

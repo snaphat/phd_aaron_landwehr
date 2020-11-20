@@ -137,13 +137,14 @@ This chapter describes an FPGA implementation of the PDP architecture~\cite{Land
         \label{Sec:MemorySync}
         At high-level, internally, a request-acknowledgment handshake is used to ensure the data has transitioned correctly across clock domains and is available on the other side. Once data becomes available, the read router will output the data lines as well as a valid signal indicating that the data can be read and cleared. The read controller will clear it once an empty trigger is sent from the array emitter indicating that the corresponding word has been read. It will then select the next buffer. Once the last buffer is written or read by either controller, the first buffer will be selected again.
 
+        Figure~\ref{fig:full_empty_circuit} shows an register-tranfer level (RTL) design of the circuit.
+
         \begin{figure}
             \centering
             \includegraphics[width=1.0\textwidth]{fig/full_empty_circuit.pdf}
-            \caption{Full/Empty Memory Synchronizer}
+            \caption{Full/Empty Memory Synchronizer Circuit}
             \label{fig:full_empty_circuit}
         \end{figure}
-
         \begin{minted}[
         frame=lines,
         framesep=2mm,
