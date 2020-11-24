@@ -9,7 +9,7 @@
 This section describes the various tests performed on the full/empty memory synchronizer used within the PDP firmware to synchronize data transitioning across clock domains. First, it discusses simulation results obtained through a full behavioral simulation of PDP. Secondly, it discusses using the memory synchronizer in a test setup and pitfalls that occurred with earlier implementations.
 
 \subsubsection{Simulations}
-Figure~\ref{fig:full_empty_sim} shows the simulated results of the full/empty memory synchronizer when transitioning to full and back to empty per clock cycle for writer and reader. For discussion about each signal and the expected internal behavior see chapter~\ref{sec:memorysync}. Each state transition in the simulation should look similar to the state transitions shown in Table~\ref{tbl:full_empty_circuit_states}.
+Figure~\ref{fig:full_empty_sim} shows the simulated results of the full/empty memory synchronizer when transitioning to full and back to empty per clock cycle for a writer and reader operating at \mbox{XXX Mhz} and \mbox{200 Mhz}, respectively. For discussion about each signal and the expected internal behavior see chapter~\ref{sec:memorysync}. Each state transition in the simulation should look similar to the state transitions shown in Table~\ref{tbl:full_empty_circuit_states}.
 
 \begin{figure}
     \centering
@@ -30,10 +30,12 @@ In practice, a complete double handshake takes many cycles to complete which cou
 
 Additionally, the use of the two flip-flop synchronizer means that it takes more than a single {\it read clock} cycle for the {\it full flag} to raise; however, given that an IRLED array's pixels take many {\it read clock} cycles to charge, this does not pose a problem. Moreover, in practice, the {\it full flag} will transition in between two to three cycles of the reader clock depending on where the rising edge of the reader clock falls relative to the transitioning of the {\it req} signal.
 
+Figure~\ref{fig:full_empty_row_sim} shows the simulated results of the full/empty memory synchronizer for multiple pixels. The large gaps of time between transitions to full are due to there being multiple buffers available as discussed above. This indicates that at the simulated rates no overflow can occur. In practice, it would be possible for overflow to occur if the write clock speed was close to the read clock speed; however, due to the maximum possible write speed for HDMI only being \mbox{148.5 MHz} and the hiding of clock domain crossinglatency via multiple buffers, a \mbox{200 Mhz} input clock is sufficient for correct behavior.
+
 \begin{figure}
     \centering
     \includegraphics[width=1.0\textwidth]{fig/full_empty_row_sim.png}
-    \caption{Full/Empty Circuit Full Row Simulation}
+    \caption{Full/Empty Circuit Multiple Pixel Simulation}
     \label{fig:full_empty_row_sim}
 \end{figure}
 
