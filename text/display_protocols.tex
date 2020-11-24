@@ -12,9 +12,6 @@ This chapter discusses the details of display protocols. Firstly, it provides a 
 
     Figure~\ref{fig:display_protocol_line_cross} shows a closeup view of signal lines during the active region of display for two scan lines\footnote{The active pixel count is proportionally smaller to blanking regions than in real modes for illustration purposes.}. A data enable signal denoted by $enable$ is high during the active region shown in green. Following this, it goes low for a period of time denoted by the $h_{fp}+h_{sp}+h_{bp}$ regions. The horizontal sync signal goes low only in the region shown in yellow between the front porch and back porches. This process repeats for all scan lines. Once the last active region pixel is drawn, the enable signal will stop going high during the vertical synchronization period.
 
-    %FIXME: Fix discussion of DP not using backwards compatibility HDMI mode?
-    %FIXME: Talk about CC in the vertical blanking
-
     Figure~\ref{fig:display_protocol_full_cross} shows a closeup view of signal lines during the transition into the vertical synchronization period\footnote{The blanking regions consist of less scanlines than in real modes for illustration purposes.}. The region donated by $v_a$ indicates the end of the video active region of the display which occurs toward the end of a frame. After the active video region, all data has been drawn to a display. The region denoted by $v_{fp}+v_{sp}+v_{bp}$ is the vertical blanking or vsync period during which no active video data is sent; therefore, data enable denoted by $enable$ is always low during this period. Before the vertical sync pulse period denoted by $v_{sp}$ occurs, a vertical front porch period denoted by $v_{fp}$ occurs. After the vertical sync pulse, a vertical back porch region $v_{bp}$ occurs. Following this, the beginning of the next frame begins after the $v_{bp}$ region.
 
     \begin{figure}[H]

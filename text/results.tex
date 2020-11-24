@@ -2,7 +2,11 @@
 \label{chap:experimental_results}
 
 
+%FIXME: add text here
+
 \subsection{Memory Synchronizer}
+
+This section describes the various tests performed on the full/empty memory synchronizer used within the PDP firmware to synchronize data transitioning across clock domains. First, it discusses simulation results obtained through a full behavioral simulation of PDP. Secondly, it discusses using the memory synchronizer in a test setup and pitfalls that occurred with earlier implementations.
 
 \subsubsection{Simulations}
 Figure~\ref{fig:full_empty_sim} shows the simulated results of the full/empty memory synchronizer when transitioning to full and back to empty per clock cycle for writer and reader. For discussion about each signal and the expected internal behavior see chapter~\ref{sec:memorysync}. Each state transition in the simulation should look similar to the state transitions shown in Table~\ref{tbl:full_empty_circuit_states}.
