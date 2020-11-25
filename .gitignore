@@ -14,3 +14,6 @@
 *.gz
 ~$*.pptx
 _minted-*
+*.pyg
+*.syntex
+*.lol
