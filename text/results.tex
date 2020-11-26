@@ -41,20 +41,43 @@ This chapter discusses a number of experimental results obtained using the imple
         \end{figure}
 
     \subsection{Experimental Testing}
+        Testing the memory synchronizer on real hardware was an important consideration because behavioral simulations do not capture timing behavior accurately. In real hardware, noise, clock jitter, and variations in synthesis introduce unpredictable behavior that can lead designs to fail unexpectedly if they have inherent metastability issues.
+
+        Testing was performed using a ZYBO development board~\cite{Digilent2016} hooked up as shown in Figure~\ref{fig:zybo_setup}. Image data consisting of 256 by 256 pixels operating at \mbox{250 hertz} was sent over from a NUCPC to a ZYBO board running an implementation of the synchronized circular buffer. VGA was used to provide loop-back for visual inspection. It is not possible to check for bit-level accuracy using a VGA device due to the analog nature of the interface so a UART device was used as an alternative (slow) path to read out internal image data. It was also used to collect statistical information such as the error bits for a given configuration and the amount of data that passed through the interface.
+
+        \begin{figure}[t]
+            \centering
+            \includegraphics[width=0.40\textwidth]{fig/zybo_setup.pdf}
+            \caption{ZYBO Test Setup}
+            \label{fig:zybo_setup}
+        \end{figure}
+
+        For the first test, the synchronized circular buffer circuit was driven using the checkerboard input image shown in Figure~\ref{fig:checker_pattern}. This pattern was routed to the loop-back device for visual inspection. It was manually retrieved over UART and diffed with the original image to check for bit-level accuracy.
 
         \begin{figure}[t]
             \centering
             \includegraphics{fig/checker.png}
-            \caption{Checker Input Image}
+            \caption{Checkerboard Input Image}
             \label{fig:checker_pattern}
+        \end{figure}
+
+        For the second test, a dynamic CRC-like pattern was used to verify data accuracy directly. Segments of eight 8-bit random values where generated and then inserted into an HDMI stream twice as shown in Figure~\ref{fig:crc_like_buffer}. The pattern dynamic changed for every input frame. Figure~\ref{fig:random_noise} shows an example pattern. Internally, the test circuit would compare the results of the segments and log errors. UART was used to retrieve the error count.
+
+        \begin{figure}[t]
+            \centering
+            \includegraphics[width=0.75\textwidth]{fig/crc_like_buffer.pdf}
+            \caption{CRC-like 16-pixel Stream}
+            \label{fig:crc_like_buffer}
         \end{figure}
 
         \begin{figure}[t]
             \centering
             \includegraphics{fig/random_noise.png}
-            \caption{Random Noise Input Image}
+            \caption{CRC-like Input Image}
             \label{fig:random_noise}
         \end{figure}
+
+        The initial synchronizer circuit employed the design was able to pass behavioral simulation testing but during the above experimental testing exhibited bit-level errors. Upon careful analysis, it was discovered that the design contained metastability issues due to how signals are routed during synthesis. The early design employed a clock switching strategy within the memory synchronizer circuit. Essentially, the clock of the circuit was switched depending on whether the circuit was full or empty. In practice, this would randomly fail depending on how the circuit synthesized due to variability in routing per run which resulted in the timing delays between components changing unpredictably. This would ultimately lead to clock handoff being metastable and the circuit entering an inconsistent state. The final design discussed in this dissertation removes the clock switching circuitry and instead employs the double handshake design dicussed in Chapter~\ref{sec:memorysync} in order to guarantee correct operation. The test patterns discussed above were able verify this.
 
 \section{Firmware}
     This section discusses behavioral simulations of the PDP firmware implementation and experimental results obtained from running the firmware on actual IRLED arrays. The simulations serve to verify correct operational logic and the experimental results serve to validate the timing behavior of the implemented circuits.
@@ -172,7 +195,7 @@ This chapter discusses a number of experimental results obtained using the imple
 
         \begin{figure}[t]
             \centering
-            \includegraphics[width=0.25\textwidth]{fig/low_speed_numbers.png}
+            \includegraphics[width=0.15\textwidth]{fig/low_speed_numbers.png}
             \caption{60Hz to 240Hz Counting Demo Drawn with PDP Firmware}
             \label{fig:low_speed_numbers}
         \end{figure}
@@ -186,7 +209,7 @@ This chapter discusses a number of experimental results obtained using the imple
 
         \begin{figure}[t]
             \centering
-            \includegraphics[width=0.25\textwidth]{fig/high_speed_object.png}
+            \includegraphics[width=0.15\textwidth]{fig/high_speed_object.png}
             \caption{1Khz Moving Object Displayed Drawn with PDP Firmware}
             \label{fig:high_speed_object}
         \end{figure}
@@ -195,7 +218,7 @@ This chapter discusses a number of experimental results obtained using the imple
 
         \begin{figure}[t]
             \centering
-            \includegraphics[width=1.0\textwidth]{fig/high_speed_numbers.png}
+            \includegraphics[width=0.7\textwidth]{fig/high_speed_numbers.png}
             \caption{2Khz Counting Demo Drawn with PDP Firmware}
             \label{fig:high_speed_numbers}
         \end{figure}
@@ -204,7 +227,7 @@ This chapter discusses a number of experimental results obtained using the imple
 
         \begin{figure}[t]
             \centering
-            \includegraphics[width=1.0\textwidth]{fig/high_speed_rotating_object.png}
+            \includegraphics[width=0.7\textwidth]{fig/high_speed_rotating_object.png}
             \caption{2Khz Non-uniformity Corrected Rotating Object Drawn with PDP Firmware}
             \label{fig:high_speed_rotating_object}
         \end{figure}
@@ -212,9 +235,9 @@ This chapter discusses a number of experimental results obtained using the imple
     \subsection{Multi-frame Rate}
         Figure~\ref{fig:pdp_multi_frame_rate} shows a series of frames for a multi-frame rate display of numbers using the PDP firmware. The small bright number was updated at \mbox{800 hertz}, the small background numbers was updated at \mbox{100 hertz}, and the large number was updated at \mbox{2 hertz}. Each number was drawn using individual PDP region packets. Similar to other demos discussed in this chapter, each number was incremented at the cooresponding frame rate. This demonstrates that multiple framerate display operates correctly within the firmware and is able to achieve rates much higher than possible with the same hardware utilizing conventional display technology.
 
-        \begin{figure}[h]
+        \begin{figure}[t]
             \centering
-            \includegraphics[width=1.0\textwidth]{fig/pdp_multi_frame_rate.jpg}
+            \includegraphics[width=0.85\textwidth]{fig/pdp_multi_frame_rate.jpg}
             \caption{Multi-frame Rate: 800Hz Bouncing Number, 100Hz Small Background Numbers, and 2Hz Large Number Drawn with PDP Firmware}
             \label{fig:pdp_multi_frame_rate}
         \end{figure}
