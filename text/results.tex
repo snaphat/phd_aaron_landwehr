@@ -1,12 +1,13 @@
 
 \label{chap:experimental_results}
 
+This chapter discusses a number of experimental results obtained using the implemented PDP firmware discussed in Chapter~\ref{chap:implementation}. Only select results are included. These were chosen because they provide direct evidence that the protocol and PDP firmware solves the challenges put forth in Chapter~\ref{chap:problem_formulation} and meets the design goals discussed in Chapter~\ref{sec:design_methodology}.
 
-%FIXME: add text here
+ Firstly, memory synchronizer operation is discussed and evaluated as correct clock domain crossing is an essential requirement for array operation. Secondly, overall firmware behavior is evaluated in both simulation and practice. Thirdly, packetized operation is evaluated. Finally, overall results are discussed to provide a summary of lessons learned during operational testing.
 
 \section{Memory Synchronizer}
 
-    This section describes the various tests performed on the full/empty memory synchronizer used within the PDP firmware to synchronize data transitioning across clock domains. First, it discusses simulation results obtained through a full behavioral simulation of PDP. Secondly, it discusses using the memory synchronizer in a test setup and pitfalls that occurred with earlier implementations.
+    This section describes the various tests performed on the full/empty memory synchronizer used within the PDP firmware to synchronize data transitioning across clock domains. First, it discusses simulation results obtained through a full behavioral simulation of the PDP firmware. Secondly, it discusses using the memory synchronizer in a test setup and the pitfalls that occurred with earlier implementations.
 
     \subsection{Simulation}
         Figure~\ref{fig:full_empty_sim} shows the simulated results of the full/empty memory synchronizer when transitioning to full and back to empty per clock cycle for a writer and reader operating at \mbox{35.75 Mhz} and \mbox{200 Mhz}, respectively. For discussion about each signal and the expected internal behavior see Chapter~\ref{sec:memorysync}. Each state transition in the simulation should look similar to the state transitions shown in Table~\ref{tbl:full_empty_circuit_states}.
@@ -39,27 +40,27 @@
             \label{fig:full_empty_row_sim}
         \end{figure}
 
-    \subsection{Verification}
+    \subsection{Experimental Testing}
 
-%\begin{figure}
-%    \centering
-%    \includegraphics{fig/checker.png}
-%    \caption{Checker Input Image}
-%    \label{fig:checker_pattern}
-%\end{figure}
-%
-%\begin{figure}
-%    \centering
-%    \includegraphics{fig/random_noise.png}
-%    \caption{Random Noise Input Image}
-%    \label{fig:random_noise}
-%\end{figure}
+        \begin{figure}[t]
+            \centering
+            \includegraphics{fig/checker.png}
+            \caption{Checker Input Image}
+            \label{fig:checker_pattern}
+        \end{figure}
+
+        \begin{figure}[t]
+            \centering
+            \includegraphics{fig/random_noise.png}
+            \caption{Random Noise Input Image}
+            \label{fig:random_noise}
+        \end{figure}
 
 \section{Firmware}
-    This section discusses behavioral simulation results from the PDP firmware implementation and experimental results obtained from running the firmware on actual IRLED arrays.
+    This section discusses behavioral simulations of the PDP firmware implementation and experimental results obtained from running the firmware on actual IRLED arrays. The simulations serve to verify correct operational logic and the experimental results serve to validate the timing behavior of the implemented circuits.
 
     \subsection{Simulation}
-    This section provides captures of simulation inputs and outputs to show how packets arrive and are processed by the firmware architecture.
+    This section provides captures of a few simulation inputs and outputs to show how packets arrive and are processed by the PDP firmware architecture. Other isolated module and integrated simulations (not shown here) were performed to access behavioral operation of the PDP firmware implementation. Additional module level unit testing was performed as well.
 
     In Figure~\ref{fig:input_example} simulated HDMI is shown. When video data enable (write enable) transitions high words of data representing PDP packets start to stream in. These are indicated by packet ID, X start, X end, Y start, Y end, and Packet Data. Each word would be stored in an SCB slot as indicated in the previous section. The final piece of data indicated is a reset packet. Note, that the data prior to Packet ID would be ignored as it does not represent a valid PDP command. It would be discarded by the valid controller.
 
@@ -83,7 +84,7 @@
         This section shows select results of running the PDP firmware on an NSLEDS array to characterize its behavior. Namely, whether it correctly draws to an array and whether it performs better than earlier firmware incarnations. Some non-uniformity correct imagery is also shown which indicates the PDP firmware is capable of drawing full imagery correctly. Though, only a few results are shown here, the PDP firmware has been run on multiple NSLEDS and HDILED arrays to collect data and characterize the arrays themselves. As of this writing, it has been used in daily operations with my research group's IRLED arrays for over a year and is the primary firmware in use today.
 
         \subsubsection {Array Maps}
-            In order to characterize whether the behavior of PDP is consistent with older firmware (called SNAP) and has reproducible results between runs, a number of different array characterization tests were performed on an NSLEDS array. One test is to collect an array map which is performed by doing a sweep of array pixels by outputting light to each pixel separately over multiple frames and capturing the result. Typically, this is done using grids to speed up data collection. An example grid for a partial frame is shown in Figure~\ref{fig:grid_sweep}. Defective pixels on an array will have low light output or have inconsistent brightness from run to run. This could also happen if a firmware contained internal timing issues as well. Comparing a test firmware with a known good reference firmware can rule out firmware issues in the advent of this type of poor array behavior.
+            In order to characterize whether the behavior of the PDP firmware is consistent with older firmware (called SNAP) and has reproducible results between runs, a number of different array characterization tests were performed on an NSLEDS array. One test is to collect an array map which is performed by doing a sweep of array pixels by outputting light to each pixel separately over multiple frames and capturing the result. Typically, this is done using grids to speed up data collection. An example grid for a partial frame is shown in Figure~\ref{fig:grid_sweep}. Defective pixels on an array will have low light output or have inconsistent brightness from run to run. This could also happen if a firmware contained internal timing issues as well. Comparing a test firmware with a known good reference firmware can rule out firmware issues in the advent of this type of poor array behavior.
 
             \begin{figure}[t]
                 \centering
@@ -92,7 +93,7 @@
                 \label{fig:grid_sweep}
             \end{figure}
 
-            Figure~\ref{fig:array_map_pdp} shows an array map collected from the PDP firmware and Figure~\ref{fig:array_map_snap} shows an array map collected from the older SNAP firmware. In each figure, array data collected using an IR camera is shown on the left with a camera count scale on the right. Camera counts are an uncalibrated measure of IR intensity that can mapped to apparent temperature when calibrated. At a glance each image appears to be the same; however, there are slight differences in behavior between the firmwares in that PDP has a slightly higher light output. The dark regions of each map are simply dead pixels on the array and do not reflect the firmware. More than half of the particular array is non functioning. The repeating patterns of horizontal lines that can be seen are the result of slow DAC channels on an array. Every 32 columns there are 2 channels which take longer to settle and that can be seen in these results, as these channels have no fully settled. This is due to design flaw on early arrays which resulted in higher capacitance on those lines. Overall, the PDP results are as expected.
+            Figure~\ref{fig:array_map_pdp} shows an array map collected from the PDP firmware and Figure~\ref{fig:array_map_snap} shows an array map collected from the older SNAP firmware. In each figure, array data collected using an IR camera is shown on the left with a camera count scale on the right. Camera counts are an uncalibrated measure of IR intensity that can mapped to apparent temperature when calibrated. At a glance each image appears to be the same; however, there are slight differences in behavior between the firmwares in that the PDP firmware has a slightly higher light output. The dark regions of each map are simply dead pixels on the array and do not reflect the firmware. More than half of the particular array is non functioning. The repeating patterns of horizontal lines that can be seen are the result of slow DAC channels on an array. Every 32 columns there are 2 channels which take longer to settle and that can be seen in these results, as these channels have no fully settled. This is due to design flaw on early arrays which resulted in higher capacitance on those lines. Overall, the PDP firmware results are as expected and indicate correct operation.
 
             \begin{figure}[t]
                 \centering
@@ -110,7 +111,7 @@
 
         \subsubsection{Fractional Difference Maps}
 
-            Another test is to collect multiple array maps and take the fractional difference between them to see the percent difference in light output between runs. This allows for the consistency of light output to be characterized. A large difference could indicate problems with the pixels of an array, analog chain, or firmware behavior. Small differences indicate that the pixels of an array are more consistent between runs. Differences in behavior between firmwares (or firmware revisions) would be indicative of variances in signal timing. In this case, a larger variance would indicate less precise timing within the firmware. Some variance is expected is due to camera focus, noise, and physical vibration. The particular IR camera used to collect data in this setup utilizes a motorized reversed-stirling cryo-cooler. These are often utilized for cooling detectors within thermal imaging systems\cite{Organ1999}. These induce a physical vibration which can result in noise within collected camera imagery.
+            Another test is to collect multiple array maps and take the fractional difference between them to see the percent difference in light output between runs. This allows for the consistency of light output to be characterized. A large difference could indicate problems with the pixels of an array, analog chain, or firmware behavior. Small differences indicate that the pixels of an array are more consistent between runs. Differences in behavior between firmwares (or firmware revisions) would be indicative of variances in signal timing. In this case, a larger variance would indicate less precise timing within the firmware. Some variance is expected is due to camera focus, noise, and physical vibration. The particular IR camera used to collect data in this setup utilizes a motorized reversed-stirling cryo-cooler. These are often utilized for cooling detectors within thermal imaging systems~\cite{Organ1999}. These induce a physical vibration which can result in noise within collected camera imagery.
 
             Figure~\ref{fig:fractional_difference_pdp} shows a fractional difference map for the PDP firmware and Figure~\ref{fig:fractional_difference_snap} shows a fractional difference map for the older SNAP firmware. The dark blue areas indicating zero difference are simply dead regions of the array similar to the earlier results. The red areas of high variance are due to those pixels being located on marginal portions of the array specifically along non-functioning edges. In practice for displaying imagery, these areas would be marked as defected and not driven.
 
@@ -128,74 +129,99 @@
                 \label{fig:fractional_difference_snap}
             \end{figure}
 
-            The average variance for both firmwares is less than 4 percent. However, the results indicate a difference in behavior between the older SNAP firmware and the newer PDP firmware. PDP has less variance in per pixel light output per run as indicated by the darker blue colors in the working portions of the array. This is likely due to the static \mbox{200 Mhz} system clock used for driving an arrays pixels combined with the two flip-flop synchronization strategy utilized within the PDP firmware that is discussed in Chapter~\ref{sec:memorysync}. The earlier SNAP firmware used an HDMI clock signaling based approach to time triggering of events on the system side. Given that the clock is an input from an external HDMI card, it most likely has some noise. Another factor that may contribute to the larger variance is the fact that most functionality within SNAP used only the first HDMI card clock and ignored the second HDMI card clock. The crystal oscillators used for generating clock signals within devices typically has a finite precision due to various contributing factors such as thermal noise, power supply variations, and aging\cite{Naval2002}. This means that oscillators within the same device model may vary resulting in clock skew. Any inherit oscillation skew could be further compounded by the fact that each HDMI cards data lines travel physically different trace paths to arrive within the FPGA. The PDP firmware on the other hand, makes no assumptions about input clock skew. The Memory synchronizer utilized within explicitly synchronizes the data of each HDMI card separately across clock domains to the system clock domain. Then it explicitly pulls data from each synchronized circular buffer independently. Overall the better behavioral results are promising for the PDP firmware.
+            The average variance for both firmwares is less than 4 percent. However, the results indicate a difference in behavior between the older SNAP firmware and the newer PDP firmware. The PDP firmware has less variance in per pixel light output per run as indicated by the darker blue colors in the working portions of the array. This is likely due to the static \mbox{200 Mhz} system clock used for driving an arrays pixels combined with the two flip-flop synchronization strategy utilized within the PDP firmware that is discussed in Chapter~\ref{sec:memorysync}. The earlier SNAP firmware used an HDMI clock signaling based approach to time triggering of events on the system side. Given that the clock is an input from an external HDMI card, it most likely has some noise. Another factor that may contribute to the larger variance is the fact that most functionality within SNAP used only the first HDMI card clock and ignored the second HDMI card clock. The crystal oscillators used for generating clock signals within devices typically has a finite precision due to various contributing factors such as thermal noise, power supply variations, and aging~\cite{Naval2002}. This means that oscillators within the same device model may vary resulting in clock skew. Any inherit oscillation skew could be further compounded by the fact that each HDMI cards data lines travel physically different trace paths to arrive within the FPGA. The PDP firmware on the other hand, makes no assumptions about input clock skew. The Memory synchronizer utilized within explicitly synchronizes the data of each HDMI card separately across clock domains to the system clock domain. Then it explicitly pulls data from each synchronized circular buffer independently. Overall the better behavioral results are promising for the PDP firmware.
 
         \subsubsection{Non-uniformity Corrected Imagery}
-            Figure~\ref{fig:pdp_bird} shows an example of non-uniformity corrected IR imagery generated using the PDP firmware on an NSLEDS array. This particular array has much better yield than the one used for some of the earlier results in this chapter and is capable of displaying full images.
+            Figure~\ref{fig:pdp_bird} shows an example of non-uniformity corrected IR imagery generated using the PDP firmware on an NSLEDS array. This particular array has much better yield than the one used for some of the earlier results presented in this chapter and is capable of displaying full images at a 1024 by 1024 resolution.
 
             \begin{figure}[t]
                 \centering
                 \includegraphics{fig/pdp_bird.png}
-                \caption{Non-uniformity Corrected IR Image Drawn with PDP Firmware}
+                \caption{Non-uniformity Corrected Image Drawn with PDP Firmware at 100Hz}
                 \label{fig:pdp_bird}
             \end{figure}
 
-            Figure~\ref{fig:pdp_grid} shows a grid being displayed on the same array. The lower right hand corner of the array has physical defects but the majority of the array operates correctly. Interdispersed in between the working pixels are a couple of dead pixels here and there. These look worse in a static grid map than in practice, as the brightness of neighboring pixels will hide individually defective pixels within an array. This is true as long as multiple pixels within a small region of an array are not defective as well. This is why Figure~\ref{fig:pdp_bird} has no obvious dead pixels.
+            Figure~\ref{fig:pdp_grid} shows a grid being displayed on the same array. The lower right hand corner of the array has physical defects but the majority of the array operates correctly. Interdispersed in between the working pixels are a couple of dead pixels here and there. These look worse in a static grid map than in practice, as the brightness of neighboring pixels will hide individually defective pixels within an array. This is true as long as multiple pixels within a small region of an array are not defective as well. This is why Figure~\ref{fig:pdp_bird} shows no obvious dead pixels even though individual pixels are defective within the region that the image is displayed on.
 
             \begin{figure}[t]
                 \centering
-                \includegraphics[width=0.6\textwidth]{fig/pdp_grid.png}
+                \includegraphics[width=0.76\textwidth]{fig/pdp_grid.png}
                 \caption{Grid Drawn with PDP firmware}
                 \label{fig:pdp_grid}
             \end{figure}
 
+        \subsubsection{Analog Bandwidth}
+            \label{sec:analog_bandwidth}
+            Figure~\ref{fig:pdp_bird_comparison} shows the same IR image drawn at two different frame rates using the PDP firmware operating in backwards compatibility mode. In this mode, normal HDMI data is sent to an array at full resolution. At \mbox{100 hertz} operation, the image quality is much more uniform across pixels despite having low dynamic range when not non-uniformity corrected. At \mbox{400 hertz} operation there are distinct banding patterns that are not visible at lower frame rate. These banding patterns are the result of limited analog bandwidth due to the time it takes for the analog portions of the system to settle which includes DAC settling time, amplifier settling time, RIIC internal timings, and emitter charge time. Under normal HDMI operation it is difficult to correct for these issues at high-speed without introducing complicated compensation schemes such as analog or digital pre-emphasis filtering\footnote{Analog and digital pre-emphasis is used in many types of applications~\cite{BuckwalterEtAl2006, RafiqueEtAl2015, HuEtAl2017, ThaiEtAl2018, ZhouEtAl2020}}.
+
+            \begin{figure}[t]
+                \centering
+                \includegraphics[width=1.0\textwidth]{fig/pdp_bird_comparison.png}
+                \caption{100hz Versus 400hz Imagery Comparison Under Normal HDMI Operation}
+                \label{fig:pdp_bird_comparison}
+            \end{figure}
+
+            Utilizing a packetized approach to display can help mitigate issues with high-speed display by providing more time for changing regions of a display to settle. Consider a 1024 by 1024 display operating at high speed. When packetized operation is utilized, only a sub regions of the display will be updated at high-speeds. The portions of the array operating at low-speed will be addressed at much slower rate; and thus, use much less analog bandwidth. The exact amount of analog bandwidth saved would depend on how much of the imagery needs to run at high-speed; however, this could on the order of a 75 percent reduction in cases of low-speed backgrounds with small high-speed objects. This means that portions updating at high speed can be driven for longer amounts of times to allow for complete settling.
 
 \section{Packetized Operation}
-        This section shows various examples of PDP running at low-speed and high-speed operation to demonstrate the capabilities and versatility of a packetized display protocol.
+        This section shows various examples of the PDP firmware running at low-speed and high-speed operation to demonstrate the capabilities and versatility of a packetized display protocol. Additionally, multiple frame rate operation is demonstrated at high-speeds to show the capabilities of packetized operation.
 
     \subsection{Normal-speed}
         %60hz 240hz
-        Figure~\ref{fig:low_speed_numbers} shows a series of counting numbers operating at low speeds. These were part of some of the initial demos used for testing packetized operation. This demo, in particular, ran at a number of different rates ranging from \mbox{60 hertz} to \mbox{240 hertz} operation.
+        Figure~\ref{fig:low_speed_numbers} shows a series of counting numbers operating at low speeds. These were part of some of the initial demos used for testing packetized operation. This demo, in particular, ran at a number of different rates ranging from \mbox{60 hertz} to \mbox{240 hertz} operation. It was used as an initial verification of the firmware's packetized mode of operation.
 
-        \begin{figure}
+        \begin{figure}[t]
             \centering
-            \includegraphics[width=0.15\textwidth]{fig/low_speed_numbers.png}
+            \includegraphics[width=0.25\textwidth]{fig/low_speed_numbers.png}
             \caption{60Hz to 240Hz Counting Demo Drawn with PDP Firmware}
             \label{fig:low_speed_numbers}
         \end{figure}
 
+        Other imagery included moving objects across the array at low-speed and moving changing numbers. Of particular interest was analyzing the boundaries of each packet for artifacts in overlapping packet regions and verifying that moving objects were not exhibiting partial display of previous packet data as these behaviors may indicate incorrect firmware operation. In initial testing, some implementation challenges included ensuring that the correct packet data was being sent from the driving computer to the CSE, and verifying that the correct pixels were being addressed from within the firmware. The former was addressed by attaching the HDMI output links to loop-back capture devices and meticulously analyzing the output to ensure both the data ordering described in Chapter~\ref{sec:data_ordering} was being abided by, and that packet headers were being correctly specified. The latter was addressed by analyzing the address lines routed directly to the array via oscilloscope.
+
     \subsection{High-speed}
-        There has been a number of different high-speed demos used to test PDP at rates above \mbox{250 Hz} operation on an NSLEDS array. Due to the limitations in IR Camera speed these were obtained by windowing the camera resolution down to allow for faster capture. Under full resolution, the IR camera used can only reach \mbox{565 Hertz}.
+        There have been a number of different high-speed demos used to test the PDP firmware at rates above \mbox{250 Hz} operation on an NSLEDS array. Due to the limitations in IR Camera speed, these were obtained by windowing the camera resolution down to allow for faster capture. Under full resolution, the IR cameras used can only reach \mbox{565 hertz} or \mbox{132 hertz} depending on the exact model.
 
-        Figure~\ref{fig:high_speed_object} shows a still image for a demo of an object that bounces at \mbox{1 kilohertz}. This object was drawn using multiple PDP draw region packets embedded into a larger HDMI frame. For every packet the {\it x start} and {\it y start} locations are modified. Drawing at this rate with normal full frame HDMI is impossible. At best, \mbox{240 Hertz} may be used with sacrifices in image brightness due to limited analog bandwidth.
+        Figure~\ref{fig:high_speed_object} shows a still image for a demo of an object that moves along both the x and y dimensions of the array at \mbox{1 kilohertz}. When an edge is reached, the object bounces similar to the electronic game of Pong\cite{Alcorn1972}. This object was drawn using multiple PDP draw region packets embedded into a larger HDMI frame. For every packet, the {\it x start} and {\it y start} locations were modified. Drawing at this rate with normal full frame HDMI is impossible. At best, \mbox{240 hertz} may be used with sacrifices in image brightness due to limited analog bandwidth as discussed in Chapter~\ref{sec:analog_bandwidth}.
 
-        \begin{figure}
+        \begin{figure}[t]
             \centering
-            \includegraphics{fig/high_speed_object.png}
+            \includegraphics[width=0.25\textwidth]{fig/high_speed_object.png}
             \caption{1Khz Moving Object Displayed Drawn with PDP Firmware}
             \label{fig:high_speed_object}
         \end{figure}
 
-        Figure~\ref{fig:high_speed_numbers} shows a series of images for a number counting demo running at {2 Kilohertz} operation. This demo ran both in a static predefined location as well as could be configured to move around the array. The object itself was drawn using individual PDP packets for each numerical digit. As with the previous example, drawing at this rate with normal full frame HDMI is impossible.
+        Figure~\ref{fig:high_speed_numbers} shows a series of images for a number counting demo running at {2 kilohertz} operation. This demo consisted of both a static configuration in which a predefined location was used to display the number, and moving configuration in which the number would move around the array in both the x and y dimensions. In both configurations, the number would increment by one at the given frame rate. The object itself was drawn using individual PDP packets for each numerical digit. As with the previous example, drawing at this rate with normal full frame HDMI is impossible which demonstrates that packetized operation can achieve rates well beyond normal HDMI with the same hardware.
 
-        \begin{figure}
+        \begin{figure}[t]
             \centering
-            \includegraphics[width=0.6\textwidth]{fig/high_speed_numbers.png}
+            \includegraphics[width=1.0\textwidth]{fig/high_speed_numbers.png}
             \caption{2Khz Counting Demo Drawn with PDP Firmware}
             \label{fig:high_speed_numbers}
         \end{figure}
 
-        Figure~\ref{fig:high_speed_rotating_object} shows a series of images for a non-uniformity corrected rotating three dimensional object running at {2 Kilohertz} operation. The object itself was drawn using individual PDP packets for each rotation. Notably, even with the limited resolution of the IR camera when operating at a high-speed, the object is clear and distinct during each rotation.
+        Figure~\ref{fig:high_speed_rotating_object} shows a series of frames for a non-uniformity corrected rotating three dimensional object running at {2 Kilohertz} operation. The object itself was drawn using individual PDP packets for each rotation. Notably, even with the limited resolution of the IR camera when operating at a high-speed, the object is clear and distinct during each rotation. This demonstrates that packetized operation can indeed mitigate issues with limited analog bandwidth as discussed in Chapter~\ref{sec:analog_bandwidth}. A small object such as this could be displayed with a slow-speed background without sacrificing image quality which representative of some types of IR imagery used in practice.
 
-        \begin{figure}
+        \begin{figure}[t]
             \centering
-            \includegraphics[width=0.6\textwidth]{fig/high_speed_rotating_object.png}
+            \includegraphics[width=1.0\textwidth]{fig/high_speed_rotating_object.png}
             \caption{2Khz Non-uniformity Corrected Rotating Object Drawn with PDP Firmware}
             \label{fig:high_speed_rotating_object}
         \end{figure}
 
-%preliminary 2khz pdp demo:
-%1900hz numbers counting to 1995
-%camera 6200 at ~1950hz (need to update with camera config)
-%nsleds 3 cyro with dio board
-%note the last packet of every hdmi frame (running 100hz mode) is longer than every other packet due to %blanking, i believe this is the biggest contributor to the desync seen plus the camera rate isnt exactly matched
+    \subsection{Multi-frame Rate}
+        Figure~\ref{fig:pdp_multi_frame_rate} shows a series of frames for a multi-frame rate display of numbers using the PDP firmware. The small bright number was updated at \mbox{800 hertz}, the small background numbers was updated at \mbox{100 hertz}, and the large number was updated at \mbox{2 hertz}. Each number was drawn using individual PDP region packets. Similar to other demos discussed in this chapter, each number was incremented at the cooresponding frame rate. This demonstrates that multiple framerate display operates correctly within the firmware and is able to achieve rates much higher than possible with the same hardware utilizing conventional display technology.
+
+        \begin{figure}[h]
+            \centering
+            \includegraphics[width=1.0\textwidth]{fig/pdp_multi_frame_rate.jpg}
+            \caption{Multi-frame Rate: 800Hz Bouncing Number, 100Hz Small Background Numbers, and 2Hz Large Number Drawn with PDP Firmware}
+            \label{fig:pdp_multi_frame_rate}
+        \end{figure}
+
+\section{Summary}
+    The demonstrations of packetized display protocol operation provided within this chapter make a strong argument to the benefit of this type of technology for use in future high-speed IRSP systems. This chapter presented a number of demonstrations of the PDP firmware running on real hardware in various types of operation. A wide breadth of different experiments were shown including normal backwards compatible HDMI operation, low-speed packetized display, high-speed packetized display, and high-speed multiple frame rate operation.
+
+    Taken together, these demonstrate that packetized operation is capable of vastly improving performance with various types of imagery in bandwidth starved environments. The improvements in digital bandwidth utilization from packetized operation show that substantially higher frame rates can be achieved. Additionally, multiple frame rate operation, in particular, enables better analog performance by allowing analog bandwidth to be to be reserved for high-speed updates of pixel regions which in turn yields improved overall image quality. In contrast, conventional display technology requires that analog bandwidth be apportioned equally for all pixels which results in considerably inferior image quality at high-speeds.
+
+    The subsequent and final chapter of this dissertation is devoted to an overall discussion of the journey through the architectural development and implementation of a packetized display protocol architecture for infrared scene projection systems.
