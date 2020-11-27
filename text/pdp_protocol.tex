@@ -65,7 +65,7 @@ This chapter discusses the underlying communication details of the packetized di
         \label{fig:display_port_framing}
     \end{figure}
 
-    This differs from the PDP in that the PDP allows for completely arbitrary packets to be sent and decoded with differing packet sizes which gives the PDP the ability to support dynamic sub-frame frame rates, and to be extendable to future packet types. Additionally, the PDP carries no internal notion of horizontal or vertical blanking intervals which allows the PDP to operate as fast as possible and give scene generators direct control over frame rates at the user level. For example, the transport upon which the PDP is implemented can operate at the maximum possible data rate allowable in hardware; then, the user in turn can simply send packets over the data link at the desired rate while inserting empty space where necessary. In the backend, a PDP decoder would decode the data as quickly as possible and display it. From a higher level, this could be viewed as the user simply issuing commands to send data packets similar to that of how TCP based programs send data over a link with a remote environment executing the actual commands. It is up to the user where and when they want data displayed which enables the PDP to fit a larger set of use cases, and to be simpler to integrate within projector systems.
+    This differs from the PDP in that the PDP allows for completely arbitrary packets to be sent and decoded with differing packet sizes which gives the PDP the ability to support dynamic sub-frame frame rates, and to be extendable to future packet types. Additionally, the PDP carries no internal notion of horizontal or vertical blanking intervals which allows the PDP to operate as fast as possible and give scene generators direct control over frame rates at the user level. For example, the transport upon which the PDP is implemented can operate at the maximum possible data rate allowable in hardware; then, the user in turn can send packets over the data link at the desired rate while inserting empty space where necessary. In the backend, a PDP decoder would decode the data as quickly as possible and display it. From a higher level, this could be viewed as the user issuing commands to send data packets similar to that of how TCP based programs send data over a link with a remote environment executing the actual commands. It is up to the user where and when they want data displayed which enables the PDP to fit a larger set of use cases, and to be simpler to integrate within projector systems.
 
 \section{Packet Format}
     \label{sec:packet_format}
@@ -90,7 +90,7 @@ This chapter discusses the underlying communication details of the packetized di
 
     PDP Packets are divided into four types, a no operation packet, a draw region packet, array reset packet, and trigger packet. All packets consist of a Type ID field of word-size. The type ID is used by the decoder to determine the packet type.
 
-    The first packet type, {\it No Operation}, is simply reserved to indicate that command IDs of 0x0 will be ignored.
+    The first packet type, {\it No Operation}, is reserved to indicate that command IDs of 0x0 will be ignored.
 
     The second packet type, {\it Draw Region}, is used to send a rectangular sub-region of pixel data in global array coordinates to minimize computations and translations. It has fields for the start and stop horizontal and vertical coordinates (defined inclusively) followed by individual pixel data. For example, suppose a scene generator were to send a packet of data from array region 10 to 19 along the X axis and 20 to 29 along the Y axis, a total of 100 pixels of data would follow the packet coordinates given that the packet specifies a 100 pixel sized region.
 
@@ -191,7 +191,7 @@ This chapter discusses the underlying communication details of the packetized di
         \label{eq:total_pixel2}
     \end{equation}
 
-    Computing the overhead percentage, $O_{pdp}$, is simply a matter of dividing the total pixel overhead, $O_{px}$, by the total pixels, $T_{px}$.
+    Computing the overhead percentage, $O_{pdp}$, is a matter of dividing the total pixel overhead, $O_{px}$, by the total pixels, $T_{px}$.
 
     \begin{equation}
         \begin{array}{ l }
@@ -223,7 +223,7 @@ This chapter discusses the underlying communication details of the packetized di
 
     This section discusses the benefits of utilizing a PDP based approach for reaching high frame rates. In high performance systems, data movement~\cite{LeeEtAl1984}, bandwidth~\cite{LaiBaker1999}, and latency~\cite{ZhengEtAl2014} are of primary concern due to the nature of these typically impeding performance requirements. In many cases, minimizing data movement can vastly improve the performance of systems~\cite{BandyopadhyayCoyle2004,LiEtAl2009,Hall2020}. In real time systems~\cite{Kopetz2011}, such as IR projector systems, where end-to-end latency is important for driving arrays, and the observation of real-time IR behavior is important for characterizing temperature changes~\cite{ZhouEtAl2000} minimizing data movement, and choosing appropriate hardware with high bandwidth as well as low-latency is extremely important.
 
-    As detailed throughout this dissertation, the PDP allows for control over which individual segments of an array can be written to. This means that large amounts of bandwidth can be saved by updating parts of a frame at slower frame rates than other sections of a frame. In a simplified dual frame rate setup, Equation~\eqref{eq:bandwidth_saved} and the subsequent simplification show how to compute the percentage of saved bandwidth, $b_s$, when operating some proportion of pixels at a slower rate than a given faster rate. The proportion of pixels operating at a slow frame rate is $p$, the fast frame rate is $r_f$, and the slow frame rate is $r_s$. The final simplified form is simply the percentage of pixels operating at a slow rate multiplied by the difference between the rates over the fast rate.
+    As detailed throughout this dissertation, the PDP allows for control over which individual segments of an array can be written to. This means that large amounts of bandwidth can be saved by updating parts of a frame at slower frame rates than other sections of a frame. In a simplified dual frame rate setup, Equation~\eqref{eq:bandwidth_saved} and the subsequent simplification show how to compute the percentage of saved bandwidth, $b_s$, when operating some proportion of pixels at a slower rate than a given faster rate. The proportion of pixels operating at a slow frame rate is $p$, the fast frame rate is $r_f$, and the slow frame rate is $r_s$. The final simplified form is the percentage of pixels operating at a slow rate multiplied by the difference between the rates over the fast rate.
 
     \begin{equation}
         \begin{array}{ l }
