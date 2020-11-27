@@ -6,37 +6,13 @@ This chapter discusses in detail the limitations with current display protocol t
 
     Current display technologies, such as HDMI, assume a fixed frame rate display which places a hard limit on frame timing and synchronization.
 
-    % Limitations:
-    % Synchronization:
-    %   -Implementation and integration-costs $
-    %   -System-specific solutions $
-    %   -Poor upgradeability $
     In detail, display protocols operate in a best-effort fashion where a buffer swap-initiated transfer of frame data occurs at a static predetermined interval. If a new frame is unavailable to be transmitted at each interval due to any delay, such as processing delay, the previous frame will be retransmitted. This necessarily makes correct synchronization challenging because modern computation systems do not generally provide real-time guarantees due to variability in system operation, including frame generation, CPU scheduling, and Input/Output (I/O) delays. Generally, while these challenges can often be addressed to some degree, they require custom hardware solutions on top of existing display protocols because end-to-end system synchronization is out of the scope of typical display standards which are designed to push relatively low frame rates over single hardware links. These solutions also tend to lack abstraction layers which can greatly hinder upgradeability.
 
-    % Limitations:
-    % Display Protocols
-    %   -Frame rate limits                 -> image size inversely proportional to speed $
-    %   -Static Bandwidth Requirements     -> full image transfer $
-    %   -Static frame rates                -> 60Hz, 100Hz, etc. $
-    %   -Scalability                       -> single scene generator, projector driver $
-    %   Diagrams: Bandwidth diagram -- referenced already $
-    Moreover, because of the static nature of the transmission interval (e.g. 100Hz), the frame rate cannot be dynamically controlled or changed after initialization. Instead, these protocols have static bandwidth requirements for a given resolution and frame rate of the form found in Table~\ref{tbl:bandwidth}, which shows that resolution size is inversely proportional to the max speed the display can operate at. Additionally, these protocols only support sending the entire frame at a given interval even if only a small portion of the frame has changed. This is a non-optimal use of bandwidth that does not allow for fine-grained control over the frame rate in cases where a user might wish to dynamically change the frame rate to match the processing rate. In high-speed display scenarios, this inevitably causes dropped frames. This issue is further compounded by the fact that conventional display protocols utilize proprietary drivers and hardware such that frame-drops become effectively silent. Similar to the synchronization solutions discussed above, this tends to lead to upgradeability issues due to systems being tailored for specific display hardware. This contributes to scalability issues as well since changing the display hardware often requires a complete system redesign.
-
-    % Analog Chain:
-    %   -RT settling time limitations: -- not included right now
-    % Existing diagrams:
-    %   Diagrams: scene generator -> Non-uniformity Correction -> Projector
-    %   Diagrams: Modeline Overhead diagram
+    Moreover, because of the static nature of the transmission interval (e.g. \mbox {100 hertz}), the frame rate cannot be dynamically controlled or changed after initialization. Instead, these protocols have static bandwidth requirements for a given resolution and frame rate of the form found in Table~\ref{tbl:bandwidth}, which shows that resolution size is inversely proportional to the max speed the display can operate at. Additionally, these protocols only support sending the entire frame at a given interval even if only a small portion of the frame has changed. This is a non-optimal use of bandwidth that does not allow for fine-grained control over the frame rate in cases where a user might wish to dynamically change the frame rate to match the processing rate. In high-speed display scenarios, this inevitably causes dropped frames. This issue is further compounded by the fact that conventional display protocols utilize proprietary drivers and hardware such that frame-drops become effectively silent. Similar to the synchronization solutions discussed above, this tends to lead to upgradeability issues due to systems being tailored for specific display hardware. This contributes to scalability issues as well since changing the display hardware often requires a complete system redesign.
 
     \begin{table}
         \centering
         \large
-        %\begin{small}
-        %$$bandwidth = resolution \times bits \times fps$$
-        %$bandwidth$ : \quad bandwidth requirements in bits per second. \\
-        %$resolution$ : \quad number of pixels including porches. \\
-        %$bits$ : \quad \quad \quad \ \ \ bits per pixel. \\
-        %$fps$ : \quad \quad \quad \ \ \ frames per second.
         \begin{tabular}{| r l |}
             \hline
             $bandwidth$ & = resolution $\times$ bits $\times$ fps \\ \hline
@@ -52,19 +28,6 @@ This chapter discusses in detail the limitations with current display protocol t
     \end{table}
 
 \section{High-speed IRLED Scene Projector Systems}
-% How these limitations affect IRSP
-% Bottlenecks:
-% Hardware limitations:
-%   -Physical interconnect bandwidth and latency -> Concurrency/Parallelization $
-%   -FPGA/ASIC/IC clock rates                    -> Concurrency/Parallelization $
-%   -Analog chain settling times (DAC)           -> Address only the pixels needed $
-% Software limitations:
-%   -Computational/algorithmic limitations       -> Concurrency/Parallelization $
-%   -Poorly optimized software / drivers         -> Do not use $
-%   -Fixed frame display                         -> Dynamic frame rate + frame segmentation $
-%   -Non-RT scheduling                           -> Realtime schedule / DMA -- not covered below - do i want to cover this?
-%   -Lack of control                             -> Use a communication protocol with dynamic control built-in $
-%
 
     Conventional display protocols, which are designed for driving relatively low speed consumer electronics as indicated in Chapter~\ref{chap:display_protocols}, are often utilized in High-speed IRLED IRSP systems. This results in a combination of unnecessary hardware and software limitations being incorporated into systems. This section will discuss these limitations and the general methodology toward alleviating them. Hardware limitations will be discussed first then software limitations.
 
