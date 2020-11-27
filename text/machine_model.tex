@@ -26,7 +26,7 @@ This chapter describes the machine model upon which the PDP operates to motivate
 
 \section{Compositing}
     \label{sec:compositing}
-    This section discusses a compositing layer and analysis that could be implemented into a system utilizing the PDP. As noted previously, compositing is the process of combining two or more images into a single picture. In high-speed systems imagery could be generated in individual pieces and combined via a compositor layer. This process might be done by a single system or via separate systems.
+    This section discusses a compositing layer and analysis that could be implemented into a system utilizing the PDP. As noted previously, compositing is the process of combining two or more images into a single picture. In high-speed systems imagery could be generated in individual pieces and combined with a compositor layer. This process might be done by a single system or with separate systems.
 
     A general example of how compositing might look is shown in Figure~\ref{fig:compositing}. During the compositing process frame segments are ranked to determine which to send at high speeds, and which to send at low speeds for intelligent bandwidth utilization. Once segmented and ranked into non-overlapping speed classes, frame segments are transmitted at the necessary rate. Figure~\ref{fig:compositing_overlayed} shows the source segments overlayed with the image where one can see how each region maps to the image.
 
