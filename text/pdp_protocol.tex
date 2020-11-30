@@ -41,7 +41,6 @@ This chapter discusses the underlying communication details of the packetized di
             \textbf{\normalsize 512x512}   & \textbf{\normalsize 60}   & {\normalsize 262144 } & {\normalsize 357500 } & {\normalsize 26.7\%} \\ \hline
             \textbf{\normalsize 512x512}   & \textbf{\normalsize 50}   & {\normalsize 262144 } & {\normalsize 364000 } & {\normalsize 28.0\%} \\ \hline
             \textbf{\normalsize 512x512}   & \textbf{\normalsize 30}   & {\normalsize 262144 } & {\normalsize 520000 } & {\normalsize 50.0\%} \\ \hline
-            \textbf{\normalsize 512x512}   & \textbf{\normalsize 30}   & {\normalsize 262144 } & {\normalsize 520000 } & {\normalsize 50.0\%} \\ \hline
             \textbf{\normalsize 512x256}   & \textbf{\normalsize 1000} & {\normalsize 131072 } & {\normalsize 149460 } & {\normalsize 12.3\%} \\ \hline
             \textbf{\normalsize 512x256}   & \textbf{\normalsize 500}  & {\normalsize 131072 } & {\normalsize 256000 } & {\normalsize 48.8\%} \\ \hline
             \textbf{\normalsize 512x256}   & \textbf{\normalsize 200}  & {\normalsize 131072 } & {\normalsize 320000 } & {\normalsize 59.0\%} \\ \hline
@@ -118,42 +117,20 @@ This chapter discusses the underlying communication details of the packetized di
     As one of the goals of the PDP is to provide backwards compatibility, an important consideration is how this decoding process might be implemented within a display protocol transport layer. Most of the details regarding this is discussed in Chapter~\ref{sec:hdmi_transport_layer}. For now, it is worth noting that for an implementation that is backwards compatible with HDMI, draw packet headers could be transmitted by a secondary data channel while leaving the main stream channel for pixel data. This would allow for pixels data to be transmitted exactly as normal while utilizing normal display protocol modelines, thus, allowing users to be able to utilize their array technology transparently as-is without any changes while utilizing an array that internally supports the PDP via its close support electronics.
 
 \section{Overhead}
-    As mentioned previously, internally the PDP has no notion of blanking periods or porches for providing synchronization, and therefore does not encapsulate the inefficiencies inherent in the aforementioned protocols. Instead synchronization and frame rates within the PDP are controlled by the source through timing when data is sent. This means that high overheads due to blanking can be mitigated. Table~\ref{tbl:pdp_efficiency} shows the maximum packet overhead due to packet encapsulation when the PDP is utilized for the same resolutions and frequencies listed in Table~\ref{tbl:modeline_overhead}. These are computed using active pixel area over total pixel area. The right column shows the reduction in overhead vs normal modelines. {\it 512 by 512} and {\it 512 by 256} are typical modeline resolutions used on IRLED arrays. These numbers represent a worst-case scenario when the PDP is implemented within a transport layer that does not require blanking intervals. In actual usage, larger packets consisting of more pixels would be utilized therefore, the overhead would be lower on average. However, even in worst-case scenarios the PDP has a vast reduction on bandwidth requirements on average which means that faster refresh rates can be utilized in bandwidth limited situations. Additionally, higher integration times could be utilized within IR cameras and sensors due to less time being needed for writing the same visible data to an IR array. For example, with the 512 by 256 modeline operating at \mbox{200 hertz}, integration time could be increased by up to 51.8 percent over a traditional modeline.
+    As mentioned previously, internally the PDP has no notion of blanking periods or porches for providing synchronization, and therefore does not encapsulate the inefficiencies inherent in the aforementioned protocols. Instead synchronization and frame rates within the PDP are controlled by the source through timing when data is sent. This means that high overheads due to blanking can be mitigated. Table~\ref{tbl:pdp_efficiency} shows the maximum packet overhead due to packet encapsulation when the PDP is utilized for the same resolutions and frequencies listed in Table~\ref{tbl:modeline_overhead}. These are computed using active pixel area over total pixel area. The right column shows the reduction in overhead vs normal modelines. {\it 512 by 512} and {\it 512 by 256} are typical modeline resolutions used on IRLED arrays. These numbers represent a worst-case scenario when the PDP is implemented within a transport layer that does not require blanking intervals. In actual usage, larger packets consisting of more pixels would be utilized therefore, the overhead would be lower on average. However, even in worst-case scenarios the PDP has a vast reduction on bandwidth requirements on average which means that faster refresh rates can be utilized in bandwidth limited situations. Additionally, higher integration times could be utilized within IR cameras and sensors due to less time being needed for writing the same visible data to an IR array. For example, with the 512 by 256 modeline operating at \mbox{200 hertz}, integration time could be increased by up to 45.5 percent over a traditional modelines for bit-packed data.
 
     \begin{table}
-        \centering
-        \large
-        \begin{tcolorbox}[tabularx={Y|Y|Y|Y|Y|Y},title=\textbf{PDP Maximum Packet Overhead},boxrule=0.5pt]
-        \textbf{\normalsize Slow Refresh Rate (Hz)} & \textbf{\normalsize Fast Refresh Rate (Hz)} & \textbf{\normalsize Visible Pixels} & \textbf{\normalsize Total Pixels} & \textbf{\normalsize Overhead} & \textbf{\normalsize Overhead Reduction} \\ \hline
-            \textbf{\normalsize 1920x1080} & \textbf{\normalsize 60}   & {\normalsize 2073600} & {\normalsize 2235600} & {\normalsize 7.2\%} &\textbf{\normalsize 9.0 \%} \\ \hline
-            \textbf{\normalsize 1600x1200} & \textbf{\normalsize 60}   & {\normalsize 1920000} & {\normalsize 2070000} & {\normalsize 7.2\%} &\textbf{\normalsize 21.7\%} \\ \hline
-            \textbf{\normalsize 1280x1024} & \textbf{\normalsize 60}   & {\normalsize 1310720} & {\normalsize 1413120} & {\normalsize 7.2\%} &\textbf{\normalsize 20.0\%} \\ \hline
-            \textbf{\normalsize 1280x960}  & \textbf{\normalsize 60}   & {\normalsize 1228800} & {\normalsize 1324800} & {\normalsize 7.2\%} &\textbf{\normalsize 24.5\%} \\ \hline
-            \textbf{\normalsize 1280x800}  & \textbf{\normalsize 60}   & {\normalsize 1024000} & {\normalsize 1104000} & {\normalsize 7.2\%} &\textbf{\normalsize 19.2\%} \\ \hline
-            \textbf{\normalsize 1024x768}  & \textbf{\normalsize 60}   & {\normalsize 786432 } & {\normalsize 847872 } & {\normalsize 7.2\%} &\textbf{\normalsize 20.2\%} \\ \hline
-            \textbf{\normalsize 512x512}   & \textbf{\normalsize 500}  & {\normalsize 262144 } & {\normalsize 282624 } & {\normalsize 7.2\%} &\textbf{\normalsize 4.3\% } \\ \hline
-            \textbf{\normalsize 512x512}   & \textbf{\normalsize 400}  & {\normalsize 262144 } & {\normalsize 282624 } & {\normalsize 7.2\%} &\textbf{\normalsize 4.3\% } \\ \hline
-            \textbf{\normalsize 512x512}   & \textbf{\normalsize 300}  & {\normalsize 262144 } & {\normalsize 282624 } & {\normalsize 7.2\%} &\textbf{\normalsize 19.5\%} \\ \hline
-            \textbf{\normalsize 512x512}   & \textbf{\normalsize 100}  & {\normalsize 262144 } & {\normalsize 282624 } & {\normalsize 7.2\%} &\textbf{\normalsize 19.5\%} \\ \hline
-            \textbf{\normalsize 512x512}   & \textbf{\normalsize 60}   & {\normalsize 262144 } & {\normalsize 282624 } & {\normalsize 7.2\%} &\textbf{\normalsize 19.5\%} \\ \hline
-            \textbf{\normalsize 512x512}   & \textbf{\normalsize 50}   & {\normalsize 262144 } & {\normalsize 282624 } & {\normalsize 7.2\%} &\textbf{\normalsize 20.8\%} \\ \hline
-            \textbf{\normalsize 512x512}   & \textbf{\normalsize 30}   & {\normalsize 262144 } & {\normalsize 282624 } & {\normalsize 7.2\%} &\textbf{\normalsize 42.8\%} \\ \hline
-            \textbf{\normalsize 512x512}   & \textbf{\normalsize 30}   & {\normalsize 262144 } & {\normalsize 282624 } & {\normalsize 7.2\%} &\textbf{\normalsize 42.8\%} \\ \hline
-            \textbf{\normalsize 512x256}   & \textbf{\normalsize 1000} & {\normalsize 131072 } & {\normalsize 141312 } & {\normalsize 7.2\%} &\textbf{\normalsize 5.1\% } \\ \hline
-            \textbf{\normalsize 512x256}   & \textbf{\normalsize 500}  & {\normalsize 131072 } & {\normalsize 141312 } & {\normalsize 7.2\%} &\textbf{\normalsize 41.6\%} \\ \hline
-            \textbf{\normalsize 512x256}   & \textbf{\normalsize 200}  & {\normalsize 131072 } & {\normalsize 141312 } & {\normalsize 7.2\%} &\textbf{\normalsize 51.8\%} \\ \hline
-            \textbf{\normalsize 512x256}   & \textbf{\normalsize 100}  & {\normalsize 131072 } & {\normalsize 141312 } & {\normalsize 7.2\%} &\textbf{\normalsize 51.8\%} \\ \hline
-            \textbf{\normalsize 512x256}   & \textbf{\normalsize 60}   & {\normalsize 131072 } & {\normalsize 141312 } & {\normalsize 7.2\%} &\textbf{\normalsize 51.8\%} \\ \hline
-        \end{tcolorbox}
+        \includegraphics[width=1.0\textwidth]{fig/maximum_packet_overhead.pdf}
         \caption{PDP Maximum Packet Overhead}
         \label{tbl:pdp_efficiency}
     \end{table}
 
-    The numbers in Table~\ref{tbl:pdp_efficiency} are computed by taking the visible resolution and dividing it by the minimum pixel write size supported on an array. The minimum pixel write size is also synonymous with the minimum possible PDP packet payload size excluding headers, and thus, is denoted as $S_{pkt}$. This yields the maximum possible packet count, $C_{pkt}$, for a given resolution as shown in Equation~\eqref{eq:packet_max}. The visible resolution parameters are denoted as horizontal active, $h_a$, and vertical active, $v_a$, respectively to keep consistent with the naming conventions used in Chapter~\ref{chap:display_protocols}. Within the NSLEDS and HDILED arrays, the minimal packet size, $S_{pkt}$, is 2 by 32 due to the interleaved array write process discussed in Chapter~\ref{chap:array_write_process}.
+     The numbers in Table~\ref{tbl:pdp_efficiency} are computed by taking the visible resolution and dividing it by the minimum pixel write size supported on an array. The minimum pixel write size is also synonymous with the minimum possible PDP packet payload size excluding headers, and thus, is denoted as $S_{pkt}$. This yields the maximum possible packet count, $C_{pkt}$, for a given resolution as shown in Equation~\eqref{eq:packet_max}. The visible resolution parameters are denoted as horizontal active, $h_a$, and vertical active, $v_a$, respectively to keep consistent with the naming conventions used in Chapter~\ref{chap:display_protocols}. Within the NSLEDS and HDILED arrays, the minimal packet size, $S_{pkt}$, is 2 by 16 due to the interleaved array write process and bit-packing format discussed in Chapter~\ref{chap:array_write_process}. The minimal packet size is 2 by 32 pixels for unpacked data.
 
     \begin{equation}
         \begin{array}{ l }
             \displaystyle C_{pkt}=\frac{h_a \cdot v_a}{S_{pkt}} \\[13pt]
+            \displaystyle C_{pkt}=\frac{h_a \cdot v_a}{2 \cdot 16}\\[13pt]
             \displaystyle C_{pkt}=\frac{h_a \cdot v_a}{2 \cdot 32}\\[13pt]
         \end{array}
         \label{eq:packet_max}
@@ -186,6 +163,7 @@ This chapter discusses the underlying communication details of the packetized di
         \begin{array}{ l }
             \displaystyle T_{px}=O_{pkt} \cdot \frac{h_a \cdot v_a}{S_{pkt}} + h_a \cdot v_a \\[13pt]
             \displaystyle T_{px}=h_a \cdot v_a \cdot (\frac{O_{pkt}}{S_{pkt}} + 1) \\[13pt]
+            \displaystyle T_{px}=h_a \cdot v_a \cdot (\frac{5}{2 \cdot 16} + 1) \\[13pt]
             \displaystyle T_{px}=h_a \cdot v_a \cdot (\frac{5}{2 \cdot 32} + 1) \\[13pt]
         \end{array}
         \label{eq:total_pixel2}
@@ -201,7 +179,7 @@ This chapter discusses the underlying communication details of the packetized di
         \label{eq:overhead}
     \end{equation}
 
-    Due to the nature of the total pixel overhead being proportional to the visible pixel size for each resolution, the overhead percentage under worst-case conditions cancels out to a constant consisting of only a relationship between the minimum packet size and packet overhead.
+    Due to the nature of the total pixel overhead being proportional to the visible pixel size for each resolution, the overhead percentage under worst-case conditions cancels out to a constant consisting of only a relationship between the minimum packet size and packet overhead. The overhead for packed data is $13.5\%$ and the overhead for unpacked data is $7.2\%$.
 
     \begin{equation}
         \begin{array}{ l }
@@ -210,13 +188,15 @@ This chapter discusses the underlying communication details of the packetized di
             \displaystyle O_{pdp}=\frac{O_{pkt}\cdot \frac{1}{S_{pkt}}}{O_{pkt} \cdot \frac{1}{S_{pkt}} + 1} \cdot 100 \\[16pt]
             \displaystyle O_{pdp}=\frac{\frac{O_{pkt}}{S_{pkt}}}{\frac{O_{pkt}}{S_{pkt}} + 1} \cdot 100 \\[19pt]
             \displaystyle O_{pdp}=\frac{O_{pkt}}{O_{pkt}+S_{pkt}} \cdot 100 \\[19pt]
+            \displaystyle O_{pdp}=\frac{5}{5 + 2 \cdot 16} \cdot 100 \\[19pt]
+            \displaystyle O_{pdp}=13.5 \\[13pt]
             \displaystyle O_{pdp}=\frac{5}{5 + 2 \cdot 32} \cdot 100 \\[19pt]
             \displaystyle O_{pdp}=7.2 \\[13pt]
         \end{array}
         \label{eq:cancel}
     \end{equation}
 
-    The overhead reduction in Table~\ref{tbl:pdp_efficiency} is computed by subtracting the PDP overhead from the overheads listed in Table~\ref{tbl:modeline_overhead}. It is worth restating for posterity that these numbers represent worst-case scenarios for the PDP when implemented on top of a transport layer that does not require blanking intervals. If the underlying transport layer upon which the PDP is implemented cannot function without additional overhead, then the performance would be worse in practice as is the case if the PDP is utilized with a display protocol-based transport layer. However, in the case of display protocols, overhead can be minimized relative to normal non-PDP operation by utilizing the fastest frequency the hardware allows and minimizing modeline porches. This would enable the PDP to use much smaller porches than normal modelines. Additionally, horizontal porch overhead can be mitigated by timing any inherit analog settling delays to occur during porches. This can be done by ensuring that there is enough data for a write prior to a horizontal blanking period.
+    The overhead reduction in Table~\ref{tbl:pdp_efficiency} is computed by subtracting the PDP overhead from the overheads listed in Table~\ref{tbl:modeline_overhead}. In most cases, there is an overhead reduction. It is worth restating for posterity that these numbers represent worst-case scenarios for the PDP when implemented on top of a transport layer that does not require blanking intervals. If the underlying transport layer upon which the PDP is implemented cannot function without additional overhead, then the performance would be worse in practice as is the case if the PDP is utilized with a display protocol-based transport layer. However, in the case of display protocols, overhead can be minimized relative to normal non-PDP operation by utilizing the fastest frequency the hardware allows and minimizing modeline porches. This would enable the PDP to use much smaller porches than normal modelines. Additionally, horizontal porch overhead can be mitigated by timing any inherit analog settling delays to occur during porches. This can be done by ensuring that there is enough data for a write prior to a horizontal blanking period.
 
 \section{Multi-frame Rate Performance}
     \label{sec:multi_framerate_performance}
