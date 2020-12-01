@@ -62,7 +62,7 @@ This chapter discusses a number of experimental results obtained using the imple
             \label{fig:checker_pattern}
         \end{figure}
 
-        For the second test, a dynamic CRC-like pattern was used to verify data accuracy directly. Segments of eight 8-bit random values where generated and then inserted into an HDMI stream twice as shown in Figure~\ref{fig:crc_like_buffer}. The pattern dynamic changed for every input frame. Figure~\ref{fig:random_noise} shows an example pattern. Internally, the test circuit would compare the results of the segments and log errors. UART was used to retrieve the error count.
+        For the second test, a dynamic CRC-like pattern was used to verify data accuracy directly. 4096 segments of 8 consecutively ordered randomly generated pixel values were inserted into HDMI stream twice as shown in in Figure~\ref{fig:crc_like_buffer}. The pattern dynamically changed for every input frame. Figure~\ref{fig:random_noise} shows an example pattern. Internally, the test circuit would compare the results of the segments and log errors. UART was used to retrieve the error count.
 
         \begin{figure}[t]
             \centering
