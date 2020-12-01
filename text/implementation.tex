@@ -128,7 +128,14 @@ This chapter describes an FPGA implementation of the PDP architecture~\cite{Land
 
     \subsection{Internal Buffer and Memory Synchronizer}
         \label{sec:memorysync}
-        At high-level, internally, a request-acknowledgment handshake is used to ensure the buffer state has transitioned correctly across clock domains and is available on the other side. Once data becomes available, the read router outputs the data lines as well as a valid signal to indicate that the data can be read and cleared. The read controller clears it once an empty trigger is sent from the array emitter. The SCB then select the next buffer. Once the last buffer is written or read by either controller, the first buffer is selected again.
+        At high-level, internally, a double request-acknowledgment handshake is used to ensure the buffer state has transitioned correctly across clock domains and is available on the other side. This is shown in Figure~\ref{fig:handshake}. Once data becomes available, the read router outputs the data lines as well as a valid signal to indicate that the data can be read and cleared. The read controller clears it once an empty trigger is sent from the array emitter. The SCB then select the next buffer. Once the last buffer is written or read by either controller, the first buffer is selected again.
+
+        \begin{figure}[t]
+            \centering
+            \includegraphics[width=0.5\textwidth]{fig/handshake.pdf}
+            \caption{Synchronizer Double Handshake}
+            \label{fig:handshake}
+        \end{figure}
 
         Figure~\ref{fig:full_empty_circuit} shows a register-transfer level (RTL) design of the circuit. {\it Set full} and {\it set empty} are the control signals for the circuit to allow it to transition from empty to full and full to empty, respectively. The {\it set full} signal is controlled by the write domain and the {set empty} signal is controlled by the reader domain. For correct operation, {\it set full} can only be toggled for a single write cycle when the {\it empty flag} is high and {\it set empty} can only be toggled for a single read cycle when the {\it full flag} is high. If the {\it set} operations are performed during other times, then the circuit behavior is undefined. Additionally, the read clock must be faster than the write clock in order to guarantee that buffer overrun cannot occur.
 
@@ -170,7 +177,7 @@ This chapter describes an FPGA implementation of the PDP architecture~\cite{Land
         framesep=2mm,
         baselinestretch=1.0,
         %bgcolor=lightgray,%
-        fontsize=\small,
+        fontsize=\footnotesize,
         linenos
         ]{vhdl}
 library IEEE;
