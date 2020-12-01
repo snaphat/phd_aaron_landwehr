@@ -95,7 +95,7 @@ This chapter discusses a number of experimental results obtained using the imple
         \label{fig:input_example}
     \end{figure}
 
-    Figure~\ref{fig:output_example} shows the final output which would be passed to an array in a real system. Highlighted in red is data from the write enable packet. Note, all values out are up shifted by 5 bits to be received by the DACs in the system. Additionally, the values are shown in reverse order from the input diagram. For example, 992 corresponds to the value of 31 on the input side. In purple the reset packet is shown with two stages of array writes. In the first stage, the load signal transitions to low. In the second stage the load signal transitions high. The states shown are the transitioning stages of the state machines discussed in Chapter~\ref{sec:state_machines}.
+    Figure~\ref{fig:output_example} shows the final output which would be passed from the write buffer to an array in a real system. Highlighted in red is data for drawing a segment on the array. Note, all values out are up shifted by 5 bits to be received by the DACs in the system. Additionally, the values are shown in reverse order from the input diagram. For example, 992 corresponds to the value of 31 on the input side. In purple an array reset is shown with two stages of array writes. In the first stage, the load signal transitions to low. In the second stage the load signal transitions high. The states shown are the transitioning stages of the write buffer.
 
     \begin{figure}
         \centering
