@@ -10,7 +10,7 @@ This chapter provides the reader with an overview of the data formatting require
 
     The TCSA, NSLEDS, and HDILED arrays are organized into four quadrants as shown in Figure~\ref{fig:tcsa_nsleds_hdiled_quads}. Each quadrant is organized into a given number of pixels with TCSA housing 256 by 256, NSLEDS housing 512 by 512, and HDILED housing 1024 by 1024 per quadrant. There are number of input signals necessary to drive an array. These are {\em a 4-bit quadrant write enable}, {\em X address}, {\em Y address}, {\em LOAD bit}, {\em 16 Strong/Weak drive strength bit}, {\em array reset bit}, and {\em analog signaling lines which charges the pixels being addressed}. The quadrant write enable, X address, Y address, and LOAD signals are all utilized for addressing the array.
 
-    \begin{figure}
+    \begin{figure}[t]
         \centering
         %includegraphs[trim=L B R T]
         \includegraphics[width=1.0\textwidth]{fig/tcsa_nsleds_hdiled_quads.pdf}
@@ -24,7 +24,7 @@ This chapter provides the reader with an overview of the data formatting require
 
     The X address, Y address, and LOAD are used to select which pixel or group of pixels to write within a quadrant depending on the mode of operation. Though these lines are effectively shared by quadrants in a single CSE Setup, within the RIIC architecture they can be driven independently to enable the multiple CSE operation mentioned previously. Internally, each array (or quadrants in multi-CSE setups) can write up to 32 pixels (or channels) of data at a given time. As noted previously, the mode of operation dictates whether 2, 4, 8, 16, or 32 channels are used. It also affects the number of address bits utilized in practice with lower modes of operation using more bits. Additionally, the number of address bits differs by array due to the differences in sizes. NSLEDS utilizes 7 bits for the X address and 7 bits for the Y address, yielding a total of 256 by 256 addresses per quadrant. The LOAD bit is used to select between even and odd rows, yielding an effective address space of 256 by 512 per quadrant. Because the smallest mode of operation writes 2 pixels at a time, this is sufficient to fully address the array. Similarly, HDILED utilizes 8 bits for the X address and 8 bits for the Y address, yielding a total of 512 by 512 addresses per quadrant. Again, as with NSLEDS, the LOAD bit is used to select between even and odd rows, yielding an effective address space of 512 by 1024 per quadrant. This is again sufficient to completely address the array since it also can at a minimize write 2 pixels at a time.
 
-    Structurally, NSLEDS and HDILED are laid out as super pixel as shown in Figure~\ref{fig:nsleds_hdiled_array_superpixel_layout}. Each super pixel is made up of a grid of 4 pixels spanning two rows and columns. These are laid out across the array in a grid structure with NSLEDS consisting of 256 by 256 super pixels, and HDILED consisting of 512 by 512 super pixels. This image also highlights two points discussed above, the LOAD line selects between the top two pixels (even rows) and bottom two pixels (odd rows) of each super pixel in the quadrant, and the two selected pixels are both written at the same time. Additionally, these share a drive strength as noted in the diagram. This is controlled using the Strong/Weak drive strength bits which dictate whether to provide a strong or weaker light emission for the given pair of pixels.
+    Structurally, NSLEDS and HDILED consist of super pixels as shown in Figure~\ref{fig:nsleds_hdiled_array_superpixel_layout}. Each super pixel is made up of a grid of 4 pixels spanning two rows and columns. As discussed above, the LOAD line selects between the top two pixels (even rows) and bottom two pixels (odd rows) of each super pixel in the quadrant, and the two selected pixels are both written at the same time. Additionally, these share a drive strength as noted in the diagram. The emission spectrum is controlled using the Strong/Weak drive strength bit which dictates whether to provide a strong or weaker light emission for the given pair of pixels. Super pixels are laid out across the array in a grid structure with NSLEDS consisting of 256 by 256, and HDILED consisting of 512 by 512. The general layout is shown in Figure~\ref{fig:array_layout}.
 
     \begin{figure}
         \centering
@@ -32,6 +32,12 @@ This chapter provides the reader with an overview of the data formatting require
         \includegraphics[width=0.50\textwidth]{fig/superpixel_layout.pdf}
         \caption{NSLEDS/HDILED Array Super Pixel Layout}
         \label{fig:nsleds_hdiled_array_superpixel_layout}
+        \bigskip
+        \centering
+        %includegraphs[trim=L B R T]
+        \includegraphics[width=0.85\textwidth]{fig/array_layout.pdf}
+        \caption{NSLEDS/HDILED Super Pixel Grid Layout}
+        \label{fig:array_layout}
     \end{figure}
 
     The 32 analog signaling lines control the emission intensity of driven pixels. These 32 channels are controlled by digital to analog converters within the CSE that are driven by the firmware. Internally, a CSE has 8 DAC cards with 2 DAC integrated circuits per card, with each DAC circuit consisting of 2 DAC channels as discussed in Chapter~\ref{sec:close_support_electronics}. Each channel is used to drive a single pixel, giving the ability to drive 32 pixels at once or some subset as mentioned previously.
@@ -62,31 +68,24 @@ This chapter provides the reader with an overview of the data formatting require
         \label{fig:bit_packing}
     \end{figure}
 
-    Figure~\ref{fig:image_encoding} shows the input reordering performed on data sent to a CSE. Each cable sends half of the data as noted in Chapter~\ref{sec:close_support_electronics}. The input example is segmented into top, middle, and bottom to indicate which part goes over which input and the different reordering steps. The portions denoted as {\it Top} are transmitted over CSE input 1. The portions denoted as {\it Bottom} are transmitted over CSE input 2. The portions marked {\it Middle} are split evenly over both inputs evenly. The first step of data reordering is to bit pack into 11-bit words as shown in Figure~\ref{fig:bit_packing}. Next, even/odd reordering is performed to reduce latency and buffering constraints as is shown in more detail in subsequent figures. Note the pattern introduced on the words in the diagram due to even/odd reordering. Finally, data is transposed before being sent to the array to accommodate the column write order of the array shown in Figure~\ref{fig:nsleds_hdiled_array_interleaved_pixel_mapping_per_write}. If data were not transposed, then multiple lines of data would need to be buffered to draw 32 pixels for a single write. In fact, the first generation of firmware utilized on the TCSA and NSLEDS arrays required full image buffering before displaying a single pixel on an array which resulted in an entire frame of latency during operation. The second generation of firmware~\cite{HouserEtAl2018} utilized on TCSA, NSLEDS, and HDILED drastically reduced buffering and latency requirements through data reordering, but
-    required double the amount of buffering to that of the current implementation of the PDP because it did not have an even/odd row reorder step during encoding. This meant that 2 by 64 pixels of even and odd rows of data were required to be buffered before a single write could occur even though only 2 by 32 pixels are needed by the hardware for a single write. It is worth noting that as mentioned in Chapter~\ref{sec:array_Interleaved_write_process}, different arrays could have different rasterization processes, and in that event the transformations described here would need to be changed to minimize buffering for those scenarios.
-
     \begin{figure}
         \centering
         \includegraphics[width=1.0\textwidth]{fig/image_encoding.pdf}
         \caption{Image Encoding: Input Reordering}
         \label{fig:image_encoding}
-    \end{figure}
-
-    Figure~\ref{fig:image_encoding_quads} shows how the same image data maps to each quadrant on an array. Similarly, to the previous image the separation of top, middle, and bottom by input cable holds here. Additionally, shown is that quadrant one and two are transmitted over the first input and quadrant three and four over the second input. Note also that the top-left of the image corresponds to quadrant one, the top-right of the image corresponds to quadrant two, the bottom-left of the image corresponds to quadrant three, and the bottom-right of the image corresponds to quadrant four. This relationship holds for all subsequent images. Figure~\ref{fig:image_encoding_colored} shows the same details in a color overlayed chart.
-
-    \begin{figure}
         \centering
         \includegraphics[width=1.0\textwidth]{fig/image_encoding_quads.pdf}
         \caption{Image Encoding: Quadrant Reordering}
         \label{fig:image_encoding_quads}
-    \end{figure}
-
-    \begin{figure}
         \centering
         \includegraphics[width=1.0\textwidth]{fig/image_encoding_colored.pdf}
         \caption{Image Encoding: Quadrant Reordering with Color Overlay}
         \label{fig:image_encoding_colored}
     \end{figure}
+
+    Figure~\ref{fig:image_encoding} shows the input reordering performed on data sent to a CSE. Each cable sends half of the data as noted in Chapter~\ref{sec:close_support_electronics}. The input example is segmented into top, middle, and bottom to indicate which part goes over which input and the different reordering steps. The portions denoted as {\it Top} are transmitted over CSE input 1. The portions denoted as {\it Bottom} are transmitted over CSE input 2. The portions marked {\it Middle} are split evenly over both inputs evenly. The first step of data reordering is to bit pack into 11-bit words as shown in Figure~\ref{fig:bit_packing}. Next, even/odd reordering is performed to reduce latency and buffering constraints as is shown in more detail in subsequent figures. Note the pattern introduced on the words in the diagram due to even/odd reordering. Finally, data is transposed before being sent to the array to accommodate the column write order of the array shown in Figure~\ref{fig:nsleds_hdiled_array_interleaved_pixel_mapping_per_write}. If data were not transposed, then multiple lines of data would need to be buffered to draw 32 pixels for a single write. In fact, the first generation of firmware utilized on the TCSA and NSLEDS arrays required full image buffering before displaying a single pixel on an array which resulted in an entire frame of latency during operation. The second generation of firmware~\cite{HouserEtAl2018} utilized on TCSA, NSLEDS, and HDILED drastically reduced buffering and latency requirements through data reordering, but required double the amount of buffering to that of the current implementation of the PDP because it did not have an even/odd row reorder step during encoding. This meant that 2 by 64 pixels of even and odd rows of data were required to be buffered before a single write could occur even though only 2 by 32 pixels are needed by the hardware for a single write. It is worth noting that as mentioned in Chapter~\ref{sec:array_Interleaved_write_process}, different arrays could have different rasterization processes, and in that event the transformations described here would need to be changed to minimize buffering for those scenarios.
+
+    Figure~\ref{fig:image_encoding_quads} shows how the same image data maps to each quadrant on an array. Similarly, to the previous image the separation of top, middle, and bottom by input cable holds here. Additionally, shown is that quadrant one and two are transmitted over the first input and quadrant three and four over the second input. Note also that the top-left of the image corresponds to quadrant one, the top-right of the image corresponds to quadrant two, the bottom-left of the image corresponds to quadrant three, and the bottom-right of the image corresponds to quadrant four. This relationship holds for all subsequent images. Figure~\ref{fig:image_encoding_colored} shows the same details in a color overlayed chart.
 
     Figure~\ref{fig:image_encoding_bitback} shows the bit-packing process for a false color image to aid with understanding. The blown-up sections show single columns of data and the corresponding bit packed version of the data where two columns of input with different colors of data per column are merged into a single column of 24-bit data with one color. This results in the example input image having two solid colors after bit-packing. In the actual implementation of bit packing, real data is in the IR-spectrum and not averaged in this way but clamped and scaled instead. While not required, generally IR data is normally 16-bits per pixel which corresponds to current higher-class IR detectors having a dynamic range of 14-bits per pixel~\cite{FLIR2014_1, FLIR2014_2, FLIR2016}. Cheaper detectors may only have lower dynamic ranges resulting in a lower ability to differentiate light output. Even/odd reordering and the transpose do not result in any noticeable data changes for this example.
 
@@ -95,16 +94,13 @@ This chapter provides the reader with an overview of the data formatting require
         \includegraphics[width=1.0\textwidth]{fig/image_encoding_bitback.pdf}
         \caption{Image Encoding: Data Bit Packing}
         \label{fig:image_encoding_bitback}
-    \end{figure}
-
-    Figure~\ref{fig:image_encoding_bitpack_reorder} shows a false color input image designed to highlight the even/odd row reordering applied to imagery. The blown-up sections show 64 labeled rows of input data where the even rows are one color and the odd rows another color for every 32 rows. Additionally, for every 32 rows, the even and odd rows are de-interlaced into 16 even rows of data follow by 16 odd rows of data. In the example input image this results in every 16 de-interlaced rows having a different color. This is due to the interleaved write process for individual 32-pixel writes discussed in Chapter~\ref{sec:array_Interleaved_write_process}. Reordering data allows for only 16 bit-packed pixels of data to be buffered per write. As discussed previously, without this reordering, double the number of pixels would need to be buffered per array write increasing both latency and implementation complexity.
-
-    \begin{figure}
         \centering
         \includegraphics[width=1.0\textwidth]{fig/image_encoding_reorder.pdf}
         \caption{Image Encoding: Data Reorder}
         \label{fig:image_encoding_bitpack_reorder}
     \end{figure}
+
+    Figure~\ref{fig:image_encoding_bitpack_reorder} shows a false color input image designed to highlight the even/odd row reordering applied to imagery. The blown-up sections show 64 labeled rows of input data where the even rows are one color and the odd rows another color for every 32 rows. Additionally, for every 32 rows, the even and odd rows are de-interlaced into 16 even rows of data follow by 16 odd rows of data. In the example input image this results in every 16 de-interlaced rows having a different color. This is due to the interleaved write process for individual 32-pixel writes discussed in Chapter~\ref{sec:array_Interleaved_write_process}. Reordering data allows for only 16 bit-packed pixels of data to be buffered per write. As discussed previously, without this reordering, double the number of pixels would need to be buffered per array write increasing both latency and implementation complexity.
 
     Figures~\ref{fig:image_encoding_color_example1},~\ref{fig:image_encoding_color_example2},~and~\ref{fig:image_encoding_color_example3} show some examples of what false colored images would look like if processed by the reordering kernels to give the reader a better understanding of how different types of data would look during the intermediate processes. Note the characteristic jagged pattern due to even/odd row reordering present in each image. Also note that each image is transposed and segmented in half for transfer over separate inputs to a CSE.
 
@@ -113,18 +109,13 @@ This chapter provides the reader with an overview of the data formatting require
         \includegraphics[width=1.0\textwidth]{fig/image_encoding_pac.pdf}
         \caption{Image Encoding: Color Example 1}
         \label{fig:image_encoding_color_example1}
-    \end{figure}
-
-    \begin{figure}
         \centering
         \includegraphics[width=1.0\textwidth]{fig/image_encoding_liberty.pdf}
         \caption{Image Encoding: Color Example 2}
         \label{fig:image_encoding_color_example2}
     \end{figure}
-
     \begin{figure}
         \centering
-        %includegraphs[trim=L B R T]
         \includegraphics[width=1.0\textwidth]{fig/image_encoding_origami.pdf}
         \caption{Image Encoding: Color Example 3}
         \label{fig:image_encoding_color_example3}
@@ -139,7 +130,6 @@ This chapter provides the reader with an overview of the data formatting require
         \caption{Image Encoding: IR Example 1}
         \label{fig:image_encoding_ir_example1}
     \end{figure}
-
     \begin{figure}
         \centering
         %includegraphs[trim=L B R T]
