@@ -125,13 +125,13 @@ This chapter discusses the underlying communication details of the packetized di
         \label{tbl:pdp_efficiency}
     \end{table}
 
-     The numbers in Table~\ref{tbl:pdp_efficiency} are computed by taking the visible resolution and dividing it by the minimum pixel write size supported on an array. The minimum pixel write size is also synonymous with the minimum possible PDP packet payload size excluding headers, and thus, is denoted as $S_{pkt}$. This yields the maximum possible packet count, $C_{pkt}$, for a given resolution as shown in Equation~\eqref{eq:packet_max}. The visible resolution parameters are denoted as horizontal active, $h_a$, and vertical active, $v_a$, respectively to keep consistent with the naming conventions used in Chapter~\ref{chap:display_protocols}. Within the NSLEDS and HDILED arrays, the minimal packet size, $S_{pkt}$, is 2 by 16 due to the interleaved array write process and bit-packing format discussed in Chapter~\ref{chap:array_write_process}. The minimal packet size is 2 by 32 pixels for unpacked data.
+    The numbers in Table~\ref{tbl:pdp_efficiency} are computed by taking the visible resolution and dividing it by the minimum pixel write size supported on an array. The minimum pixel write size is also synonymous with the minimum possible PDP packet payload size excluding headers, and thus, is denoted as $S_{pkt}$. This yields the maximum possible packet count, $C_{pkt}$, for a given resolution as shown in Equation~\eqref{eq:packet_max}. The visible resolution parameters are denoted as horizontal active, $h_a$, and vertical active, $v_a$, respectively to keep consistent with the naming conventions used in Chapter~\ref{chap:display_protocols}. Within the NSLEDS and HDILED arrays, the minimal packet size for packed data, $S_{pktP}$, is 2 by 16 due to the interleaved array write process and bit-packing format discussed in Chapter~\ref{chap:array_write_process}. The minimal packet size for unpacked data, $S_{pktU}$, is 2 by 32 pixels due to unpacked data needing double the amount of pixel data per write.
 
     \begin{equation}
         \begin{array}{ l }
             \displaystyle C_{pkt}=\frac{h_a \cdot v_a}{S_{pkt}} \\[13pt]
-            \displaystyle C_{pkt}=\frac{h_a \cdot v_a}{2 \cdot 16}\\[13pt]
-            \displaystyle C_{pkt}=\frac{h_a \cdot v_a}{2 \cdot 32}\\[13pt]
+            \displaystyle C_{pkt_P}=\frac{h_a \cdot v_a}{2 \cdot 16}\\[13pt]
+            \displaystyle C_{pkt_U}=\frac{h_a \cdot v_a}{2 \cdot 32}\\[13pt]
         \end{array}
         \label{eq:packet_max}
     \end{equation}
@@ -163,13 +163,13 @@ This chapter discusses the underlying communication details of the packetized di
         \begin{array}{ l }
             \displaystyle T_{px}=O_{pkt} \cdot \frac{h_a \cdot v_a}{S_{pkt}} + h_a \cdot v_a \\[13pt]
             \displaystyle T_{px}=h_a \cdot v_a \cdot (\frac{O_{pkt}}{S_{pkt}} + 1) \\[13pt]
-            \displaystyle T_{px}=h_a \cdot v_a \cdot (\frac{5}{2 \cdot 16} + 1) \\[13pt]
-            \displaystyle T_{px}=h_a \cdot v_a \cdot (\frac{5}{2 \cdot 32} + 1) \\[13pt]
+            \displaystyle T_{px_P}=h_a \cdot v_a \cdot (\frac{5}{2 \cdot 16} + 1) \\[13pt]
+            \displaystyle T_{px_U}=h_a \cdot v_a \cdot (\frac{5}{2 \cdot 32} + 1) \\[13pt]
         \end{array}
         \label{eq:total_pixel2}
     \end{equation}
 
-    Computing the overhead percentage, $O_{pdp}$, is a matter of dividing the total pixel overhead, $O_{px}$, by the total pixels, $T_{px}$.
+    Equation~\ref{eq:overhead} shows computing the overhead percentage, $O_{pdp}$, is a matter of dividing the total pixel overhead, $O_{px}$, by the total pixels, $T_{px}$.
 
     \begin{equation}
         \begin{array}{ l }
@@ -179,7 +179,7 @@ This chapter discusses the underlying communication details of the packetized di
         \label{eq:overhead}
     \end{equation}
 
-    Due to the nature of the total pixel overhead being proportional to the visible pixel size for each resolution, the overhead percentage under worst-case conditions cancels out to a constant consisting of only a relationship between the minimum packet size and packet overhead. The overhead for packed data is $13.5\%$ and the overhead for unpacked data is $7.2\%$.
+    Due to the nature of the total pixel overhead being proportional to the visible pixel size for each resolution, the overhead percentage under worst-case conditions cancels out to a constant consisting of only a relationship between the minimum packet size and packet overhead. Substituting Equations~\ref{eq:packet_max} and~\ref{eq:total_pixel2} into Equation~\ref{eq:overhead} yields Equation~\ref{eq:cancel} which shows this cancellation process and the resulting overhead percentages. The overhead for packed data is $13.5\%$ and the overhead for unpacked data is $7.2\%$.
 
     \begin{equation}
         \begin{array}{ l }
@@ -188,10 +188,10 @@ This chapter discusses the underlying communication details of the packetized di
             \displaystyle O_{pdp}=\frac{O_{pkt}\cdot \frac{1}{S_{pkt}}}{O_{pkt} \cdot \frac{1}{S_{pkt}} + 1} \cdot 100 \\[16pt]
             \displaystyle O_{pdp}=\frac{\frac{O_{pkt}}{S_{pkt}}}{\frac{O_{pkt}}{S_{pkt}} + 1} \cdot 100 \\[19pt]
             \displaystyle O_{pdp}=\frac{O_{pkt}}{O_{pkt}+S_{pkt}} \cdot 100 \\[19pt]
-            \displaystyle O_{pdp}=\frac{5}{5 + 2 \cdot 16} \cdot 100 \\[19pt]
-            \displaystyle O_{pdp}=13.5 \\[13pt]
-            \displaystyle O_{pdp}=\frac{5}{5 + 2 \cdot 32} \cdot 100 \\[19pt]
-            \displaystyle O_{pdp}=7.2 \\[13pt]
+            \displaystyle O_{pdp_P}=\frac{5}{5 + 2 \cdot 16} \cdot 100 \\[19pt]
+            \displaystyle O_{pdp_P}=13.5 \\[13pt]
+            \displaystyle O_{pdp_U}=\frac{5}{5 + 2 \cdot 32} \cdot 100 \\[19pt]
+            \displaystyle O_{pdp_U}=7.2 \\[13pt]
         \end{array}
         \label{eq:cancel}
     \end{equation}
