@@ -7,15 +7,15 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="388.99997"
-   height="46.999973"
+   width="267.00003"
+   height="31.000031"
    overflow="hidden"
    version="1.1"
-   id="svg67"
+   id="svg65"
    sodipodi:docname="packet_refresher.svg"
    inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07)">
   <metadata
-     id="metadata71">
+     id="metadata69">
     <rdf:RDF>
       <cc:Work
          rdf:about="">
@@ -35,21 +35,21 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="3840"
-     inkscape:window-height="2066"
-     id="namedview69"
+     inkscape:window-width="1918"
+     inkscape:window-height="2054"
+     id="namedview67"
      showgrid="false"
-     fit-margin-left="1"
-     fit-margin-top="1"
-     fit-margin-bottom="1"
-     fit-margin-right="1"
-     inkscape:zoom="1.0992187"
-     inkscape:cx="67.000327"
-     inkscape:cy="88.000327"
-     inkscape:window-x="-11"
-     inkscape:window-y="-11"
-     inkscape:window-maximized="1"
-     inkscape:current-layer="g65" />
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:zoom="1.1273438"
+     inkscape:cx="129.49967"
+     inkscape:cy="69.499673"
+     inkscape:window-x="1910"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="g63" />
   <defs
      id="defs5">
     <clipPath
@@ -64,223 +64,223 @@
   </defs>
   <g
      clip-path="url(#clip0)"
-     id="g65"
-     transform="translate(-572.99967,-271.99967)">
+     id="g63"
+     transform="translate(-510.50033,-290.50033)">
     <rect
-       x="575"
-       y="274"
-       width="42"
-       height="43"
-       fill="#f7dc74"
+       x="511.5"
+       y="291.5"
+       width="28"
+       height="29"
+       fill="#ffe699"
+       id="rect9" />
+    <rect
+       x="511.16699"
+       y="291.16699"
+       width="28.6667"
+       height="29.6667"
+       stroke="#000000"
+       stroke-width="1.33333"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
        id="rect11" />
-    <rect
-       x="575.83301"
-       y="274.83301"
-       width="40.333302"
-       height="41.333302"
-       stroke="#4b757d"
-       stroke-width="3.66667"
-       stroke-linejoin="round"
-       stroke-miterlimit="10"
-       fill="none"
-       id="rect13" />
     <text
        font-family="'Franklin Gothic Book', 'Franklin Gothic Book_MSFontService', sans-serif"
        font-weight="400"
-       font-size="21px"
-       transform="translate(589.742,304)"
-       id="text15">1</text>
+       font-size="16px"
+       transform="translate(520.246,312)"
+       id="text13">1</text>
     <rect
-       x="618"
-       y="274"
-       width="41"
-       height="43"
-       fill="#f7dc74"
+       x="540.5"
+       y="291.5"
+       width="29"
+       height="29"
+       fill="#ffe699"
+       id="rect15" />
+    <rect
+       x="540.16699"
+       y="291.16699"
+       width="29.6667"
+       height="29.6667"
+       stroke="#000000"
+       stroke-width="1.33333"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
        id="rect17" />
-    <rect
-       x="618.83301"
-       y="274.83301"
-       width="39.333302"
-       height="41.333302"
-       stroke="#4b757d"
-       stroke-width="3.66667"
-       stroke-linejoin="round"
-       stroke-miterlimit="10"
-       fill="none"
-       id="rect19" />
     <text
        font-family="'Franklin Gothic Book', 'Franklin Gothic Book_MSFontService', sans-serif"
        font-weight="400"
-       font-size="19px"
-       transform="translate(628.351,303)"
-       id="text21">XS</text>
+       font-size="15px"
+       transform="translate(546.291,311)"
+       id="text19">XS</text>
     <rect
-       x="660"
-       y="274"
-       width="42"
-       height="43"
-       fill="#f7dc74"
+       x="569.5"
+       y="291.5"
+       width="29"
+       height="29"
+       fill="#ffe699"
+       id="rect21" />
+    <rect
+       x="569.16699"
+       y="291.16699"
+       width="29.6667"
+       height="29.6667"
+       stroke="#000000"
+       stroke-width="1.33333"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
        id="rect23" />
-    <rect
-       x="660.83301"
-       y="274.83301"
-       width="40.333302"
-       height="41.333302"
-       stroke="#4b757d"
-       stroke-width="3.66667"
-       stroke-linejoin="round"
-       stroke-miterlimit="10"
-       fill="none"
-       id="rect25" />
     <text
        font-family="'Franklin Gothic Book', 'Franklin Gothic Book_MSFontService', sans-serif"
        font-weight="400"
-       font-size="19px"
-       transform="translate(671.128,303)"
-       id="text27">XE</text>
+       font-size="15px"
+       transform="translate(575.836,311)"
+       id="text25">XE</text>
     <rect
-       x="703"
-       y="274"
-       width="42"
-       height="43"
-       fill="#f7dc74"
+       x="599.5"
+       y="291.5"
+       width="29"
+       height="29"
+       fill="#ffe699"
+       id="rect27" />
+    <rect
+       x="599.16699"
+       y="291.16699"
+       width="29.6667"
+       height="29.6667"
+       stroke="#000000"
+       stroke-width="1.33333"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
        id="rect29" />
-    <rect
-       x="703.83301"
-       y="274.83301"
-       width="40.333302"
-       height="41.333302"
-       stroke="#4b757d"
-       stroke-width="3.66667"
-       stroke-linejoin="round"
-       stroke-miterlimit="10"
-       fill="none"
-       id="rect31" />
     <text
        font-family="'Franklin Gothic Book', 'Franklin Gothic Book_MSFontService', sans-serif"
        font-weight="400"
-       font-size="19px"
-       transform="translate(714.011,303)"
-       id="text33">YS</text>
+       font-size="15px"
+       transform="translate(605.422,311)"
+       id="text31">YS</text>
     <rect
-       x="746"
-       y="274"
-       width="42"
-       height="43"
-       fill="#f7dc74"
+       x="629.5"
+       y="291.5"
+       width="28"
+       height="29"
+       fill="#ffe699"
+       id="rect33" />
+    <rect
+       x="629.16699"
+       y="291.16699"
+       width="28.6667"
+       height="29.6667"
+       stroke="#000000"
+       stroke-width="1.33333"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
        id="rect35" />
-    <rect
-       x="746.83301"
-       y="274.83301"
-       width="40.333302"
-       height="41.333302"
-       stroke="#4b757d"
-       stroke-width="3.66667"
-       stroke-linejoin="round"
-       stroke-miterlimit="10"
-       fill="none"
-       id="rect37" />
     <text
        font-family="'Franklin Gothic Book', 'Franklin Gothic Book_MSFontService', sans-serif"
        font-weight="400"
-       font-size="19px"
-       transform="translate(757.105,303)"
-       id="text39">YE</text>
+       font-size="15px"
+       transform="translate(635.258,311)"
+       id="text37">YE</text>
     <rect
-       x="789"
-       y="274"
-       width="42"
-       height="43"
-       fill="#d8e9de"
+       x="658.5"
+       y="291.5"
+       width="29"
+       height="29"
+       fill="#c5e0b4"
+       id="rect39" />
+    <rect
+       x="658.16699"
+       y="291.16699"
+       width="29.6667"
+       height="29.6667"
+       stroke="#000000"
+       stroke-width="1.33333"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
        id="rect41" />
-    <rect
-       x="789.83301"
-       y="274.83301"
-       width="40.333302"
-       height="41.333302"
-       stroke="#4b757d"
-       stroke-width="3.66667"
-       stroke-linejoin="round"
-       stroke-miterlimit="10"
-       fill="none"
-       id="rect43" />
     <text
        font-family="'Franklin Gothic Book', 'Franklin Gothic Book_MSFontService', sans-serif"
        font-weight="400"
-       font-size="19px"
-       transform="translate(803.886,303)"
-       id="text45">D</text>
+       font-size="15px"
+       transform="translate(667.927,311)"
+       id="text43">D</text>
     <rect
-       x="832"
-       y="274"
-       width="42"
-       height="43"
-       fill="#d8e9de"
+       x="688.5"
+       y="291.5"
+       width="29"
+       height="29"
+       fill="#c5e0b4"
+       id="rect45" />
+    <rect
+       x="688.16699"
+       y="291.16699"
+       width="29.6667"
+       height="29.6667"
+       stroke="#000000"
+       stroke-width="1.33333"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
        id="rect47" />
-    <rect
-       x="832.83301"
-       y="274.83301"
-       width="40.333302"
-       height="41.333302"
-       stroke="#4b757d"
-       stroke-width="3.66667"
-       stroke-linejoin="round"
-       stroke-miterlimit="10"
-       fill="none"
-       id="rect49" />
     <text
        font-family="'Franklin Gothic Book', 'Franklin Gothic Book_MSFontService', sans-serif"
        font-weight="400"
-       font-size="19px"
-       transform="translate(846.833,303)"
-       id="text51">D</text>
+       font-size="15px"
+       transform="translate(697.596,311)"
+       id="text49">D</text>
     <rect
-       x="875"
-       y="274"
-       width="42"
-       height="43"
-       fill="#d8e9de"
+       x="718.5"
+       y="291.5"
+       width="28"
+       height="29"
+       fill="#c5e0b4"
+       id="rect51" />
+    <rect
+       x="718.16699"
+       y="291.16699"
+       width="28.6667"
+       height="29.6667"
+       stroke="#000000"
+       stroke-width="1.33333"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
        id="rect53" />
-    <rect
-       x="875.83301"
-       y="274.83301"
-       width="40.333302"
-       height="41.333302"
-       stroke="#4b757d"
-       stroke-width="3.66667"
-       stroke-linejoin="round"
-       stroke-miterlimit="10"
-       fill="none"
-       id="rect55" />
     <text
        font-family="'Franklin Gothic Book', 'Franklin Gothic Book_MSFontService', sans-serif"
        font-weight="400"
-       font-size="19px"
-       transform="translate(889.781,303)"
-       id="text57">D</text>
+       font-size="15px"
+       transform="translate(727.265,311)"
+       id="text55">D</text>
     <rect
-       x="918"
-       y="274"
-       width="42"
-       height="43"
-       fill="#d8e9de"
+       x="747.5"
+       y="291.5"
+       width="29"
+       height="29"
+       fill="#c5e0b4"
+       id="rect57" />
+    <rect
+       x="747.16699"
+       y="291.16699"
+       width="29.6667"
+       height="29.6667"
+       stroke="#000000"
+       stroke-width="1.33333"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
        id="rect59" />
-    <rect
-       x="918.83301"
-       y="274.83301"
-       width="40.333302"
-       height="41.333302"
-       stroke="#4b757d"
-       stroke-width="3.66667"
-       stroke-linejoin="round"
-       stroke-miterlimit="10"
-       fill="none"
-       id="rect61" />
     <text
        font-family="'Franklin Gothic Book', 'Franklin Gothic Book_MSFontService', sans-serif"
        font-weight="400"
-       font-size="19px"
-       transform="translate(931.811,303)"
-       id="text63">…</text>
+       font-size="15px"
+       transform="translate(756.185,311)"
+       id="text61">…</text>
   </g>
 </svg>
