@@ -13,7 +13,7 @@ This chapter describes the machine model upon which the PDP operates to motivate
         \label{fig:typical_projection_hardware}
     \end{figure}
 
-    Given that these processes are separate, they can be mapped readily to a machine model which represents an abstraction of an IRSP system utilizing the PDP as shown in Figure~\ref{fig:amm}. The Abstract Machine Model (AMM) separates the system operation of an IRSP system into three main components scene generation, compositing, and display. Scene generation consist of image generation just as in traditional IRSPs; however, more than one scene generator can be utilized to generate partial imagery. Compositing is the process of combining partial images into full PDP frames as well as performing non-uniformity correction and data reordering. More than one compositor is allowed for the purposes of scaling. an IRLED Array tile represents both an array tile and its supporting electronics. Between the components exist abstract links which operate using the PDP. Compositor blocks and IRLED Array Tiles have a one-to-one relationship. The multiple CSE setup discussed in Chapter~\ref{sec:array_Interleaved_write_process} is an example of this type of setup.
+    Given that these processes are separate, they can be mapped readily to a machine model which represents an abstraction of an IRSP system utilizing the PDP as shown in Figure~\ref{fig:amm}. The Abstract Machine Model (AMM) separates the system operation of an IRSP system into three main components scene generation, compositing, and display. Scene generation consist of image generation just as in traditional IRSPs; however, more than one scene generator can be utilized to generate partial imagery. Compositing is the process of combining partial images into full PDP frames as well as performing non-uniformity correction and data reordering. More than one compositor is allowed for the purposes of scaling. an IRLED Array tile represents both an array tile and its supporting electronics. Between the components exist abstract links which operate using the PDP. Compositor blocks and IRLED Array Tiles have a one-to-one relationship. The multiple CSE setup discussed in Chapter~\ref{sec:array_Interleaved_write_process} is an example of this type of setup. There is prior work on parallel scene generation and compositing specifically for hardware in the loop scene generation~\cite{CrowEtAl2006, ShyuEtAl2011, MorrisEtAl2011}.
 
     \begin{figure}
         \centering
@@ -50,7 +50,7 @@ This chapter describes the machine model upon which the PDP operates to motivate
 
     \begin{figure}
         \centering
-        \includegraphics[width=1.0\textwidth]{fig/frames.pdf}
+        \includegraphics[width=0.85\textwidth]{fig/frames.pdf}
         \caption{Average Intensity Map of PDP Regions for Composited Frames}
         \label{fig:intensity_map}
     \end{figure}
