@@ -10,6 +10,13 @@ This dissertation introduces a generalizable, dynamic, and scalable packetized d
 </p>
 
 ## Links
-Open Access Ph.D. Dissertation from UDSpace: [A Packetized Display Protocol Architecture for Infrared Scene Projection Systems](https://udspace.udel.edu/handle/19716/29064)
+* Open Access Ph.D. Dissertation
+  * UDSpace: [A Packetized Display Protocol Architecture for Infrared Scene Projection Systems](https://udspace.udel.edu/handle/19716/29064)
+  * ProQuest: [A Packetized Display Protocol Architecture for Infrared Scene Projection Systems](https://www.proquest.com/openview/b543385c8563c12e0f2ae98fb31666fc/1.pdf?pq-origsite=gscholar&cbl=18750&diss=y)
 
-Open Access Ph.D Dissertation from ProQuest: [A Packetized Display Protocol Architecture for Infrared Scene Projection Systems](https://www.proquest.com/openview/b543385c8563c12e0f2ae98fb31666fc/1.pdf?pq-origsite=gscholar&cbl=18750&diss=y)
+## Related Publications
+* [Further Enhancements to the PDP Architecture and State-of-the-art Results for High-speed IRSP Operation](https://ieeexplore.ieee.org/abstract/document/9521464)
+* [Architectural Enhancements of a Packetized Display Protocol for High-Speed IRSP Operation](https://ieeexplore.ieee.org/abstract/document/9195687)
+* [Demonstration of Packetized Display Protocol (PDP) to Overcome Speed and Resolution Limitations of Conventional Display Protocols](https://ieeexplore.ieee.org/abstract/document/8864287)
+* [An Implementation of a Packetized Display Protocol Architecture for IRLED Projector Systems](https://ieeexplore.ieee.org/abstract/document/8684780)
+* [Toward a Packetized Display Protocol Architecture for IRLED Projector Systems](https://ieeexplore.ieee.org/abstract/document/8508967)
