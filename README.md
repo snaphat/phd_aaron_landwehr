@@ -11,4 +11,5 @@ This dissertation introduces a generalizable, dynamic, and scalable packetized d
 
 ## Links
 Open Access M.S. Thesis from UDSpace: [A Packetized Display Protocol Architecture for Infrared Scene Projection Systems](https://udspace.udel.edu/handle/19716/29064)
+
 Open Access Ph.D Dissertation from ProQuest: [A Packetized Display Protocol Architecture for Infrared Scene Projection Systems](https://www.proquest.com/openview/b543385c8563c12e0f2ae98fb31666fc/1.pdf?pq-origsite=gscholar&cbl=18750&diss=y)
